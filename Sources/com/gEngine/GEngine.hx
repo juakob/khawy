@@ -424,7 +424,9 @@ class GEngine {
 			painter.render(true);
 			endCanvas();
 			renderFinal = false;
-			--drawCount; // dont count this
+			#if debugInfo
+			 --drawCount; // dont count this
+			#end
 		}
 		#if debugInfo
 		//frameBuffer.g2.transformation = FastMatrix3.identity();
