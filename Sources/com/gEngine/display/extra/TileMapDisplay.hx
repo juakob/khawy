@@ -21,7 +21,7 @@ class TileMapDisplay extends Layer
 		this.heightInTiles = heightInTiles;
 		for (i in 0...widthInTiles*heightInTiles) 
 		{
-			var sprite = new BasicSprite(SpriteSheetDB.i.getData(tileType));
+			var sprite = new BasicSprite(tileType);
 			sprite.textureFilter = TextureFilter.PointFilter;
 			sprite.x = (i % widthInTiles) * tileWidth;
 			sprite.y = Std.int(i / widthInTiles) * tileHeight;

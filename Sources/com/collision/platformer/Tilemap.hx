@@ -28,7 +28,7 @@ class Tilemap {
 					//	}
 						var tiles:Array<TmxTile> = cast tileMap.data.tiles;
 						//tileMap.data.
-						var tileMapDisplay:TileMapDisplay = new TileMapDisplay(tilesImg, tileMap.width, tileMap.height, 10, 10);
+						var tileMapDisplay:TileMapDisplay = new TileMapDisplay(tilesImg, tileMap.width, tileMap.height, tileWidth, tileHeight);
 						
 						displayLayer.addChild(tileMapDisplay);
 						var counter:Int = 0;

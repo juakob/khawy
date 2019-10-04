@@ -91,8 +91,9 @@ class SparrowLoader extends TilesheetLoader
 				labels.push(label);
 			}
 			++counter;
-
-			frames.push(TilesheetLoader.createFrame(-Std.parseInt(texture.att.frameX), -Std.parseInt(texture.att.frameY), Std.parseInt(texture.att.width), Std.parseInt(texture.att.height), rotated));
+			var frameX=trimmed?-Std.parseInt(texture.att.frameX):0 ;
+			var frameY=trimmed?-Std.parseInt(texture.att.frameY):0 ;
+			frames.push(TilesheetLoader.createFrame(frameX, frameY, Std.parseInt(texture.att.width), Std.parseInt(texture.att.height), rotated));
 			//var rect = FlxRect.get(Std.parseFloat(texture.att.x), Std.parseFloat(texture.att.y), Std.parseFloat(texture.att.width), Std.parseFloat(texture.att.height));
 			var bitmap:Bitmap = new Bitmap();
 			bitmap.x = Std.parseInt(texture.att.x);
