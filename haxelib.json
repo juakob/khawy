@@ -1,0 +1,13 @@
+{
+  "name": "superFramework",
+  "url" : "",
+  "license": "MIT",
+  "tags": ["physics", "3d"],
+  "description": "Bullet physics for Haxe",
+  "version": "1.2.0",
+  "classPath": "Sources",
+  "releasenote": "",
+  "contributors": ["juako"],
+  "dependencies": {
+  }
+}

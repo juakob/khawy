@@ -1,0 +1,42 @@
+package com.loading.basicResources;
+import com.loading.Resource;
+import com.soundLib.SoundManager.SM;
+import kha.Assets;
+import kha.Sound;
+
+class SoundLoader implements Resource
+{
+	var name:String;
+	var onLoad:Void->Void;
+	var uncompress:Bool=true;
+	public function new(soundName:String ,uncompress:Bool=true) 
+	{
+		name = soundName;
+		this.uncompress=uncompress;
+	}
+
+	public function load(callback:Void->Void):Void 
+	{
+		onLoad = callback;
+		Assets.loadSound(name, onSoundLoad);
+	}
+	
+	function onSoundLoad(sound:Sound) 
+	{
+		SM.addSound(name);
+		if(uncompress){
+			sound.uncompress(onLoad);
+			
+		}else{
+			onLoad();
+		}
+		onLoad = null;
+	}
+	
+	public function unload():Void 
+	{
+		//Reflect.callMethod(Assets.sounds, Reflect.field(Assets.sounds, name + "Unload"), []);
+	}
+	
+	
+}

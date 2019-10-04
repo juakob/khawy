@@ -1,0 +1,66 @@
+### 0.0.x (from 16 feb 2014)
+ - Added first impl. of MarchingSquares and RamerDouglasPeucker
+ - MarchingSquares: Fixed bug where it wouldn't work on fully opaque bitmapdata
+ - MarchingSquares: Added alpha threshold parameter
+ - MarchingSquares: Recognize illegal states
+ - MarchingSquares: Added clipRect support
+ - RDP: Fixed bug where it wouldn't work on circle-like polylines
+ - RDP: Ported Grumdrig's distanceToSegment to use in place of Karthaus' perpendicularDistance
+ - Added OpenFL demo
+ - Added EarClipper
+ - EarClipper: Support array of points instead of flat arrays
+ - EarClipper: Refactored to single class
+ - Added Bayazit poly decomp
+ - Added PolyTools class and refactored common code
+ - Added initial code for Keil decomposition
+ - Added first impl. of Visibility polygon
+ - Visibility: added HomogCoord class
+ - Visibility: Fixes for points discovery on polygon edges 
+ - Visibility: Refactored into static class
+ - SnoeyinkKeil: first impl.
+ - SnoeyinkKeil: finished coding missing parts/fixed bugs
+ - Added abstract HxPoint
+ - Added initial impl. of Connected Components Labeling
+ - CCLabeler: refactored and fixed various bugs
+ - CCLabeler: added 4-connectivity option
+ - MarchingSquares: fixed bug causing duplicate points
+ - Added first impl. of Visvalingam-Whyatt simplification (+ MinHeap)
+ - Visv-Whyatt: completed and improved
+ - Tess2: ported Mikko Mononen's tess2.js
+ - PolyTools adds conversion to/from fl(o)at array and switches to distanceSquared in segmentIntersect
+ - CCLabeler: improved performance swapping ByteArray with Vector
+ - CCLabeler: added areaMap to store components' area while labeling
+ - MarchingSquares: switching to Vector (vs ByteArray)
+ - Introducing simple Debug.assert() in the codebase and compiler defines (GEOM\_CHECKS/NO\_GEOM\_CHECKS)
+ - Bug fixes for some degenerate cases (poly.length < 3)
+
+### 0.1.0 (from 29 sep 2014)
+ - Version class added (starting at 0.1.0)
+ - MarchingSquares: fixing fully opaque bitmapdata again
+ - Using PosInfos in Debug.assert()
+ - RDP: setting epsilon below 1 now exits without doing any simplification
+
+### 0.2.0 (from 21 may 2015) w/ breaking changes
+ - Compatible with new haxe 3.2.0 release onward (!)
+ - MarchingSquares & CCLabeler: switched to hxPixels in place of BitmapData (removing openfl direct dependency)
+ - MarchingSquares & CCLabeler: dropped support for clipRect
+ - CCLabeler: minor improvements
+ - Swapped UInt to Int (again ;)
+ - Updated demo and added timings for the various algorithms
+ - PairDeque: fix? edge case
+ - Visv-Whyatt: changes/fixes to MinHeap, also improving performance
+ - Refactored Heap into its own class
+ - PolyTools: fixed and improved findDuplicatePoints(), added flatten()
+ - Tess2: shortcut methods for boolean ops on polygons
+ - MarchingSquares: force output inside source boundaries, and fix findStartPoint()
+ - IsoContours: initial implementation
+ - Add hxPixels dependency
+ - Add some interactivity to openfl demo (and more test images)
+ - IsoContours: improve performance (esp. AdjacencyMap)
+ - Tess2: experimental Delaunay refinement
+ - Snoeyink-Keil: fix issue #11 (related to polygon reconstruction by diagonals)
+ - PolyTools: some additions and small changes
+ - EarCut: ported from mapbox/earcut
+ - EarClipper: ditched in favor of EarCut
+ - Bayazit: fixed bug with some polys (by looking at how dyn4j solved it)
+ - 
