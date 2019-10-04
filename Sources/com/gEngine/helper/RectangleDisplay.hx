@@ -22,7 +22,8 @@ class RectangleDisplay extends BasicSprite
 		
 	}
 	public function new() {
-		super(data);	
+		animationData=data;
+		super();	
 	}
 	
 	public function setColor(r:Int, g:Int, b:Int)

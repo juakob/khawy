@@ -76,10 +76,10 @@ class BasicSprite implements IAnimation {
 
 	var paintInfo:PaintInfo;
 
-	public inline static function get(name:String):BasicSprite{
-		return new BasicSprite(com.basicDisplay.SpriteSheetDB.i.getData(name));
-	}
-	public function new(animationData:AnimationData) {
+	public function new(name:String=null) {
+		if(name!=null){
+			animationData=com.basicDisplay.SpriteSheetDB.i.getData(name);
+		}
 		if (!paintersInitialized) {
 			paintersInitialized = true;
 			var defaultBlend:Blend = Blend.blendDefault();
@@ -104,7 +104,6 @@ class BasicSprite implements IAnimation {
 			];
 		}
 		transform=FastMatrix4.identity();
-		this.animationData = animationData;
 
 		paintInfo = new PaintInfo();
 		timeline = new Timeline(1 / 30, animationData.frames.length, animationData.labels);
@@ -118,7 +117,8 @@ class BasicSprite implements IAnimation {
 	}
 
 	public function clone():BasicSprite {
-		var cl = new BasicSprite(animationData);
+		var cl = new BasicSprite();
+		cl.animationData=animationData;
 		return cl;
 	}
 
