@@ -130,12 +130,12 @@ class Camera extends Layer {
 	}
 
 	public function limits(x:Float, y:Float, width:Float, height:Float):Void {
-		min = new FastPoint(x, y);
-		max = new FastPoint(x+width, y+height);
+		min = new FastPoint(x-this.width*0.5, y-this.height*0.5);
+		max = new FastPoint(x+width-this.width*0.5, y+height-this.height*0.5);
 	}
 
 	public function setTarget(x:Float, y:Float):Void {
-		targetPos.setTo(-x , -y);
+		targetPos.setTo(-x+width*0.5 , -y+height*0.5);
 	}
 
 	public function goTo(x:Float, y:Float):Void {
