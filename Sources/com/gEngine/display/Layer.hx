@@ -47,11 +47,11 @@ class Layer implements IDraw implements IContainer {
 		sinAng = 0;
 		this.transform=FastMatrix4.identity();
 	}
-	inline function calculateTransform(transform:FastMatrix4){
-		var model1 = FastMatrix4.translation( -pivotX,  -pivotY, 0).multmat(FastMatrix4.scale(scaleX, scaleY, 1));
-		var model2 = model1.multmat(new FastMatrix4(cosAng , -sinAng , 0, 0, sinAng , cosAng , 0, 0, 0, 0, 1, 0, 0, 0, 0, 1));
-		var model3	=model2.multmat(FastMatrix4.translation(x , y, z));
-		var model = transform.multmat(model3);
+	 function calculateTransform(transform:FastMatrix4){
+		var scale = FastMatrix4.scale(scaleX, scaleY, 1).multmat(FastMatrix4.translation( -pivotX,  -pivotY, 0));
+		var rotation = new FastMatrix4(cosAng , -sinAng , 0, 0, sinAng , cosAng , 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+		var translation	= FastMatrix4.translation(x , y, z);
+		var model = transform.multmat(translation.multmat(scale).multmat(rotation));
 		model._30*=paralaxX;
 		model._31*=paralaxY;
 		this.transform.setFrom(model);

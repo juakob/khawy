@@ -60,6 +60,7 @@ class BasicSprite implements IAnimation {
 	private var textureId:Int = -1;
 	private var dataUnique:Bool = false;
 
+	public var smooth(get,set):Bool;
 	public var textureFilter:TextureFilter = TextureFilter.LinearFilter;
 	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
 
@@ -369,6 +370,19 @@ class BasicSprite implements IAnimation {
 	}
 	public function height():Float {
 		return animationData.frames[timeline.currentFrame].drawArea.height;
+	}
+
+	public function get_smooth():Bool {
+		return textureFilter==LinearFilter;
+	}
+	public function set_smooth(value:Bool):Bool {
+		if(!value){
+			textureFilter=PointFilter;
+		}else 
+		{
+			textureFilter=LinearFilter;
+		}
+		return value;
 	}
 
 	
