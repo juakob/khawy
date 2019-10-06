@@ -20,7 +20,7 @@ import kha.graphics4.MipMapFilter;
 import kha.graphics4.TextureFilter;
 import kha.math.FastMatrix3;
 
-class BasicSprite implements IAnimation {
+class BasicSprite implements IAnimation implements IRotation {
 	public var x:FastFloat = 0;
 	public var y:FastFloat = 0;
 	public var z:FastFloat = 0;

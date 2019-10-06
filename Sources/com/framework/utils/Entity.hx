@@ -131,11 +131,11 @@ class Entity
 		return false;
 	}
 	
-	public inline function  numAliveChildren():Int
+	public function  numAliveChildren():Int
 	{
 		return children.length-childrenInLimbo;
 	}
-	public inline function  currentCapacity():Int
+	public function  currentCapacity():Int
 	{
 		return children.length;
 	}

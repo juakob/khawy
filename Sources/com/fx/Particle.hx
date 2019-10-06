@@ -1,7 +1,6 @@
 package com.fx;
 
-import mergeSwf.AnimationSprite;
-import com.gEngine.display.IDraw;
+import com.gEngine.display.IRotation;
 import com.framework.utils.Entity;
 import com.gEngine.display.Layer;
 import com.gEngine.GEngine;
@@ -10,7 +9,7 @@ import com.helpers.FastPoint;
 
 class Particle extends Entity 
 {
-	public var animation:IDraw;
+	public var animation:IRotation;
 	private var mX:Float=0;
 	private var mY:Float=0;
 	private var mLife:Float = 0;
@@ -20,13 +19,13 @@ class Particle extends Entity
 	public var accelerationX:Float = 0;
 	public var mAngularVelocity:Float=0;
 	
-	public function new(display:IDraw) 
+	public function new(display:IRotation) 
 	{
 		super();
 		die();
 		setAnimation(display);
 	}
-	public function setAnimation(display:IDraw):Void
+	public function setAnimation(display:IRotation):Void
 	{
 		animation=display;
 	}
@@ -70,7 +69,7 @@ class Particle extends Entity
 		mY += mVelocity.y * aDt;
 		animation.x = mX;
 		animation.y = mY;
-		//animation.rotation += mAngularVelocity * aDt;
+		animation.rotation += mAngularVelocity * aDt;
 		
 		//if (mAnimation.TotalFrames > 0)
 		{
