@@ -231,9 +231,9 @@ class CollisionBox  implements ICollider
 		}else
 		if (aCollider.collisionType() == CollisionType.TileMap)
 		{
-			return aCollider.collide(this);
+			return aCollider.collide(this,NotifyCallback);
 		}else if (aCollider.collisionType() == CollisionType.Group) {
-			return aCollider.collide(this);
+			return aCollider.collide(this,NotifyCallback);
 		}
 		return false;
 	}

@@ -85,6 +85,10 @@ class CollisionTileMap implements ICollider
 				}
 				
 			}
+			return toReturn;
+		}else
+		if (aCollider.collisionType() == CollisionType.Group){
+			return aCollider.collide(this,NotifyCallback);
 		}
 		return false;
 	}
