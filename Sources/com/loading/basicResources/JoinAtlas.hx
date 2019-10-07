@@ -1,5 +1,7 @@
 package com.loading.basicResources;
 
+import kha.Image;
+import com.framework.Simulation;
 import kha.Assets;
 import com.imageAtlas.Bitmap;
 import com.gEngine.GEngine;
@@ -15,6 +17,7 @@ class JoinAtlas implements Resource
 	var onFinish:Void->Void;
 	var loadedCounter:Int = 0;
 	var separation:Int;
+	var image:Image;
 	public function new(width:Int, height:Int, separation:Int = 2 ) 
 	{
 		this.width = width;
@@ -35,6 +38,14 @@ class JoinAtlas implements Resource
 			resource.load(onLoad);
 		}
 	}
+	public function loadLocal(callback:Void->Void):Void 
+	{
+		onFinish = callback;
+		for (resource in resources) 
+		{
+			resource.loadLocal(onLoad);
+		}
+	}
 	
 	function onLoad() 
 	{
@@ -52,12 +63,9 @@ class JoinAtlas implements Resource
 		{
 			bitmaps = bitmaps.concat(resource.getBitmaps());
 		}
-		var img = AtlasGenerator.generate(width, height, bitmaps, separation);
-		for(bitmap in bitmaps){
-			bitmap.image.unload();
-			Reflect.setField(Assets.images,bitmap.name,null);
-		}
-		var textureId:Int = GEngine.i.addTexture(img);
+		image = AtlasGenerator.generate(width, height, bitmaps, separation);
+		
+		var textureId:Int = GEngine.i.addTexture(image);
 		for (resource in resources) 
 		{
 			resource.update(textureId);
@@ -71,6 +79,15 @@ class JoinAtlas implements Resource
 		{
 			resource.unload();
 		}
+		image.unload();
+	}
+	public function unloadLocal():Void 
+	{
+		for (resource in resources) 
+		{
+			resource.unloadLocal();
+		}
+		image.unload();
 	}
 	
 }

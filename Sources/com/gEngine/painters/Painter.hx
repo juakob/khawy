@@ -32,7 +32,7 @@ class Painter implements IPainter
 	public var green:FastFloat = 0.;
 	public var blue:FastFloat = 0.;
 	public var alpha:FastFloat = 0.;
-	 inline static  var MAX_VERTEX_PER_BUFFER:Int =2500*2;
+	 inline static  var MAX_VERTEX_PER_BUFFER:Int =2500;
 	
 	var dataPerVertex:Int = 5;
 	var mvpID:ConstantLocation;
@@ -136,7 +136,7 @@ class Painter implements IPainter
 				structure, 
 				Usage.DynamicUsage 
 				);
-	
+			
 			createIndexBuffer();
 		}
 		

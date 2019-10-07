@@ -1,5 +1,6 @@
 package com.gEngine;
 
+import com.framework.Simulation;
 import hxGeomAlgo.Debug;
 import kha.math.FastVector4;
 import kha.graphics4.Graphics;
@@ -474,8 +475,8 @@ class GEngine {
 
 	public function unload():Void {
 		var end = textures.length;
-		for (j in initialIndex...end) {
-			textures.pop().unload();
+		for (proxy in renderTargetPool.targets) {
+			textures[proxy.textureId].unload();
 		}
 		PainterGarbage.i.clear();
 		renderTargetPool.clear();

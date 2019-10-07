@@ -36,8 +36,19 @@ class TilesheetLoader implements AtlasJoinable
 			callback();
 		});
 	}
+	public function loadLocal(callback:Void->Void):Void
+	{
+		fromSpriteSheet();
+		callback();
+	}
 
 	public function unload():Void
+	{
+		Assets.images.get(imageName).unload();
+		Reflect.setField(Assets.images, imageName, null);
+		//Reflect.callMethod(Assets.images, Reflect.field(Assets.images, imageName + "Unload"), []);
+	}
+	public function unloadLocal():Void
 	{
 		
 	}

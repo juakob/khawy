@@ -175,7 +175,7 @@ class Simulation
 			currentState = state;
 			currentState.load(resources);
 			if (manualLoad) {
-				//mResources.loadLocal(finishUpload);
+				resources.loadLocal(finishUpload);
 			}else{
 				resources.load(finishUpload);
 			}

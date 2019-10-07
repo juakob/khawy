@@ -19,10 +19,17 @@ class DataLoader implements Resource
 			callback();
 		});
 	}
+	public function loadLocal(callback:Void->Void):Void 
+	{
+		callback();
+	}
 	
 	public function unload():Void 
 	{
 		Reflect.callMethod(Assets.blobs, Reflect.field(Assets.blobs, name + "Unload"), []);
+	}
+	public function unloadLocal():Void 
+	{
 	}
 	
 }
