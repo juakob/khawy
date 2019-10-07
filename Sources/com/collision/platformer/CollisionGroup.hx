@@ -6,7 +6,7 @@ package com.collision.platformer;
  */
 class CollisionGroup implements ICollider
 {
-	private var colliders:Array<ICollider>;
+	public var colliders:Array<ICollider>;
 	public var userData:Dynamic;
 	public var parent:CollisionGroup;
 	

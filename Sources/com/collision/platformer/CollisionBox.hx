@@ -251,11 +251,7 @@ class CollisionBox  implements ICollider
 			}
 		}
 		else if (aCollider.collisionType() == CollisionType.Group) {
-			if (aCollider.collide(this))
-			{
-				if (NotifyCallback != null) NotifyCallback(this, aCollider);
-				return true;
-			}
+			aCollider.overlap(this,NotifyCallback);//TODO: Fix order
 		}
 		return  false;
 	}
