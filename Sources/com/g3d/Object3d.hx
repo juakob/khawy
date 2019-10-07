@@ -52,7 +52,7 @@ class Object3d implements IAnimation{
 	}
 
    	public function render(paintMode:PaintMode, transform:FastMatrix4):Void{ 
-		   var model=FastMatrix4.translation(x,y,z).multmat(FastMatrix4.rotationZ(angleZ)).multmat(FastMatrix4.rotationX(0)).multmat(FastMatrix4.scale(-scaleX,scaleY,scaleZ));
+		   var model=FastMatrix4.translation(x,y,z).multmat(FastMatrix4.rotationZ(angleZ)).multmat(FastMatrix4.rotationY(rotation)).multmat(FastMatrix4.scale(-scaleX,scaleY,scaleZ));
 		  // var cameraMatrix=FastMatrix4.lookAt(new FastVector3(0, 0, 1), new FastVector3(0, 0, 0), new FastVector3(0, 1, 0));
 		   var cameraMatrix=transform;//.multmat(cameraMatrix);
 		   if(animated){

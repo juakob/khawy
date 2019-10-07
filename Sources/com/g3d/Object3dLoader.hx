@@ -24,6 +24,13 @@ class Object3dLoader implements Resource
 		Assets.loadBlob(name, loadBlob );
 		
 	}
+	public function loadLocal(callback:Void->Void):Void 
+	{
+		onLoad=callback;
+		++neededResources;
+		loadBlob(cast Reflect.field(Assets.blobs,name));
+		
+	}
 	function loadBlob(b:Blob){
 		data = new OgexData(b.toString());
 		for(material in data.materials){
@@ -55,6 +62,9 @@ class Object3dLoader implements Resource
 	public function unload():Void 
 	{
 		Reflect.callMethod(Assets.blobs, Reflect.field(Assets.blobs, name + "Unload"), []);
+	}
+	public function unloadLocal():Void 
+	{
 	}
 	
 }
