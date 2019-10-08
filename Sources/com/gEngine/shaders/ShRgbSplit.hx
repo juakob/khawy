@@ -13,13 +13,11 @@ import kha.graphics4.PipelineState;
 class ShRgbSplit extends Painter
 {
 	var resolutionID:ConstantLocation;
-	var resX:Float;
-	var resY:Float;
+	public var spreadX:Float=2;
+	public var spreadY:Float=2;
 	public function new(blend:Blend ) 
 	{
 		super(true,blend);
-		resX = 2 / GEngine.i.realWidth;
-		resY = 2 / GEngine.i.realHeight;
 	}
 	override function setShaders(pipeline:PipelineState):Void 
 	{
@@ -35,6 +33,6 @@ class ShRgbSplit extends Painter
 	override function setParameter(g:Graphics):Void 
 	{
 		super.setParameter(g);
-		g.setFloat2(resolutionID, resX, resY);
+		g.setFloat2(resolutionID, spreadX/canvasWidth, spreadY/canvasHeight);
 	}
 }

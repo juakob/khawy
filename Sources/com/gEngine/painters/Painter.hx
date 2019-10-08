@@ -38,6 +38,9 @@ class Painter implements IPainter
 	var mvpID:ConstantLocation;
 	var textureConstantID:TextureUnit;
 
+	var canvasWidth:Int=0;
+	var canvasHeight:Int=0;
+
 	var projection:FastMatrix4;
 	
 	public var resolution:Float = 1;
@@ -80,7 +83,10 @@ class Painter implements IPainter
 	{
 		if (counter == 0) return;
 		var vertexCount:Int=vertexCount();
-		var g = GEngine.i.currentCanvas().g4;
+		var canvas=GEngine.i.currentCanvas();
+		canvasWidth=canvas.width;
+		canvasHeight=canvas.height;
+		var g = canvas.g4;
 		// Begin rendering
 		uploadVertexBuffer(vertexCount);
 		// Clear screen

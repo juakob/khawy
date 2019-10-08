@@ -14,7 +14,6 @@ void kore() {
 	vec4 c1 = texture( tex, texCoord - value );
 	vec4 c2 = texture( tex, texCoord );
 	vec4 c3 = texture( tex, texCoord + value);
-	
 	vec4 col = vec4( c1.r, c2.g, c3.b, c1.a + c2.a + c3.b );
 	FragColor = col;
 }
