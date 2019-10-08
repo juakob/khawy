@@ -20,13 +20,17 @@ class SoundLoader implements Resource
 		onLoad = callback;
 		Assets.loadSound(name, onSoundLoad);
 	}
+	public function loadLocal(callback:Void->Void):Void 
+	{
+		onLoad = callback;
+		onSoundLoad(Reflect.field(Assets.sounds,name));
+	}
 	
 	function onSoundLoad(sound:Sound) 
 	{
-		SM.addSound(name);
-		if(uncompress){
+		SM.addSound(name,sound);
+		if(uncompress&&sound.compressedData!=null){
 			sound.uncompress(onLoad);
-			
 		}else{
 			onLoad();
 		}
@@ -35,7 +39,11 @@ class SoundLoader implements Resource
 	
 	public function unload():Void 
 	{
-		//Reflect.callMethod(Assets.sounds, Reflect.field(Assets.sounds, name + "Unload"), []);
+		Reflect.callMethod(Assets.sounds, Reflect.field(Assets.sounds, name + "Unload"), []);
+	}
+	public function unloadLocal():Void 
+	{
+		
 	}
 	
 	

@@ -24,19 +24,9 @@ class SoundManager
 		map = new Map();
 		initied = true;
 	}
-	public static function addSound(sound:String):Void
+	public static function addSound(soundName:String,sound:Sound):Void
 	{
-		
-		//#if debug
-		////if (!Assets.exists(location + aSound + ".mp3"))
-		////{
-			////throw new Error("sound file not found " + aSound);
-		////}
-		//#end
-		map.set(sound,  Reflect.field(kha.Assets.sounds, sound));
-		//#else
-		//map.set(aSound, Assets.getSound(location + aSound+".ogg"));
-		//#end
+		map.set(soundName, sound);
 	}
 	public static function playFx(sound:String,loop:Bool=false):AudioChannel
 	{
@@ -51,21 +41,27 @@ class SoundManager
 		}
 		return null;
 	}
-	public static function playMusic(sound:String,loop:Bool=true):Void
+	public static function playMusic(soundName:String,loop:Bool=true):Void
 	{
 		//#if debug
-		if (!map.exists(sound)) {
-			throw "Sound not found " +sound;
+		if (!map.exists(soundName)) {
+			throw "Sound not found " +soundName;
 		}
 		//#end
 		if (music != null)
 		{
 			music.stop();
 		}
-		musicName = sound;
+		musicName = soundName;
 		if (!musicMuted)
 		{
-			music = Audio.stream(map.get(sound), loop);
+			var sound=map.get(soundName);
+			if(sound.compressedData!=null){
+				music=Audio.stream(sound,loop);
+			}else{
+				music = Audio.play(sound, loop);
+			}
+			
 			//music.position = aPosition;
 		}
 	}
