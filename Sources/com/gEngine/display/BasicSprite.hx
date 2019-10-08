@@ -172,8 +172,6 @@ class BasicSprite implements IAnimation implements IRotation {
 		var vertexs:Array<FastFloat> = frame.vertexs;
 
 		var uvs = frame.UVs;
-		var drawTo:Int = Std.int(vertexs.length / 8);
-		var drawFrom:Int = 0;
 		paintInfo.blend = blend;
 		paintInfo.mipMapFilter = mipMapFilter;
 		paintInfo.textureFilter = textureFilter;
@@ -187,26 +185,27 @@ class BasicSprite implements IAnimation implements IRotation {
 				var redAdd, blueAdd, greenAdd, alphaAdd:Float;
 				var buffer = painter.getVertexBuffer();
 				var vertexBufferCounter = painter.getVertexDataCounter();
-				for (i in drawFrom...drawTo) {
-					redMul = this.mulRed;
-					greenMul = this.mulGreen;
-					blueMul = this.mulBlue;
-					alphaMul = this.alpha;
+				
+				redMul = this.mulRed;
+				greenMul = this.mulGreen;
+				blueMul = this.mulBlue;
+				alphaMul = this.alpha;
 
-					redAdd = this.addRed;
-					greenAdd = this.addGreen;
-					blueAdd = this.addBlue;
-					alphaAdd = this.addAlpha;
-					
-					for (k in 0...4) {
-						vertexX = vertexs[i * 8 + k * 2] - pivotX;
-						vertexY = vertexs[i * 8 + k * 2 + 1] - pivotY;
-						var pos = model.multvec(new FastVector4(vertexX, vertexY,0));
-						writeColorVertex(pos.x, pos.y,pos.z, uvs[i * 8 + k * 2], uvs[i * 8 + k * 2 + 1], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd,
-							blueAdd, alphaAdd, buffer, vertexBufferCounter);
-							vertexBufferCounter += 13;
-					}
+				redAdd = this.addRed;
+				greenAdd = this.addGreen;
+				blueAdd = this.addBlue;
+				alphaAdd = this.addAlpha;
+				var vertexIndex:Int=0;
+				var uvIndex:Int=0;
+				for (k in 0...4) {
+					vertexX = vertexs[vertexIndex++] - pivotX+offsetX;
+					vertexY = vertexs[vertexIndex++] - pivotY+offsetY;
+					var pos = model.multvec(new FastVector4(vertexX, vertexY,0));
+					writeColorVertex(pos.x, pos.y,pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd,
+						blueAdd, alphaAdd, buffer, vertexBufferCounter);
+						vertexBufferCounter += 13;
 				}
+				
 				painter.setVertexDataCounter(vertexBufferCounter);
 			} else if (alpha!=1) {
 				var painter = alphaPainters[cast blend];
@@ -216,8 +215,8 @@ class BasicSprite implements IAnimation implements IRotation {
 				var vertexIndex:Int=0;
 				var uvIndex:Int=0;
 					for (i in 0...4) {
-						vertexX = vertexs[vertexIndex++] - pivotX;
-						vertexY = vertexs[vertexIndex++] - pivotY;
+						vertexX = vertexs[vertexIndex++] - pivotX+offsetX;
+						vertexY = vertexs[vertexIndex++] - pivotY+offsetY;
 						var pos = model.multvec(new FastVector4(vertexX, vertexY,0));
 						buffer.set(vertexBufferCounter++, pos.x);
 						buffer.set(vertexBufferCounter++, pos.y);
@@ -234,21 +233,19 @@ class BasicSprite implements IAnimation implements IRotation {
 				checkBatch(paintMode,paintInfo,Std.int(frame.vertexs.length / 2),painter);
 				var buffer = painter.getVertexBuffer();
 				var vertexBufferCounter = painter.getVertexDataCounter();
-				var vertexIndex:Int;
-				var uvIndex:Int;
-				for (i in drawFrom...drawTo) {
-					uvIndex = vertexIndex = i * 8;
-					for (i in 0...4) {
-						vertexX = vertexs[vertexIndex++] - pivotX+offsetX;
-						vertexY = vertexs[vertexIndex++] - pivotY+offsetY;
-						var pos = model.multvec(new FastVector4(vertexX, vertexY,0));
-						buffer.set(vertexBufferCounter++, pos.x);
-						buffer.set(vertexBufferCounter++, pos.y);
-						buffer.set(vertexBufferCounter++, pos.z);
-						buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-						buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-					}
+				var vertexIndex:Int=0;
+				var uvIndex:Int=0;
+				for (i in 0...4) {
+					vertexX = vertexs[vertexIndex++] - pivotX+offsetX;
+					vertexY = vertexs[vertexIndex++] - pivotY+offsetY;
+					var pos = model.multvec(new FastVector4(vertexX, vertexY,0));
+					buffer.set(vertexBufferCounter++, pos.x);
+					buffer.set(vertexBufferCounter++, pos.y);
+					buffer.set(vertexBufferCounter++, pos.z);
+					buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+					buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
 				}
+				
 				painter.setVertexDataCounter(vertexBufferCounter);
 			}
 			
