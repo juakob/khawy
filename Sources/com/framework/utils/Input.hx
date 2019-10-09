@@ -65,7 +65,9 @@ class Input
 		
 		joysticks = new Array();
 	}
-	
+	public function getGamepad(index:Int):JoystickProxy {
+		return joysticks[index];
+	}
 	private function subscibeInput() 
 	{
 		Keyboard.get().notify(onKeyDown, onKeyUp);
@@ -82,6 +84,7 @@ class Input
 		Gamepad.notifyOnConnect(onConnect,onDisconnect);
 	}
 	function onConnect(aId:Int) {
+		trace("gamepad "+ aId);
 		joysticks[aId].onConnect();
 	}
 

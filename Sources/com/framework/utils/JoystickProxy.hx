@@ -8,6 +8,8 @@ class JoystickProxy {
 	var pressed:Array<Int>;
 	var released:Array<Int>;
 	var gamepad:Gamepad;
+	var onAxisChange:Int->Float->Void;
+	var onButtonChange:Int->Float->Void;
 	var id:Int;
 	public var active(default,null):Bool;
 
@@ -18,6 +20,7 @@ class JoystickProxy {
 		pressed = new Array();
 		released = new Array();
 
+
 		onConnect();
 		// add more than needed just to be safe
 		for (i in 0...20) {
@@ -27,7 +30,10 @@ class JoystickProxy {
 			axes.push(0);
 		}
 	}
-
+	public function notify(onAxisChange:Int->Float->Void,onButtonChange:Int->Float->Void){
+		this.onAxisChange=onAxisChange;
+		this.onButtonChange=onButtonChange;
+	}
 	public function onConnect() {
 		if(!active){
 			gamepad = Gamepad.get(id);
@@ -50,6 +56,7 @@ class JoystickProxy {
 
 	function onAxis(id:Int, value:Float) {
 		axes[id] = value;
+		if(onAxisChange!=null)onAxisChange(id,value);
 	}
 
 	function onButton(id:Int, value:Float) {
@@ -59,6 +66,7 @@ class JoystickProxy {
 		} else {
 			pressed.push(id);
 		}
+		if(onButtonChange!=null)onButtonChange(id,value);
 	}
 
 	public function update() {
@@ -71,6 +79,8 @@ class JoystickProxy {
 		for(i in 0...buttons.length){
 			buttons[i]=0;
 		}
+		onButtonChange = null;
+		onAxisChange = null;
 	}
 
 	public function buttonPressed(id:Int):Bool {

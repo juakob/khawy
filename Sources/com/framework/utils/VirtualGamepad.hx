@@ -1,4 +1,6 @@
 package com.framework.utils;
+import kha.input.KeyCode;
+import kha.input.Keyboard;
 import kha.input.Surface;
 import kha.input.Mouse;
 
@@ -8,9 +10,11 @@ class VirtualGamepad
 	private var height:Int;
 	private var scaleX:Float=1;
 	private var scaleY:Float=1;
-	var buttons:Array<VirtualButton>;
-	var sticks:Array<VirtualStick>;
+	var buttonsTouch:Array<VirtualButton>;
+	var sticksTouch:Array<VirtualStick>;
 	var globalStick:VirtualStick;
+
+	var keyButton:Map<KeyCode,Int>;
 	
 	var onAxisChange:Int->Float->Void;
 	var onButtonChange:Int->Float->Void;
@@ -18,13 +22,16 @@ class VirtualGamepad
 	public function new() 
 	{
 		Surface.get().notify(onTouchStart, onTouchEnd, onTouchMove);
-		buttons = new Array();
-		sticks = new Array();
+		Keyboard.get().notify(onKeyDown,onKeyUp);
+		buttonsTouch = new Array();
+		sticksTouch = new Array();
 		globalStick = new VirtualStick();
+		keyButton = new Map();
 	}
 	public function destroy()
 	{
 		Surface.get().remove(onTouchStart, onTouchEnd, onTouchMove);
+		Keyboard.get().remove(onKeyDown,onKeyUp,null);
 		onAxisChange = null;
 		onButtonChange = null;
 	}
@@ -36,9 +43,12 @@ class VirtualGamepad
 		button.x = x;
 		button.y = y;
 		button.radio = radio;
-		buttons.push(button);
+		buttonsTouch.push(button);
 	}
-	
+	public function addKeyButton(id:Int, key:KeyCode)
+	{
+		keyButton.set(key,id);
+	}
 	public function addStick(idX:Int, idY:Int, x:Float, y:Float, radio:Float)
 	{
 		var stick = new VirtualStick();
@@ -47,7 +57,7 @@ class VirtualGamepad
 		stick.x = x;
 		stick.y = y;
 		stick.radio = radio;
-		sticks.push(stick);
+		sticksTouch.push(stick);
 	}
 	public function globalStickData(idX:Int, idY:Int, radio:Float)
 	{
@@ -66,7 +76,7 @@ class VirtualGamepad
 	{
 		scaleX = Input.i.screenScale.x;
 		scaleY = Input.i.screenScale.y;
-		for (button in buttons)
+		for (button in buttonsTouch)
 		{
 			if (button.handleInput(x * scaleX, y * scaleY))
 			{
@@ -77,7 +87,7 @@ class VirtualGamepad
 				return;
 			}
 		}
-		for (stick in sticks) 
+		for (stick in sticksTouch) 
 		{
 			if (stick.handleInput(x * scaleX, y * scaleY))
 			{
@@ -104,7 +114,7 @@ class VirtualGamepad
 	{
 		scaleX = Input.i.screenScale.x;
 		scaleY = Input.i.screenScale.y;
-		for (stick in sticks) 
+		for (stick in sticksTouch) 
 		{
 			if (stick.touchId==id)
 			{
@@ -126,7 +136,7 @@ class VirtualGamepad
 	
 	function onTouchEnd(id:Int,x:Int,y:Int) 
 	{
-		for (button in buttons)
+		for (button in buttonsTouch)
 		{
 			if (button.touchId==id)
 			{
@@ -136,7 +146,7 @@ class VirtualGamepad
 				return;
 			}
 		}
-		for (stick in sticks) 
+		for (stick in sticksTouch) 
 		{
 			if (stick.touchId==id)
 			{
@@ -157,6 +167,14 @@ class VirtualGamepad
 		}
 	}
 	
+	function onKeyDown(key:KeyCode) {
+		var id = keyButton.get(key);
+		onButtonChange(id,1);
+	}
+	function onKeyUp(key:KeyCode) {
+		var id = keyButton.get(key);
+		onButtonChange(id,0);
+	}
 }
 class VirtualButton
 {
