@@ -90,7 +90,7 @@ class Painter implements IPainter
 		// Begin rendering
 		uploadVertexBuffer(vertexCount);
 		// Clear screen
-		if(clear) g.clear(Color.fromFloats(red,green,blue,alpha));
+		if(clear) g.clear(Color.fromFloats(red,green,blue,alpha),1);
 		// Bind data we want to draw
 		g.setVertexBuffer(vertexBuffer);
 		g.setIndexBuffer(indexBuffer);
@@ -212,9 +212,9 @@ class Painter implements IPainter
 		}
 		public function destroy():Void
 		{
-			vertexBuffer.delete();
-			indexBuffer.delete();
-			pipeline.delete();
+		//	vertexBuffer.delete();
+		//	indexBuffer.delete();
+		//	pipeline.delete();
 		}
 		public function adjustRenderArea(area:MinMax):Void {}
 
