@@ -114,7 +114,6 @@ class Simulation
 		}
 		if (requestChangeState)
 		{
-			Input.i.clearInput();
 			requestChangeState = false;
 			loadState(nextState);
 			nextState = null;
@@ -167,6 +166,7 @@ class Simulation
 			if (currentState!=null)
 			{
 				SM.reset();
+				Input.i.clearInput();
 				currentState.destroy();
 				resources.unload();
 				unloadResourceHandlers();

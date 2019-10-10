@@ -35,6 +35,11 @@ class VirtualGamepad
 		onAxisChange = null;
 		onButtonChange = null;
 	}
+	public function clear()
+	{
+		onAxisChange = null;
+		onButtonChange = null;
+	}
 	
 	public function addButton(id:Int, x:Float, y:Float, radio:Float)
 	{
