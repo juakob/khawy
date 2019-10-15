@@ -61,8 +61,6 @@ class SoundManager
 			}else{
 				music = Audio.play(sound, loop);
 			}
-			
-			//music.position = aPosition;
 		}
 	}
 	public static function switchSound():Void

@@ -15,7 +15,7 @@ out vec2 texCoord;
 //out vec4 shadowCoord;
 
 void kore() {
-	vec3 norm = normal.xyz+vec3(0.1);
+	
     texCoord=uv;
 	//shadowCoord = depthBias*vec4(pos,1);
 	gl_Position = mvp * vec4(pos, 1.0);

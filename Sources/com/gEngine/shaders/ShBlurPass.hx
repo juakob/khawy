@@ -37,7 +37,7 @@ class ShBlurPass extends Painter
 	override function setParameter(g:Graphics):Void 
 	{
 		super.setParameter(g);
-		g.setFloat2(dirInv, amountX / GEngine.i.realWidth, amountY / GEngine.i.realWidth);
+		g.setFloat2(dirInv, amountX / canvasWidth, amountY / canvasHeight);
 	}
 	
 }
