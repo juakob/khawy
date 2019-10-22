@@ -82,6 +82,21 @@ class BasicSprite implements IAnimation implements IRotation {
 			animationData=com.basicDisplay.SpriteSheetDB.i.getData(name);
 		}
 		if (!paintersInitialized) {
+			createPainters();
+		}
+		transform=FastMatrix4.identity();
+
+		paintInfo = new PaintInfo();
+		timeline = new Timeline(1 / 30, animationData.frames.length, animationData.labels);
+		scaleX = 1;
+		scaleY = 1;
+		rotation = 0;
+		cosAng = Math.cos(rotation);
+		sinAng = Math.sin(rotation);
+
+		textureId = animationData.texturesID;
+	}
+	static inline function createPainters() {
 			paintersInitialized = true;
 			var defaultBlend:Blend = Blend.blendDefault();
 			var multipassBlend:Blend = Blend.blendMultipass();
@@ -103,20 +118,7 @@ class BasicSprite implements IAnimation implements IRotation {
 				new PainterColorTransform(false, multipassBlend),
 				new PainterColorTransform(false, addBlend)
 			];
-		}
-		transform=FastMatrix4.identity();
-
-		paintInfo = new PaintInfo();
-		timeline = new Timeline(1 / 30, animationData.frames.length, animationData.labels);
-		scaleX = 1;
-		scaleY = 1;
-		rotation = 0;
-		cosAng = Math.cos(rotation);
-		sinAng = Math.sin(rotation);
-
-		textureId = animationData.texturesID;
 	}
-
 	public function clone():BasicSprite {
 		var cl = new BasicSprite();
 		cl.animationData=animationData;
@@ -302,6 +304,7 @@ class BasicSprite implements IAnimation implements IRotation {
 	public function removeFromParent() {
 		if (parent != null) {
 			parent.remove(this);
+			parent=null;
 		}
 	}
 
@@ -318,15 +321,12 @@ class BasicSprite implements IAnimation implements IRotation {
 		mulGreen = g;
 		mulBlue = b;
 		alpha = a;
-		colorTransform = overrideColorTransform();
+		colorTransform = !overrideColorTransform();
 	}
 
 	private inline function overrideColorTransform():Bool {
-		return !(mulRed + mulGreen + mulBlue + alpha == 0 &&
-			addRed == 0 &&
-			addGreen == 0 &&
-			addBlue == 0 &&
-			addAlpha == 0);
+		return mulRed ==1 && mulGreen == 1 && mulBlue ==1 && alpha == 1 &&
+			addRed == 0 && addGreen == 0 && addBlue == 0 && addAlpha == 0;
 	}
 
 	public function getTransformation():FastMatrix3 {

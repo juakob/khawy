@@ -1,4 +1,5 @@
 package com.imageAtlas;
+import kha.graphics2.ImageScaleQuality;
 import kha.Color;
 import com.helpers.Rectangle;
 import kha.Image;
@@ -27,6 +28,9 @@ class AtlasGenerator
 				throw "not enough space on the atlas texture , atlas id " + bitmap.name +", create another atlas";
 			}
 			#end
+			g.pipeline=bitmap.specialPipeline;
+			g.imageScaleQuality=ImageScaleQuality.Low;
+			g.mipmapScaleQuality=ImageScaleQuality.Low;
 			g.drawSubImage(bitmap.image, rectangle.x, rectangle.y, bitmap.x, bitmap.y, bitmap.width, bitmap.height);
 			rectangle.x+=bitmap.extrude;
 			rectangle.y+=bitmap.extrude;
