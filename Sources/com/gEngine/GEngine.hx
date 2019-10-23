@@ -329,8 +329,8 @@ class GEngine {
 		return textures[id];
 	}
 
-	public function update(elapsedTime:Float):Void {
-		stage.update(elapsedTime);
+	public function update():Void {
+		stage.update();
 	}
 
 	public function draw(frameBuffer:Framebuffer, clear:Bool = true):Void {

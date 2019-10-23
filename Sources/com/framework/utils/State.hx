@@ -10,6 +10,7 @@ import kha.Framebuffer;
 
 class State extends Entity {
 	public var stage:Stage;
+	public var timeScale(default,set):Float=1;
 
 	var subStates:Array<State>;
 	var resources:Resources;
@@ -26,6 +27,7 @@ class State extends Entity {
 		addChild(state);
 		state.subStageInit(stage);
 	}
+	
 	
 	public function subStageInit(stage:Stage){
 		resources=new Resources();
@@ -54,9 +56,21 @@ class State extends Entity {
 	}
 
 	override public function destroy():Void {
-		super.destroy();
+		
+		if(Std.is(parent,State)){
+			(cast parent).stage.removeSubStage(stage);
+		}
 		if(resources!=null){
 			resources.unload();
 		}
+		super.destroy();
+	}
+	override function update(dt:Float) {
+		super.update(TimeManager.delta*timeScale);
+	}
+	public function set_timeScale(scale:Float):Float {
+		timeScale=scale;
+		stage.timeScale=scale;
+		return scale;
 	}
 }

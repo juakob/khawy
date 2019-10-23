@@ -152,7 +152,7 @@ class Simulation
 		var fullIterations=Math.floor(TimeManager.multiplier+iterationRest);
 		for(i in 0...fullIterations){
 			currentState.update(dt);
-			GEngine.i.update(dt);
+			GEngine.i.update();
 			Input.i.update();
 		}
 		iterationRest=(TimeManager.multiplier+iterationRest)-fullIterations;

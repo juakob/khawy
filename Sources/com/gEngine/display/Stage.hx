@@ -16,6 +16,7 @@ class Stage
 	public var y(get, set):Float;
 	var painterMode:PaintMode;
 	var subStages:Array<Stage>;
+	public var timeScale:Float=1;
 	
 	public function new() 
 	{
@@ -26,14 +27,15 @@ class Stage
 		painterMode = new PaintMode();
 		subStages=new Array();
 	}
-	public function update(dt:Float):Void
+	public function update():Void
 	{
+		var dt=TimeManager.delta*timeScale;
 		world.update(dt);
 		for(camera in cameras){
 			camera.update(dt);
 		}
 		for(stage in subStages){
-			stage.update(dt);
+			stage.update();
 		}
 	}
 	public function render():Void

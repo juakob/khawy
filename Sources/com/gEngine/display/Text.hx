@@ -74,7 +74,7 @@ class Text extends Layer
 
 				displayLetter.timeline.gotoAndStop(charCodeIndex);
 				currentWordLetters.push(displayLetter);
-				displayLetter.x = q.x0;
+				displayLetter.x = xpos;
 				displayLetter.y =ypos;
 				displayLetter.scaleX=displayLetter.scaleY=scaleFont;
 				xpos += q.xadvance;
