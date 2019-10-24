@@ -1,4 +1,5 @@
 package com.gEngine.display;
+import kha.Color;
 import kha.math.FastMatrix4;
 import com.gEngine.painters.IPainter;
 import com.gEngine.painters.PaintMode;
@@ -17,7 +18,7 @@ class Stage
 	var painterMode:PaintMode;
 	var subStages:Array<Stage>;
 	public var timeScale:Float=1;
-	
+	public var color(default,set):Color;
 	public function new() 
 	{
 		world = new Layer();
@@ -69,6 +70,7 @@ class Stage
 	}
 	public function addCamera(camera:Camera):Int{
 		camera.addChild(world);
+		camera.clearColor=color;
 		return cameras.push(camera);
 	}
 	
@@ -87,5 +89,12 @@ class Stage
 	 function set_x(value:Float):Float
 	{
 		return matrix._30=value;
+	}
+	public function set_color(val:Color):Color {
+		color=val;
+		for(camera in cameras){
+			camera.clearColor=val;
+		}
+		return val;
 	}
 }

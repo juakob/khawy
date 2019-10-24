@@ -64,11 +64,6 @@ class BasicSprite implements IAnimation implements IRotation {
 	public var textureFilter:TextureFilter = TextureFilter.LinearFilter;
 	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
 
-	static var paintersInitialized:Bool;
-	static var simplePainters:Array<Painter>;
-	static var alphaPainters:Array<PainterAlpha>;
-	static var colorPainters:Array<PainterColorTransform>;
-
 	var transform:FastMatrix4;
 
 	public var filter:Filter;
@@ -80,9 +75,6 @@ class BasicSprite implements IAnimation implements IRotation {
 	public function new(name:String=null) {
 		if(name!=null){
 			animationData=com.basicDisplay.SpriteSheetDB.i.getData(name);
-		}
-		if (!paintersInitialized) {
-			createPainters();
 		}
 		transform=FastMatrix4.identity();
 
@@ -96,29 +88,7 @@ class BasicSprite implements IAnimation implements IRotation {
 
 		textureId = animationData.texturesID;
 	}
-	static inline function createPainters() {
-			paintersInitialized = true;
-			var defaultBlend:Blend = Blend.blendDefault();
-			var multipassBlend:Blend = Blend.blendMultipass();
-			var addBlend:Blend = Blend.blendAdd();
-			simplePainters = [
-				new Painter(false, defaultBlend),
-				new Painter(false, multipassBlend),
-				new Painter(false, addBlend)
-			];
-
-			alphaPainters = [
-				new PainterAlpha(false, defaultBlend),
-				new PainterAlpha(false, multipassBlend),
-				new PainterAlpha(false, addBlend)
-			];
-
-			colorPainters = [
-				new PainterColorTransform(false, defaultBlend),
-				new PainterColorTransform(false, multipassBlend),
-				new PainterColorTransform(false, addBlend)
-			];
-	}
+	
 	public function clone():BasicSprite {
 		var cl = new BasicSprite();
 		cl.animationData=animationData;
@@ -181,7 +151,7 @@ class BasicSprite implements IAnimation implements IRotation {
 
 
 			if (colorTransform) {
-				var painter = colorPainters[cast blend];
+				var painter = GEngine.i.getColorTransformPainter(blend);
 				checkBatch(paintMode,paintInfo,Std.int(frame.vertexs.length / 2),painter);
 				var redMul, blueMul, greenMul, alphaMul:Float;
 				var redAdd, blueAdd, greenAdd, alphaAdd:Float;
@@ -210,7 +180,7 @@ class BasicSprite implements IAnimation implements IRotation {
 				
 				painter.setVertexDataCounter(vertexBufferCounter);
 			} else if (alpha!=1) {
-				var painter = alphaPainters[cast blend];
+				var painter = GEngine.i.getAlphaPainter(blend);
 				checkBatch(paintMode,paintInfo,Std.int(frame.vertexs.length / 2),painter);
 				var buffer = painter.getVertexBuffer();
 				var vertexBufferCounter = painter.getVertexDataCounter();
@@ -231,7 +201,7 @@ class BasicSprite implements IAnimation implements IRotation {
 				painter.setVertexDataCounter(vertexBufferCounter);
 				
 			} else {
-				var painter = simplePainters[cast blend];
+				var painter = GEngine.i.getSimplePainter(blend);
 				checkBatch(paintMode,paintInfo,Std.int(frame.vertexs.length / 2),painter);
 				var buffer = painter.getVertexBuffer();
 				var vertexBufferCounter = painter.getVertexDataCounter();

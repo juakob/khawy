@@ -16,7 +16,6 @@ import kha.math.FastMatrix3;
 
 class Layer implements IDraw implements IContainer {
 	private var children:Array<IDraw>;
-	private var blendMode:Int;
 	private var texture:Int;
 
 	public var x:FastFloat = 0;
@@ -115,13 +114,6 @@ class Layer implements IDraw implements IContainer {
 			}
 		}
 	}
-
-	public function blend():Int {
-		return 0;
-		// return Tilesheet.TILE_BLEND_NORMAL;
-	}
-
-
 
 	public function addChild(child:IDraw):Void {
 		child.parent = this;

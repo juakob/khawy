@@ -28,6 +28,6 @@ class RectangleDisplay extends BasicSprite
 	
 	public function setColor(r:Int, g:Int, b:Int)
 	{
-		colorAdd(r / 255, g / 255, b / 255, 1);
+		colorMultiplication(r / 255, g / 255, b / 255, 1);
 	}
 }

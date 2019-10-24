@@ -29,12 +29,13 @@ class State extends Entity {
 	}
 	
 	
-	public function subStageInit(stage:Stage){
+	function subStageInit(parentStage:Stage){
 		resources=new Resources();
 		load(resources);
-		resources.load(init);
 		this.stage=new Stage();
-		stage.addSubStage(this.stage);
+		parentStage.addSubStage(this.stage);
+		resources.load(init);
+		
 	}
 
 	public function changeState(state:State):Void {
@@ -42,7 +43,7 @@ class State extends Entity {
 	}
 
 	public function stageColor(r:Float = 0, g:Float = 0, b:Float = 0, a:Float = 1) {
-		GEngine.i.clearColor = Color.fromFloats(r, g, b, a);
+		stage.color=Color.fromFloats(r,g,b,a);
 	}
 
 	public function draw(framebuffer:Canvas):Void {}

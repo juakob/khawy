@@ -1,5 +1,8 @@
 package com.gEngine;
 
+import com.gEngine.display.BlendMode;
+import com.gEngine.painters.PainterColorTransform;
+import com.gEngine.painters.PainterAlpha;
 import com.framework.Simulation;
 import hxGeomAlgo.Debug;
 import kha.math.FastVector4;
@@ -90,16 +93,26 @@ class GEngine {
 
 		textures = new Array();
 		
+		createPainters();
 
 		// createBuffer(Screen.getWidth(), Screen.getHeight());
 		trace(Screen.getWidth() + "x" + Screen.getHeight());
 		createBuffer(Screen.getWidth(), Screen.getHeight());
 
 		var recTexture = Image.createRenderTarget(1, 1);
-		recTexture.g2.begin(true, Color.Black);
+		recTexture.g2.begin(true, Color.White);
 		recTexture.g2.end();
 		textures.push(recTexture);
 		RectangleDisplay.init(1);	
+	}
+	public function getSimplePainter(blend:BlendMode) {
+		return simplePainters[cast blend];
+	}
+	public function getAlphaPainter(blend:BlendMode) {
+		return alphaPainters[cast blend];
+	}
+	public function getColorTransformPainter(blend:BlendMode) {
+		return colorPainters[cast blend];
 	}
 
 	function createBuffer(targetWidth:Int, targetHeight:Int):Bool {
@@ -219,6 +232,10 @@ class GEngine {
 
 	var currentCanvasActive:Bool=false;
 
+	var simplePainters:Array<Painter>;
+	var alphaPainters:Array<PainterAlpha>;
+	var colorPainters:Array<PainterColorTransform>;
+
 	public function changeToBuffer() {
 		#if debug
 		if(currentCanvasActive) throw "end buffer before releasing it";
@@ -235,6 +252,33 @@ class GEngine {
 		} else {
 			changeToBuffer();
 		}
+	}
+	function createPainters() {
+			var defaultBlend:Blend = Blend.blendDefault();
+			var multipassBlend:Blend = Blend.blendMultipass();
+			var addBlend:Blend = Blend.blendAdd();
+			var multiplyBlend:Blend = Blend.blendMultiply();
+			simplePainters = [
+				new Painter(false, defaultBlend),
+				new Painter(false, multipassBlend),
+				new Painter(false, addBlend),
+				new Painter(false, multiplyBlend)
+			];
+
+			alphaPainters = [
+				new PainterAlpha(false, defaultBlend),
+				new PainterAlpha(false, multipassBlend),
+				new PainterAlpha(false, addBlend),
+				new PainterAlpha(false, multiplyBlend)
+				
+			];
+
+			colorPainters = [
+				new PainterColorTransform(false, defaultBlend),
+				new PainterColorTransform(false, multipassBlend),
+				new PainterColorTransform(false, addBlend),
+				new PainterColorTransform(false, multiplyBlend)
+			];
 	}
 	public function endCanvas() {
 		#if debug

@@ -1,5 +1,6 @@
 package com.gEngine.display;
 
+import kha.graphics4.TextureFilter;
 import kha.graphics1.Graphics4;
 import com.g3d.OgexData.Color;
 import com.gEngine.painters.Painter;
@@ -33,6 +34,8 @@ class Camera extends Layer {
 	public var smooth(get,set):Bool;
 	public var autoCrop:Bool;
 
+	public var clearColor:kha.Color=kha.Color.fromFloats(0,0,0,0);
+
 	public var projection(default,null):FastMatrix4;
 	public var orthogonal:FastMatrix4;
 
@@ -45,8 +48,10 @@ class Camera extends Layer {
 	public var view:FastMatrix4;
 	public var onPreRender:Camera->FastMatrix4->Void;
 	public var renderTarget:Int=-1;
-	var painter:Painter;
 
+	var textureFilter:TextureFilter=TextureFilter.LinearFilter;
+
+	public var blend:BlendMode=BlendMode.Default;
 
 	public function new() {
 		super();
@@ -65,8 +70,7 @@ class Camera extends Layer {
 		renderTarget = GEngine.i.getRenderTarget(width,height);
 		setOrthogonalProjection(width,height);
 		projection=orthogonal;
-		painter=new Painter();
-		painter.filter=kha.graphics4.TextureFilter.LinearFilter;
+		
 	}
 	public  function updateView() {
 		view.setFrom(FastMatrix4.lookAt(eye, at, up));
@@ -110,7 +114,7 @@ class Camera extends Layer {
 		GEngine.i.beginCanvas();
 		var g=GEngine.i.currentCanvas().g4;
 		
-		g.clear(kha.Color.fromFloats(0,0,0,0),1);
+		g.clear(clearColor,1);
 		
 		paintMode.projection=projection;
 		paintMode.orthogonal=orthogonal;
@@ -124,6 +128,7 @@ class Camera extends Layer {
 		GEngine.i.endCanvas();
 		GEngine.i.changeToBuffer();
 		GEngine.i.beginCanvas();
+		var painter=GEngine.i.getSimplePainter(blend);
 		painter.setProjection(GEngine.i.getMatrix());
 		GEngine.i.renderBufferFull(renderTarget,painter,finalX,finalY,width,height,1,false,1);
 		GEngine.i.endCanvas();
@@ -241,16 +246,13 @@ class Camera extends Layer {
 		this.shakeInterval = shakeInterval;
 	}
 	public function get_smooth():Bool {
-		return painter.filter==LinearFilter;
+		return textureFilter==LinearFilter;
 	}
 	public function set_smooth(value:Bool):Bool {
-		if(!value&&painter.filter==LinearFilter){
-			painter=new Painter();
-			painter.filter=PointFilter;
-		}else 
-		if(value&&painter.filter!=LinearFilter){
-			painter=new Painter();
-			painter.filter=LinearFilter;
+		if(value){
+			textureFilter=LinearFilter;
+		}else{
+			textureFilter=PointFilter;
 		}
 		return value;
 	}
