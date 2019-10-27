@@ -253,6 +253,10 @@ class GEngine {
 			changeToBuffer();
 		}
 	}
+	public function setCanvasFromImage(image:Image):Void {
+			renderCustomBuffer = true;
+			customBuffer = image;
+	}
 	function createPainters() {
 			var defaultBlend:Blend = Blend.blendDefault();
 			var multipassBlend:Blend = Blend.blendMultipass();

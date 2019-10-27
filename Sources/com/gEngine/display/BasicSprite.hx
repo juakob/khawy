@@ -226,7 +226,7 @@ class BasicSprite implements IAnimation implements IRotation {
 
 		if(filter!=null)filter.filterEnd(paintMode);
 	}
-	static inline function checkBatch(paintMode:PaintMode,paintInfo:PaintInfo,count:Int,painter:IPainter) {
+	static  function checkBatch(paintMode:PaintMode,paintInfo:PaintInfo,count:Int,painter:IPainter) {
 		if (!paintMode.canBatch(paintInfo, count, painter)) {
 			paintMode.render();
 			paintMode.changePainter(painter, paintInfo);
