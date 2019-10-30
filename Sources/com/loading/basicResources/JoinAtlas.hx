@@ -37,6 +37,7 @@ class JoinAtlas implements Resource
 		{
 			resource.load(onLoad);
 		}
+		if(resources.length==0)callback();
 	}
 	public function loadLocal(callback:Void->Void):Void 
 	{
@@ -45,6 +46,7 @@ class JoinAtlas implements Resource
 		{
 			resource.loadLocal(onLoad);
 		}
+		if(resources.length==0)callback();
 	}
 	
 	function onLoad() 

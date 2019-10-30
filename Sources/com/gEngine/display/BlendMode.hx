@@ -8,4 +8,5 @@ abstract BlendMode(Int)
 	var Multipass = 1;
 	var Add = 2;
 	var Multiply = 3;
+	var Screen = 4;
 }

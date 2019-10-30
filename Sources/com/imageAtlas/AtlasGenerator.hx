@@ -20,7 +20,7 @@ class AtlasGenerator
 		
 		var g:Graphics = atlasImage.g2;
 		g.begin(true,Color.fromFloats(0,0,0,0));
-		for (bitmap in bitmaps) 
+		for (bitmap in bitmaps)  
 		{
 			var rectangle:Rectangle = atlasMap.insertImage(bitmap);
 			#if debug

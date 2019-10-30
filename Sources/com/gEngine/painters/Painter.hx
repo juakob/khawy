@@ -1,4 +1,5 @@
 package com.gEngine.painters;
+import kha.graphics4.BlendingOperation;
 import kha.graphics4.CompareMode;
 import kha.math.FastMatrix4;
 import com.gEngine.display.Blend;
@@ -174,6 +175,7 @@ class Painter implements IPainter
 		}
 		private inline function setBlends(pipeline:PipelineState, blend:Blend) 
 		{
+			pipeline.blendOperation=blend.blendOperation;
 			pipeline.blendSource = blend.blendSource;
 			pipeline.blendDestination = blend.blendDestination;
 			pipeline.alphaBlendSource = blend.alphaBlendSource;

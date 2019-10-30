@@ -1,5 +1,6 @@
 package com.gEngine;
 
+
 import com.gEngine.display.BlendMode;
 import com.gEngine.painters.PainterColorTransform;
 import com.gEngine.painters.PainterAlpha;
@@ -12,7 +13,6 @@ import com.gEngine.display.Blend;
 import com.gEngine.display.IDraw;
 import com.gEngine.display.Stage;
 import com.gEngine.helper.RectangleDisplay;
-import com.gEngine.helper.Screen;
 import com.gEngine.painters.IPainter;
 import com.gEngine.painters.Painter;
 import com.helpers.RenderTargetPool;
@@ -96,8 +96,8 @@ class GEngine {
 		createPainters();
 
 		// createBuffer(Screen.getWidth(), Screen.getHeight());
-		trace(Screen.getWidth() + "x" + Screen.getHeight());
-		createBuffer(Screen.getWidth(), Screen.getHeight());
+		trace( com.gEngine.helper.Screen.getWidth() + "x" +  com.gEngine.helper.Screen.getHeight());
+		createBuffer( com.gEngine.helper.Screen.getWidth(),  com.gEngine.helper.Screen.getHeight());
 
 		var recTexture = Image.createRenderTarget(1, 1);
 		recTexture.g2.begin(true, Color.White);
@@ -262,26 +262,29 @@ class GEngine {
 			var multipassBlend:Blend = Blend.blendMultipass();
 			var addBlend:Blend = Blend.blendAdd();
 			var multiplyBlend:Blend = Blend.blendMultiply();
+			var screenBlend:Blend = Blend.blendScreen();
 			simplePainters = [
 				new Painter(false, defaultBlend),
 				new Painter(false, multipassBlend),
 				new Painter(false, addBlend),
-				new Painter(false, multiplyBlend)
+				new Painter(false, multiplyBlend),
+				new Painter(false, screenBlend)
 			];
 
 			alphaPainters = [
 				new PainterAlpha(false, defaultBlend),
 				new PainterAlpha(false, multipassBlend),
 				new PainterAlpha(false, addBlend),
-				new PainterAlpha(false, multiplyBlend)
-				
+				new PainterAlpha(false, multiplyBlend),
+				new PainterAlpha(false, screenBlend)
 			];
 
 			colorPainters = [
 				new PainterColorTransform(false, defaultBlend),
 				new PainterColorTransform(false, multipassBlend),
 				new PainterColorTransform(false, addBlend),
-				new PainterColorTransform(false, multiplyBlend)
+				new PainterColorTransform(false, multiplyBlend),
+				new PainterColorTransform(false, screenBlend)
 			];
 	}
 	public function endCanvas() {
