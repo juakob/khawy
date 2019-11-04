@@ -293,7 +293,10 @@ class BasicSprite implements IAnimation implements IRotation {
 		alpha = a;
 		colorTransform = !overrideColorTransform();
 	}
-
+	public function resetColorTransform() {
+		colorAdd();
+		colorMultiplication();
+	}
 	private inline function overrideColorTransform():Bool {
 		return mulRed ==1 && mulGreen == 1 && mulBlue ==1 && alpha == 1 &&
 			addRed == 0 && addGreen == 0 && addBlue == 0 && addAlpha == 0;

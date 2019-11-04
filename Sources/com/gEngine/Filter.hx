@@ -24,8 +24,9 @@ class Filter
 	var drawArea:MinMax;
 	var finishTarget:Int;
 	var workTargetId:Int;
+	var scaleRenderArea:MinMax=new MinMax();
 
-	public function new(filters:Array<IPainter>,r:FastFloat=0,g:FastFloat=0,b:FastFloat=0,a:FastFloat=0,cropScreen:Bool=true) 
+	public function new(filters:Array<IPainter>=null,r:FastFloat=0,g:FastFloat=0,b:FastFloat=0,a:FastFloat=0,cropScreen:Bool=true) 
 	{
 		red = r;
 		green = g;
@@ -39,8 +40,16 @@ class Filter
 			drawArea.min.setTo(0, 0);
 			drawArea.max.setTo(GEngine.i.width,GEngine.i.height);
 		}
-		var passFilters:Array<IPainter> = new Array();
 		
+		if(filters!=null){
+			setPasses(filters);
+		}
+		
+		
+	}
+	public function setPasses(filters:Array<IPainter>) {
+		var passFilters:Array<IPainter> = new Array();
+		renderPass=new Array();
 		for (filter in filters) 
 		{
 			if (Std.is(filter, ShRender))
@@ -75,108 +84,7 @@ class Filter
 			//}
 		}
 	}
-	var scaleRenderArea:MinMax=new MinMax();
-	public function renderGroup(layer:Layer,display:Array<IDraw>,paintMode:PaintMode,transform:FastMatrix4):Void
-	{
-		if (renderPass.length == 0)
-		{
-			return;
-		}
-		paintMode.render();
-		var finishTarget:Int = GEngine.i.currentCanvasId();
-		var workTargetId:Int = GEngine.i.getRenderTarget(paintMode.targetWidth,paintMode.targetHeight);
-		GEngine.i.endCanvas();
-		GEngine.i.setCanvas(workTargetId);
-		var g4=GEngine.i.currentCanvas().g4;
-		//g4.scissor(0, 0, paintMode.targetWidth,paintMode.targetHeight);
-		g4.begin();
-		g4.clear(Color.fromFloats(red,green,blue,alpha),1);
 	
-
-		
-		for (display in display) 
-		{
-			display.render(paintMode, transform);
-		}
-		drawArea.reset();
-		if (cropScreen)
-		{
-			layer.getDrawArea(drawArea,transform);
-			drawArea.perspective(paintMode.projection,paintMode.targetWidth,paintMode.targetHeight);
-			drawArea.offset(paintMode.targetWidth*0.5,paintMode.targetHeight*0.5);
-			if(!Image.renderTargetsInvertedY()) drawArea.flipY(paintMode.targetHeight);
-			//drawArea.scale(1/GEngine.i.scaleWidth*GEngine.i.oversample,1/GEngine.i.scaleHeigth*GEngine.i.oversample);
-			
-			if(paintMode.hasRenderArea()){
-			//	drawArea.intersection(painter.getRenderArea());
-			}
-			if(drawArea.isEmpty){
-				paintMode.render();//TODO abort render without rendering
-				g4.end();
-				GEngine.i.releaseRenderTarget(workTargetId);
-				GEngine.i.setCanvas(finishTarget);
-				GEngine.i.beginCanvas();
-				return;
-			}
-			
-		}else{
-			drawArea.min.x=0;
-			drawArea.min.y=0;
-			drawArea.max.x = paintMode.targetWidth;
-			drawArea.max.y = paintMode.targetHeight;
-		}
-			
-		paintMode.render();
-		g4.end();
-
-		var counter:Int = renderPass.length;
-		for (renderPass in renderPass) 
-		{
-			--counter;
-			var filters:Array<IPainter> = renderPass.filters;
-			var resolution:Float = 1;
-			var length:Int;
-			if (renderPass.renderAtEnd)
-			{
-				length = filters.length - 1;//dont iterate over the last one
-			}else {
-				length= filters.length ;
-			}
-			for (i in 0...length) 
-			{
-				var sourceImg = workTargetId;
-				workTargetId = GEngine.i.getRenderTarget(paintMode.targetWidth,paintMode.targetHeight);
-				
-				GEngine.i.setCanvas(workTargetId);
-				GEngine.i.beginCanvas();
-				var filter:IPainter = filters[i];
-				filter.setProjection(paintMode.orthogonal);
-				//filter.adjustRenderArea(drawArea);
-				renderBuffer(sourceImg, filter, drawArea.min.x , drawArea.min.y , drawArea.width(), drawArea.height() ,1/resolution, true,resolution*filter.resolution);
-				resolution *= filter.resolution;
-				if (filter.releaseTexture()) GEngine.i.releaseRenderTarget(sourceImg);
-				GEngine.i.endCanvas();
-			}
-			if (renderPass.renderAtEnd)
-			{
-				GEngine.i.setCanvas(finishTarget);
-				GEngine.i.beginCanvas();
-				var filter:IPainter = filters[filters.length-1];
-				filter.setProjection(paintMode.orthogonal);
-			//	filter.adjustRenderArea(drawArea);
-				var scale = 1 / resolution;
-				renderBuffer(workTargetId, filter,drawArea.min.x, drawArea.min.y,drawArea.width(), drawArea.height(), scale, false);
-				if (filter.releaseTexture() && counter == 0) GEngine.i.releaseRenderTarget(workTargetId);
-				if(0!=counter){
-					GEngine.i.endCanvas();
-				}
-
-			}
-		}
-		
-
-	}
-
 	public function filterStart(display:IDraw,paintMode:PaintMode,transform:FastMatrix4):Void
 	{
 		if (renderPass.length == 0)
@@ -190,7 +98,8 @@ class Filter
 		GEngine.i.setCanvas(workTargetId);
 		var g4=GEngine.i.currentCanvas().g4;
 		//g4.scissor(0, 0, paintMode.targetWidth,paintMode.targetHeight);
-		g4.begin();
+		//g4.begin();
+		GEngine.i.beginCanvas();
 		g4.clear(Color.fromFloats(red,green,blue,alpha),1);
 		if (cropScreen)
 		{
@@ -204,20 +113,25 @@ class Filter
 			
 			
 		}
-		paintMode.render();
-		g4.end();
+		//paintMode.render();
+		
 		if(drawArea.isEmpty){
+			GEngine.i.endCanvas();
 			GEngine.i.releaseRenderTarget(workTargetId);
 			GEngine.i.setCanvas(finishTarget);
 			GEngine.i.beginCanvas();
 		}	
 		
+		
 	}
 	public function filterEnd(paintMode:PaintMode):Void
 	{
+		
 		if(drawArea.isEmpty){
 			return;
 		}
+		paintMode.render();
+		GEngine.i.endCanvas();
 		var counter:Int = renderPass.length;
 		for (renderPass in renderPass) 
 		{
@@ -240,6 +154,7 @@ class Filter
 				GEngine.i.beginCanvas();
 				var filter:IPainter = filters[i];
 				filter.setProjection(paintMode.orthogonal);
+				filter.adjustRenderArea(drawArea);
 				renderBuffer(sourceImg, filter, drawArea.min.x , drawArea.min.y , drawArea.width(), drawArea.height() ,1/resolution, true,resolution*filter.resolution);
 				resolution *= filter.resolution;
 				if (filter.releaseTexture()) GEngine.i.releaseRenderTarget(sourceImg);
@@ -251,6 +166,7 @@ class Filter
 				GEngine.i.beginCanvas();
 				var filter:IPainter = filters[filters.length-1];
 				filter.setProjection(paintMode.orthogonal);
+				filter.adjustRenderArea(drawArea);
 				var scale = 1 / resolution;
 				renderBuffer(workTargetId, filter,drawArea.min.x, drawArea.min.y,drawArea.width(), drawArea.height(), scale, false);
 				if (filter.releaseTexture() && counter == 0) GEngine.i.releaseRenderTarget(workTargetId);
@@ -259,6 +175,7 @@ class Filter
 				}
 			}
 		}
+		
 	}
 	public function renderBuffer(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool, outScale:Float = 1) {
 		painter.textureID = source;

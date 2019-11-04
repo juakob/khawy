@@ -84,7 +84,7 @@ class MinMax
 		}
 	}
 	
-	public function transform(matrix:FastMatrix4) 
+	public inline function transform(matrix:FastMatrix4) 
 	{
 		if(isEmpty)return;
 		var fMin = new FastVector4(min.x, min.y,minZ);

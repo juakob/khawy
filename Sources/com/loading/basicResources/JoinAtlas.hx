@@ -81,7 +81,7 @@ class JoinAtlas implements Resource
 		{
 			resource.unload();
 		}
-		image.unload();
+		if(image!=null) image.unload();
 	}
 	public function unloadLocal():Void 
 	{

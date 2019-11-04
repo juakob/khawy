@@ -289,7 +289,9 @@ class GEngine {
 	}
 	public function endCanvas() {
 		#if debug
-		if(!currentCanvasActive)  trace("Warning :start buffer before you end it");
+		if(!currentCanvasActive){
+			trace("Warning :start buffer before you end it");
+		}  
 		#end
 		if(currentCanvasActive){
 			currentCanvas().g4.end();
@@ -298,7 +300,9 @@ class GEngine {
 	}
 	public function beginCanvas() {
 		#if debug
-		if(currentCanvasActive)  trace("Warning :end buffer before you start ");
+		if(currentCanvasActive)  {
+			trace("Warning :end buffer before you start ");
+		}
 		#end
 		if(!currentCanvasActive){
 			currentCanvas().g4.begin();

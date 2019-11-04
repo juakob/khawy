@@ -17,10 +17,10 @@ class ShOutline extends Painter
 	var colorPosition:kha.graphics4.ConstantLocation;
 	var stepSizePosition:kha.graphics4.ConstantLocation;
 	
-	var color:Color;
-	var thick:Float;
+	public var color:Color;
+	public var thick:Float;
 	
-	public function new(blend:Blend,color:Color,thick:Float) 
+	public function new(color:Color,thick:Float,blend:Blend=null) 
 	{
 		super(true,blend);
 		this.color = color;
@@ -46,7 +46,7 @@ class ShOutline extends Painter
 	{
 		super.setParameter(g);
 		g.setFloat3(colorPosition, color.R, color.G, color.B);
-		g.setFloat2(stepSizePosition, thick/GEngine.i.realWidth, thick/GEngine.i.realHeight);
+		g.setFloat2(stepSizePosition, thick/canvasWidth, thick/canvasHeight);
 	}
 	
 }

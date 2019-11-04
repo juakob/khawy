@@ -24,18 +24,19 @@ class State extends Entity {
 	public function init():Void {}
 
 	public function addSubState(state:State):Void {
-		addChild(state);
-		state.subStageInit(stage);
+		initSubState(state);
+		
 	}
 	
-	
-	function subStageInit(parentStage:Stage){
-		resources=new Resources();
-		load(resources);
-		this.stage=new Stage();
-		parentStage.addSubStage(this.stage);
-		resources.load(init);
-		
+	function initSubState(state:State) {
+		state.resources = new Resources();
+		state.load(state.resources);
+		state.stage=new Stage();
+		state.resources.load(function(){
+			state.init();
+			stage.addSubStage(state.stage);
+			addChild(state);
+		});
 	}
 
 	public function changeState(state:State):Void {

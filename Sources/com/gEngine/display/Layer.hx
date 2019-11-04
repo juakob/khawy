@@ -67,12 +67,14 @@ class Layer implements IDraw implements IContainer {
 			scaleArea.scale( GEngine.i.scaleWidth, GEngine.i.scaleHeigth);
 			paintMode.adjustRenderArea(scaleArea);
 		}
-		if (filter == null) {
-			for (child in children) {
-				child.render(paintMode, this.transform);
-			}
-		} else {
-			filter.renderGroup(this, children, paintMode, transform);
+		if(filter!=null){
+			filter.filterStart(this,paintMode,transform);
+		}
+		for (child in children) {
+			child.render(paintMode, this.transform);
+		}
+		if(filter!=null){
+			filter.filterEnd(paintMode);
 		}
 		if (drawArea != null) {
 			paintMode.render();

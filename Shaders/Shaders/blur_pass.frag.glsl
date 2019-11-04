@@ -21,5 +21,5 @@ void main() {
 	fragColor += texture(tex, texCoord - (dirInv * 4.5));
 	fragColor += texture(tex, texCoord - (dirInv * 5.5));
 	fragColor.rgba /= 11;
-	fragColor.rgb *= fragColor.a;
+	//fragColor.rgb *= fragColor.a;
 }
