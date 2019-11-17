@@ -115,13 +115,28 @@ class Timeline{
 		}
 		throw "label "+text +"not found";
 	}
+	public function labelEndEvent(text:String,indexStart:Int=0,prefixIgnore:String):Int
+	{
+		for(i in indexStart...labels.length ){
+			var label=labels[i];
+			if(label.text==text){
+				if(labels.length==i+1) return totalFrames-1;
+				if(labels[i+1].text.indexOf(prefixIgnore)==0)
+				{
+					return labelEndEvent(labels[i+1].text,i+1,prefixIgnore);
+				}
+				return labels[i+1].frame-1;
+			}
+		}
+		throw "label "+text +"not found";
+	}
 	public function play(){
 		playing=true;
 	}
 	public function localFrame():Int{
 		return currentFrame-firstFrame;
 	}
-	public function playAnimation(animation:String,loop:Bool=true,force:Bool=false):Void
+	public function playAnimation(animation:String,loop:Bool=true,force:Bool=false,prefixCharIgnore:String=null):Void
 	{
 		var firstAnimationFrame:Int = labelFrame(animation).frame;
 		if ((currentAnimation != animation||force||!playing)&&firstAnimationFrame!=-1)
@@ -129,7 +144,7 @@ class Timeline{
 			this.loop = loop;
 			currentAnimation = animation;
 			firstFrame = firstAnimationFrame;
-			lastFrame = labelEnd(currentAnimation);
+			lastFrame = prefixCharIgnore==null?labelEnd(currentAnimation):labelEndEvent(animation,prefixCharIgnore);
 			gotoAndPlay(firstFrame);
 		}
 	}

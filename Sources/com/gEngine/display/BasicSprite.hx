@@ -115,6 +115,16 @@ class BasicSprite implements IAnimation implements IRotation {
 	public function update(dt:Float):Void {
 		timeline.update(dt);
 	}
+
+	public function makeUnique()
+	{
+		animationData = animationData.clone();
+		dataUnique = true;
+	}
+	public function getAnimationData():AnimationData {
+		if (!dataUnique) makeUnique();
+		return animationData;
+	}
 	inline function calculateTransform(){
 		this.transform._00=cosAng*scaleX;
 		this.transform._10=-sinAng*scaleY;
@@ -250,17 +260,7 @@ class BasicSprite implements IAnimation implements IRotation {
 		buffer.set(offsetPos++, alphaAdd);
 	}
 
-	public function makeUnique() {
-		animationData = animationData.clone();
-		dataUnique = true;
-	}
-
-	public function getAnimationData():AnimationData {
-		if (!dataUnique)
-			makeUnique();
-		return animationData;
-	}
-
+	
 	public function set_skewX(value:Float):Float {
 		tanSkewX = Math.tan(value);
 		return skewX = value;
@@ -283,7 +283,7 @@ class BasicSprite implements IAnimation implements IRotation {
 		addGreen = g;
 		addBlue = b;
 		addAlpha = a;
-		colorTransform = overrideColorTransform();
+		colorTransform = !overrideColorTransform();
 	}
 
 	public function colorMultiplication(r:Float = 1, g:Float = 1, b:Float = 1, a:Float = 1):Void {

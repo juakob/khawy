@@ -283,12 +283,22 @@ class MinMax
 		min.y=height-max.y;
 		max.y=t;
 	}
+
+	public function inside(x:Float,y:Float) {
+		return x>min.x&&x<max.x&&y>min.y&&y<max.y;
+	}
 	
 	
 	static  public function from(left:FastFloat, top:FastFloat, right:FastFloat, bottom:FastFloat):MinMax
 	{
 		var minMax:MinMax = new MinMax();
 		minMax.set(left,top,right,bottom);
+		return minMax;
+	}
+	static  public function fromRec(x:FastFloat, y:FastFloat, width:FastFloat, height:FastFloat):MinMax
+	{
+		var minMax:MinMax = new MinMax();
+		minMax.set(x,y,x+width,y+height);
 		return minMax;
 	}
 	

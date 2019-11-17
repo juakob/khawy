@@ -22,6 +22,7 @@ class Text extends Layer
 	var sourceFontSize:Int=0;
 	public var color(default,set):Color;
 	var bakedQuadCache = new kha.Kravur.AlignedQuad();
+	public var alpha(default,set):Float=1;
 	
 	public function new(type:String) 
 	{
@@ -110,6 +111,13 @@ class Text extends Layer
 		}
 		this.color=color;
 		return color;
+	}
+	public function set_alpha(value:Float):Float{
+		alpha=value;
+		for(child in children){
+			(cast child).alpha = value;
+		}
+		return value;
 	}
 }
 

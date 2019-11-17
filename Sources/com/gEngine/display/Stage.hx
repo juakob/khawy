@@ -19,6 +19,7 @@ class Stage
 	var subStages:Array<Stage>;
 	public var timeScale:Float=1;
 	public var color(default,set):Color;
+	
 	public function new() 
 	{
 		world = new Layer();

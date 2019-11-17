@@ -49,6 +49,8 @@ class Camera extends Layer {
 	public var onPreRender:Camera->FastMatrix4->Void;
 	public var renderTarget:Int=-1;
 
+	public var postProcess:Painter=null;
+
 	var textureFilter:TextureFilter=TextureFilter.LinearFilter;
 
 	public var blend:BlendMode=BlendMode.Default;
@@ -128,8 +130,9 @@ class Camera extends Layer {
 		GEngine.i.endCanvas();
 		GEngine.i.changeToBuffer();
 		GEngine.i.beginCanvas();
-		var painter=GEngine.i.getSimplePainter(blend);
+		var painter=postProcess!=null?postProcess:GEngine.i.getSimplePainter(blend);
 		painter.setProjection(GEngine.i.getMatrix());
+		if(postProcess!=null){}
 		GEngine.i.renderBufferFull(renderTarget,painter,finalX,finalY,width,height,1,false,1);
 		GEngine.i.endCanvas();
 	}
