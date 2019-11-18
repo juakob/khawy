@@ -74,7 +74,11 @@ class Stage
 		camera.clearColor=color;
 		return cameras.push(camera);
 	}
-	
+	public function destroy() {
+		for(camera in cameras){
+			camera.destroy();
+		}
+	}
 	 function get_y():Float
 	{
 		return matrix._31;

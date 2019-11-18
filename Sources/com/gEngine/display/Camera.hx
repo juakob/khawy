@@ -166,7 +166,10 @@ class Camera extends Layer {
 	public inline function screenToWorldY(y:Float):Float {
 		return ((y - height / 2) * 1 / scaleY + height / 2) * angleInverse + this.y;
 	}
-
+	override function destroy() {
+		GEngine.i.releaseRenderTarget(renderTarget);
+		super.destroy();
+	}
 	public var maxSeparationFromTarget:Float = 100 * 100;
 
 	override public function update(dt:Float):Void {

@@ -64,6 +64,7 @@ class State extends Entity {
 		if(resources!=null){
 			resources.unload();
 		}
+		stage.destroy();
 		super.destroy();
 	}
 	override function update(dt:Float) {
