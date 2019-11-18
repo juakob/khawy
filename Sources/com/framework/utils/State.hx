@@ -12,7 +12,6 @@ class State extends Entity {
 	public var stage:Stage;
 	public var timeScale(default,set):Float=1;
 
-	var subStates:Array<State>;
 	var resources:Resources;
 
 	public function new() {
