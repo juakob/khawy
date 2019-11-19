@@ -28,12 +28,12 @@ class Timeline{
 	}
 	public  function update(dt:Float){
 		frameChange=false;
-		if (!playing ) return;
 		frameSkiped = 0;
 		frameJump=false;
-	
+		if (!playing ) return;
 		currentTime += dt;
 		if (currentTime < frameRate) return;
+		
 		frameChange=true;
 		
 		frameSkiped = Math.floor(currentTime / frameRate);

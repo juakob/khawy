@@ -11,11 +11,14 @@ import kha.Framebuffer;
 class State extends Entity {
 	public var stage:Stage;
 	public var timeScale(default,set):Float=1;
+	var subStates:Array<State>;
+	var parentState:State;
 
 	var resources:Resources;
 
 	public function new() {
 		super();
+		subStates=new Array();
 	}
 
 	public function load(resources:Resources):Void {}
@@ -24,7 +27,13 @@ class State extends Entity {
 
 	public function addSubState(state:State):Void {
 		initSubState(state);
-		
+		subStates.push(state);
+		state.parentState=this;
+	}
+	public function removeSubState(state:State):Void {
+		state.die();
+		subStates.remove(state);
+		state.parentState=null;
 	}
 	
 	function initSubState(state:State) {
@@ -46,7 +55,11 @@ class State extends Entity {
 		stage.color=Color.fromFloats(r,g,b,a);
 	}
 
-	public function draw(framebuffer:Canvas):Void {}
+	public function draw(framebuffer:Canvas):Void {
+		for(state in subStates){
+			state.draw(framebuffer);
+		}
+	}
 
 	public function onActivate() {}
 
@@ -65,6 +78,10 @@ class State extends Entity {
 			resources.unload();
 		}
 		stage.destroy();
+		if(parentState!=null)
+		{
+			parentState.removeSubState(this);
+		}
 		super.destroy();
 	}
 	override function update(dt:Float) {
