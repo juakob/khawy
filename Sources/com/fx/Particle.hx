@@ -13,7 +13,7 @@ class Particle extends Entity
 	private var mX:Float=0;
 	private var mY:Float=0;
 	private var mLife:Float = 0;
-	private var mTotalLife:Float;
+	private var mTotalLife:Float=0;
 	private var mVelocity:FastPoint=new FastPoint();
 	public var gravity:Float = 100;
 	public var accelerationX:Float = 0;
@@ -69,7 +69,7 @@ class Particle extends Entity
 		mY += mVelocity.y * aDt;
 		animation.x = mX;
 		animation.y = mY;
-		animation.rotation += mAngularVelocity * aDt;
+		//animation.rotation += mAngularVelocity * aDt;
 		
 		//if (mAnimation.TotalFrames > 0)
 		{

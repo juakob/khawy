@@ -70,16 +70,13 @@ class State extends Entity {
 	}
 
 	override public function destroy():Void {
-		
-		if(Std.is(parent,State)){
-			(cast parent).stage.removeSubStage(stage);
-		}
 		if(resources!=null){
 			resources.unload();
 		}
 		stage.destroy();
 		if(parentState!=null)
 		{
+			parentState.stage.removeSubStage(stage);
 			parentState.removeSubState(this);
 		}
 		super.destroy();

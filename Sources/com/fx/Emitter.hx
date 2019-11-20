@@ -23,8 +23,8 @@ import com.gEngine.display.Layer;
 	
 	private var time:Float = 0;
 	
-	public var x:Float;
-	public var y:Float;
+	public var x:Float=0;
+	public var y:Float=0;
 
 	public var allX(get, set):Float;
 	public var allY(get, set):Float;

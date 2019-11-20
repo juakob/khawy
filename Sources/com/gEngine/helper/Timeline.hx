@@ -95,7 +95,7 @@ class Timeline{
 
 		for (label in labels) {
 			frame = label.frame;
-			if (frame >= currentFrame - frameSkiped && frame <= currentFrame) {
+			if (frame > currentFrame - frameSkiped && frame <= currentFrame) {
 				return label.text;
 			}
 			if (frame > currentFrame) {
