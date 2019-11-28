@@ -156,7 +156,7 @@ class Layer implements IDraw implements IContainer {
 	}
 
 	public function sort(functionSort:IDraw->IDraw->Int):Void {
-		children.sort(functionSort);
+		haxe.ds.ArraySort.sort(children,functionSort);
 	}
 
 
@@ -192,7 +192,7 @@ class Layer implements IDraw implements IContainer {
 		if (a.y < b.y) {
 			return -1;
 		}
-		if (a.y > b.y) {
+		if (a.y> b.y) {
 			return 1;
 		}
 		return 0;

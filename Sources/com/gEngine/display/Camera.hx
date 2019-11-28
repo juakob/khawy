@@ -173,11 +173,12 @@ class Camera extends Layer {
 	public var maxSeparationFromTarget:Float = 100 * 100;
 
 	override public function update(dt:Float):Void {
-		this.x = targetPos.x;
-		this.y = targetPos.y;
+		
 
 		var deltaX:Float = this.x - targetPos.x;
 		var deltaY:Float = this.y - targetPos.y;
+		this.x=this.x-deltaX*0.2;
+		this.y=this.y-deltaY*0.2;
 		if (deltaX * deltaX + deltaY * deltaY > maxSeparationFromTarget * maxSeparationFromTarget) {
 			var length:Float = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 			this.x = targetPos.x + (deltaX / length) * maxSeparationFromTarget;
