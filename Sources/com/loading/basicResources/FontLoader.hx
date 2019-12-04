@@ -31,6 +31,10 @@ class FontLoader extends TilesheetLoader
 				callback();
 		});
 	}
+    override function loadLocal(callback:() -> Void) {
+		fromKhaFont();
+		callback();
+	}
     
 	private function fromKhaFont() {
 		var font:Font = Reflect.field(kha.Assets.fonts, imageName);

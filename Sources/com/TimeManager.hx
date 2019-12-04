@@ -11,9 +11,10 @@ class TimeManager
 	
 	public static function setDelta(delta:Float,realTime:Float):Void
 	{
-		TimeManager.delta = delta;
 		time = realTime;
 		realDelta = delta;
+		if(delta>1/20) delta=1/20;
+		TimeManager.delta = delta;
 	}
 	
 }
