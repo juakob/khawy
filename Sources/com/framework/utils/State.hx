@@ -26,24 +26,26 @@ class State extends Entity {
 	public function init():Void {}
 
 	public function addSubState(state:State):Void {
-		initSubState(state);
+		#if debug
+		if(state.resources==null) throw "call initSubState from parent befour adding";
+		#end
 		subStates.push(state);
 		state.parentState=this;
+		stage.addSubStage(state.stage);
 	}
 	public function removeSubState(state:State):Void {
-		state.die();
 		subStates.remove(state);
+		stage.removeSubStage(state.stage);
 		state.parentState=null;
+		state.die();
 	}
 	
-	function initSubState(state:State) {
+	public function initSubState(state:State) {
 		state.resources = new Resources();
 		state.load(state.resources);
 		state.stage=new Stage();
 		state.resources.load(function(){
 			state.init();
-			stage.addSubStage(state.stage);
-			addChild(state);
 		});
 	}
 
@@ -76,7 +78,6 @@ class State extends Entity {
 		stage.destroy();
 		if(parentState!=null)
 		{
-			parentState.stage.removeSubStage(stage);
 			parentState.removeSubState(this);
 		}
 		super.destroy();

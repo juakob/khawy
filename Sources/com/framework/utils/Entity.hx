@@ -68,7 +68,10 @@ class Entity
 		onDestroy();
 		parent = null;
 	}
-	
+	public function revive() {
+		this.limbo = false;
+		this.dead = false;
+	}
 	private function limboStart():Void
 	{
 		throw "override this function recycle object";

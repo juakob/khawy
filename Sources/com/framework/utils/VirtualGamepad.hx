@@ -12,7 +12,7 @@ class VirtualGamepad
 	private var scaleY:Float=1;
 	var buttonsTouch:Array<VirtualButton>;
 	var sticksTouch:Array<VirtualStick>;
-	var globalStick:VirtualStick;
+	public var globalStick:VirtualStick;
 
 	var keyButton:Map<KeyCode,Int>;
 	
@@ -214,7 +214,7 @@ class VirtualStick
 		{
 			var length = Math.sqrt(sqrDistance);
 			axisX = ((x -this.x) / length) ;
-			axisY = -((y - this.y) / length );
+			axisY = ((y - this.y) / length );
 			
 			return true;
 		}
@@ -224,15 +224,19 @@ class VirtualStick
 	{
 		var sqrDistance =  (x -this.x)*(x -this.x) + (y - this.y)*(y - this.y);
 		var length = Math.sqrt(sqrDistance);
+
+		if(length>0){
+			axisX = ((x -this.x) / length) ;
+			axisY = ((y - this.y) / length );
+		}
 		
+
 		if (length > radio )
 		{
-			axisX = ((x -this.x) / length) ;
-			axisY = -((y - this.y) / length );
-			this.x = x-axisX;
-			this.y = y-axisY;
-			
+			this.x = x-axisX*radio;
+			this.y = y-axisY*radio;
 		}
+	
 		return true;
 		
 	}
