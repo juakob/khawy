@@ -33,7 +33,7 @@ class CollisionGroup implements ICollider
 	public function collide(aCollider:ICollider,?NotifyCallback:ICollider->ICollider->Void):Bool 
 	{
 		var toReturn:Bool = false;
-		if (aCollider.collisionType() ==CollisionType.Group)
+		if (aCollider.collisionType() == CollisionType.Group)
 		{
 			
 			var group:CollisionGroup = cast aCollider;

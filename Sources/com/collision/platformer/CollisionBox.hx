@@ -244,13 +244,17 @@ class CollisionBox  implements ICollider
 	{
 		if (aCollider.collisionType() == CollisionType.Box)
 		{
-			if (overlapVsBox(cast aCollider))
+			if (inline overlapVsBox(cast aCollider))
 			{
 				if (NotifyCallback != null) NotifyCallback(this, aCollider);
 				return true;
 			}
-		}
-		else if (aCollider.collisionType() == CollisionType.Group) {
+		}else
+		if (aCollider.collisionType() == CollisionType.TileMap)
+		{
+			return aCollider.overlap(this,NotifyCallback);
+		}else
+		 if (aCollider.collisionType() == CollisionType.Group) {
 			aCollider.overlap(this,NotifyCallback);//TODO: Fix order
 		}
 		return  false;
