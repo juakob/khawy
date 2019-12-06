@@ -1,41 +1,34 @@
 package com.framework.utils;
+
 import kha.Framebuffer;
 
-
-	
-class Entity
-{
+class Entity {
 	private var parent:Entity = null;
 	private var children:Array<Entity> = new Array<Entity>();
 	private var dead:Bool = false;
-	public var pool(default,default):Bool;
+
+	public var pool(default, default):Bool;
+
 	private var limbo:Bool = false;
 	private var childrenInLimbo:Int = 0;
-	
 	private var toDelete:Array<Int> = new Array();
-	
-	public function new() 
-	{
-		
-	}
-	
-	public function update(dt:Float):Void
-	{
-		var counter:Int=0;
-		for ( child in children ) {
-			if (child.limbo) 
-			{
+
+	public function new() {}
+
+	public function update(dt:Float):Void {
+		var counter:Int = 0;
+		for (child in children) {
+			if (child.limbo) {
 				++counter;
 				continue;
 			}
 			child.update(dt);
-			if ( child.isDead() ) {
-				if (pool)
-				{
+			if (child.isDead()) {
+				if (pool) {
 					child.limbo = true;
 					child.limboStart();
 					++childrenInLimbo;
-				}else {
+				} else {
 					child.destroy();
 					toDelete.push(counter);
 				}
@@ -43,110 +36,96 @@ class Entity
 			++counter;
 		}
 		var offset = 0;
-		for ( index in toDelete)
-		{
-			children.splice(index-offset, 1);
+		for (index in toDelete) {
+			children.splice(index - offset, 1);
 			++offset;
 		}
 		toDelete.splice(0, toDelete.length);
 		onUpdate(dt);
 	}
-	
-	public function render():Void
-	{
-		for ( child in children) {
+
+	public function render():Void {
+		for (child in children) {
 			child.render();
 		}
 		onRender();
 	}
-	
-	public function destroy():Void
-	{
-		for ( child in children ) {
+
+	public function destroy():Void {
+		for (child in children) {
 			child.destroy();
 		}
 		onDestroy();
 		parent = null;
 	}
+
 	public function revive() {
 		this.limbo = false;
 		this.dead = false;
 	}
-	private function limboStart():Void
-	{
+
+	private function limboStart():Void {
 		throw "override this function recycle object";
 	}
-	
-	public function recycle(type:Class<Entity> ,arg:Array<Dynamic>=null):Entity
-	{
-		if (childrenInLimbo > 0)
-		{
-			for (child in children) 
-			{
-				if (!child.limbo) continue;
-				
+
+	public function recycle(type:Class<Entity>, arg:Array<Dynamic> = null):Entity {
+		if (childrenInLimbo > 0) {
+			for (child in children) {
+				if (!child.limbo)
+					continue;
+
 				child.limbo = false;
 				child.dead = false;
 				--childrenInLimbo;
 				return child;
 			}
 		}
-		
-		var obj:Dynamic= Type.createInstance(type,arg==null?[]:arg);
+
+		var obj:Dynamic = Type.createInstance(type, arg == null ? [] : arg);
 		addChild(obj);
 		return obj;
 	}
-	private function onUpdate(aDt:Float):Void
-	{	
-	}
-	private function onRender():Void
-	{	
-	}
-	private function onDestroy():Void
-	{
-	}
-	
-	public function die():Void
-	{
+
+	private function onUpdate(aDt:Float):Void {}
+
+	private function onRender():Void {}
+
+	private function onDestroy():Void {}
+
+	public function die():Void {
 		dead = true;
 	}
-	public function isDead():Bool
-	{
+
+	public function isDead():Bool {
 		return dead;
 	}
 
-	public function addChild(entity:Entity):Void
-	{
+	public function addChild(entity:Entity):Void {
 		children.push(entity);
 		entity.parent = this;
 	}
-	
-	public static function notify(entity:Entity, id:String, args:Dynamic):Void
-	{
+
+	public static function notify(entity:Entity, id:String, args:Dynamic):Void {
 		var res:Bool = entity.onNotify(id, args);
-		if (!res)
-		{
+		if (!res) {
 			trace("Unhandled message: " + id + ", args: " + args);
 		}
 	}
-	private function onNotify(id:String, args:Dynamic):Bool
-	{
+
+	private function onNotify(id:String, args:Dynamic):Bool {
 		return false;
 	}
-	
-	public function  numAliveChildren():Int
-	{
-		return children.length-childrenInLimbo;
+
+	public function numAliveChildren():Int {
+		return children.length - childrenInLimbo;
 	}
-	public function  currentCapacity():Int
-	{
+
+	public function currentCapacity():Int {
 		return children.length;
 	}
-	
-	public function clear():Void
-	{
-		for (child in children) 
-		{
+
+	public function clear():Void {
+		for (child in children) {
 			child.limboStart();
 			child.limbo = true;
 			child.dead = true;

@@ -4,32 +4,26 @@ import com.loading.Resource;
 import kha.Assets;
 import kha.Blob;
 
-
-class DataLoader implements Resource
-{
+class DataLoader implements Resource {
 	var name:String;
-	public function new(dataName:String) 
-	{
+
+	public function new(dataName:String) {
 		name = dataName;
 	}
-	
-	public function load(callback:Void->Void):Void 
-	{
+
+	public function load(callback:Void->Void):Void {
 		Assets.loadBlob(name, function(b:Blob) {
 			callback();
 		});
 	}
-	public function loadLocal(callback:Void->Void):Void 
-	{
+
+	public function loadLocal(callback:Void->Void):Void {
 		callback();
 	}
-	
-	public function unload():Void 
-	{
+
+	public function unload():Void {
 		Reflect.callMethod(Assets.blobs, Reflect.field(Assets.blobs, name + "Unload"), []);
 	}
-	public function unloadLocal():Void 
-	{
-	}
-	
+
+	public function unloadLocal():Void {}
 }

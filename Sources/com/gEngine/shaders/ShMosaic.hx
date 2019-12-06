@@ -9,29 +9,27 @@ import kha.graphics4.ConstantLocation;
 import kha.graphics4.Graphics;
 import kha.graphics4.PipelineState;
 
-
-class ShMosaic extends Painter
-{
+class ShMosaic extends Painter {
 	var resolutionID:ConstantLocation;
-	public var tilesCount:Int=500;
-	public function new(blend:Blend ) 
-	{
-		super(true,blend);
+
+	public var tilesCount:Int = 500;
+
+	public function new(blend:Blend) {
+		super(true, blend);
 	}
-	override function setShaders(pipeline:PipelineState):Void 
-	{
+
+	override function setShaders(pipeline:PipelineState):Void {
 		pipeline.vertexShader = Shaders.simple_vert;
 		pipeline.fragmentShader = Shaders.mosaic_frag;
 	}
-	override function getConstantLocations(pipeline:PipelineState) 
-	{
+
+	override function getConstantLocations(pipeline:PipelineState) {
 		super.getConstantLocations(pipeline);
 		resolutionID = pipeline.getConstantLocation("tiles");
-		
 	}
-	override function setParameter(g:Graphics):Void 
-	{
+
+	override function setParameter(g:Graphics):Void {
 		super.setParameter(g);
-		g.setFloat(resolutionID,tilesCount);
+		g.setFloat(resolutionID, tilesCount);
 	}
 }

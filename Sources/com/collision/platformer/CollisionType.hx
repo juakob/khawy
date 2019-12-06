@@ -3,7 +3,8 @@ package com.collision.platformer;
 /**
  * @author Joaquin
  */
-enum CollisionType
-{
-	Box; TileMap; Group;
+enum CollisionType {
+	Box;
+	TileMap;
+	Group;
 }

@@ -13,7 +13,6 @@ import com.helpers.MinMax;
 import kha.FastFloat;
 import kha.math.FastMatrix3;
 
-
 class Layer implements IDraw implements IContainer {
 	private var children:Array<IDraw>;
 	private var texture:Int;
@@ -26,8 +25,8 @@ class Layer implements IDraw implements IContainer {
 	public var scaleZ:FastFloat = 1;
 	public var pivotX:FastFloat = 0;
 	public var pivotY:FastFloat = 0;
-	public var paralaxX:Float=1;
-	public var paralaxY:Float=1;
+	public var paralaxX:Float = 1;
+	public var paralaxY:Float = 1;
 	public var parent:IContainer;
 	public var visible:Bool = true;
 	public var filter:Filter;
@@ -36,7 +35,7 @@ class Layer implements IDraw implements IContainer {
 
 	private var cosAng:FastFloat;
 	private var sinAng:FastFloat;
-	var scaleArea:MinMax=new MinMax();
+	var scaleArea:MinMax = new MinMax();
 	var transform:FastMatrix4;
 
 	public function new() {
@@ -44,17 +43,19 @@ class Layer implements IDraw implements IContainer {
 		rotation = 0;
 		cosAng = 1;
 		sinAng = 0;
-		this.transform=FastMatrix4.identity();
+		this.transform = FastMatrix4.identity();
 	}
-	 function calculateTransform(transform:FastMatrix4){
-		var scale = FastMatrix4.scale(scaleX, scaleY, 1).multmat(FastMatrix4.translation( -pivotX,  -pivotY, 0));
-		var rotation = new FastMatrix4(cosAng , -sinAng , 0, 0, sinAng , cosAng , 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-		var translation	= FastMatrix4.translation(x , y, z);
+
+	function calculateTransform(transform:FastMatrix4) {
+		var scale = FastMatrix4.scale(scaleX, scaleY, 1).multmat(FastMatrix4.translation(-pivotX, -pivotY, 0));
+		var rotation = new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
+		var translation = FastMatrix4.translation(x, y, z);
 		var model = transform.multmat(translation.multmat(scale).multmat(rotation));
-		model._30*=paralaxX;
-		model._31*=paralaxY;
+		model._30 *= paralaxX;
+		model._31 *= paralaxY;
 		this.transform.setFrom(model);
 	}
+
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
 		calculateTransform(transform);
 		if (!visible) {
@@ -64,39 +65,40 @@ class Layer implements IDraw implements IContainer {
 		if (drawArea != null) {
 			paintMode.render();
 			scaleArea.setFrom(drawArea);
-			scaleArea.scale( GEngine.i.scaleWidth, GEngine.i.scaleHeigth);
+			scaleArea.scale(GEngine.i.scaleWidth, GEngine.i.scaleHeigth);
 			paintMode.adjustRenderArea(scaleArea);
 		}
-		if(filter!=null){
-			filter.filterStart(this,paintMode,transform);
+		if (filter != null) {
+			filter.filterStart(this, paintMode, transform);
 		}
 		for (child in children) {
 			child.render(paintMode, this.transform);
 		}
-		if(filter!=null){
+		if (filter != null) {
 			filter.filterEnd(paintMode);
 		}
 		if (drawArea != null) {
 			paintMode.render();
-			paintMode.resetRenderArea(); 
+			paintMode.resetRenderArea();
 		}
 	}
 
 	var drawAreaTemp:MinMax = new MinMax();
 
-	public function getDrawArea(value:MinMax,transform:FastMatrix4):Void {
+	public function getDrawArea(value:MinMax, transform:FastMatrix4):Void {
 		calculateTransform(transform);
 		drawAreaTemp.reset();
 		for (child in children) {
-			if(child.visible)child.getDrawArea(drawAreaTemp,this.transform);
+			if (child.visible)
+				child.getDrawArea(drawAreaTemp, this.transform);
 		}
-	//	drawAreaTemp.transform3(getTransformation());	
+		//	drawAreaTemp.transform3(getTransformation());
 		value.merge(drawAreaTemp);
-		if(drawArea!=null){
+		if (drawArea != null) {
 			scaleArea.setFrom(drawArea);
-			scaleArea.scale( GEngine.i.scaleWidth, GEngine.i.scaleHeigth);
+			scaleArea.scale(GEngine.i.scaleWidth, GEngine.i.scaleHeigth);
 			value.intersection(scaleArea);
-		} 
+		}
 	}
 
 	public var playing(default, default):Bool = true;
@@ -121,12 +123,13 @@ class Layer implements IDraw implements IContainer {
 		child.parent = this;
 		children.push(cast child);
 	}
-	public function addChildOrder(child:IDraw,functionOrder:IDraw->IDraw->Int){
+
+	public function addChildOrder(child:IDraw, functionOrder:IDraw->IDraw->Int) {
 		child.parent = this;
-		var counter:Int=0;
-		for(childIter in children){
-			if(functionOrder(childIter,child)>=0){
-				children.insert(counter,child);
+		var counter:Int = 0;
+		for (childIter in children) {
+			if (functionOrder(childIter, child) >= 0) {
+				children.insert(counter, child);
 				return;
 			}
 			++counter;
@@ -156,21 +159,21 @@ class Layer implements IDraw implements IContainer {
 	}
 
 	public function sort(functionSort:IDraw->IDraw->Int):Void {
-		haxe.ds.ArraySort.sort(children,functionSort);
+		haxe.ds.ArraySort.sort(children, functionSort);
 	}
-
 
 	public function getTransformation():FastMatrix3 {
 		var transform = FastMatrix3.translation(-pivotX, -pivotY);
 		transform = transform.multmat(FastMatrix3.scale(scaleX, scaleY));
 		transform = transform.multmat(new FastMatrix3(cosAng, -sinAng, 0, sinAng, cosAng, 0, 0, 0, 1));
-		transform = transform.multmat(FastMatrix3.translation(x , y ));
+		transform = transform.multmat(FastMatrix3.translation(x, y));
 		return transform;
 	}
+
 	public function getFinalTransformation():FastMatrix3 {
-		if(parent!=null){
+		if (parent != null) {
 			return parent.getFinalTransformation().multmat(getTransformation());
-		}else{
+		} else {
 			return getTransformation();
 		}
 	}
@@ -192,11 +195,12 @@ class Layer implements IDraw implements IContainer {
 		if (a.y < b.y) {
 			return -1;
 		}
-		if (a.y> b.y) {
+		if (a.y > b.y) {
 			return 1;
 		}
 		return 0;
 	}
+
 	public static function sortZCompare(a:IDraw, b:IDraw):Int {
 		if (a.z < b.z) {
 			return -1;
@@ -208,16 +212,14 @@ class Layer implements IDraw implements IContainer {
 	}
 
 	function set_drawArea(value:MinMax):MinMax {
-		value.min.x = value.min.x ;
-		value.min.y = value.min.y ;
-		value.max.x = value.max.x ;
-		value.max.y = value.max.y ;
+		value.min.x = value.min.x;
+		value.min.y = value.min.y;
+		value.max.x = value.max.x;
+		value.max.y = value.max.y;
 		return drawArea = value;
 	}
 
 	function get_length():Int {
 		return children.length;
 	}
-	
-
 }

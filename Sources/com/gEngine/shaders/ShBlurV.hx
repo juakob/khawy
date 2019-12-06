@@ -9,36 +9,35 @@ import kha.graphics4.ConstantLocation;
 import kha.graphics4.Graphics;
 import kha.graphics4.PipelineState;
 
-
-class ShBlurV extends Painter
-{
+class ShBlurV extends Painter {
 	var resolutionID:ConstantLocation;
+
 	public var factor:Float;
-	public function new(delete:Bool,factor:Float = 1,blend:Blend) 
-	{
-		super(delete,blend);
+
+	public function new(delete:Bool, factor:Float = 1, blend:Blend) {
+		super(delete, blend);
 		this.factor = factor;
 	}
-	override function setShaders(pipeline:PipelineState):Void 
-	{
+
+	override function setShaders(pipeline:PipelineState):Void {
 		pipeline.vertexShader = Shaders.hBlurVertexShader_vert;
 		pipeline.fragmentShader = Shaders.blurFragmentShader_frag;
 	}
-	override public function adjustRenderArea(area:MinMax):Void 
-	{
-		area.addBorderWidth(2*factor);
-		//width = aArea.width();
+
+	override public function adjustRenderArea(area:MinMax):Void {
+		area.addBorderWidth(2 * factor);
+		// width = aArea.width();
 	}
-	public var width:Float=720;
-	override function getConstantLocations(pipeline:PipelineState) 
-	{
+
+	public var width:Float = 720;
+
+	override function getConstantLocations(pipeline:PipelineState) {
 		super.getConstantLocations(pipeline);
-		resolutionID=pipeline.getConstantLocation("resolution");
+		resolutionID = pipeline.getConstantLocation("resolution");
 	}
-	override function setParameter(g:Graphics):Void 
-	{
+
+	override function setParameter(g:Graphics):Void {
 		super.setParameter(g);
-		g.setFloat2(resolutionID, 0,1/width*factor);
+		g.setFloat2(resolutionID, 0, 1 / width * factor);
 	}
-	
 }

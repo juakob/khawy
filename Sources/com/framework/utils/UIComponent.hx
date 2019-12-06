@@ -1,6 +1,5 @@
 package com.framework.utils;
 
-interface UIComponent 
-{
+interface UIComponent {
 	public function handleInput():Void;
 }

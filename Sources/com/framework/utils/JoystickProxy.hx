@@ -11,15 +11,15 @@ class JoystickProxy {
 	var onAxisChange:Int->Float->Void;
 	var onButtonChange:Int->Float->Void;
 	var id:Int;
-	public var active(default,null):Bool;
+
+	public var active(default, null):Bool;
 
 	public function new(id:Int) {
-		this.id=id;
+		this.id = id;
 		buttons = new Array();
 		axes = new Array();
 		pressed = new Array();
 		released = new Array();
-
 
 		onConnect();
 		// add more than needed just to be safe
@@ -30,33 +30,36 @@ class JoystickProxy {
 			axes.push(0);
 		}
 	}
-	public function notify(onAxisChange:Int->Float->Void,onButtonChange:Int->Float->Void){
-		this.onAxisChange=onAxisChange;
-		this.onButtonChange=onButtonChange;
+
+	public function notify(onAxisChange:Int->Float->Void, onButtonChange:Int->Float->Void) {
+		this.onAxisChange = onAxisChange;
+		this.onButtonChange = onButtonChange;
 	}
+
 	public function onConnect() {
-		if(!active){
+		if (!active) {
 			gamepad = Gamepad.get(id);
 			if (gamepad != null) {
 				gamepad.notify(onAxis, onButton);
-				active=true;
+				active = true;
 			}
 		}
 	}
 
 	public function onDisconnect() {
-		if(active){
+		if (active) {
 			gamepad = Gamepad.get(id);
 			if (gamepad != null) {
 				gamepad.remove(onAxis, onButton);
-				active=false;
+				active = false;
 			}
 		}
 	}
 
 	function onAxis(id:Int, value:Float) {
 		axes[id] = value;
-		if(onAxisChange!=null)onAxisChange(id,value);
+		if (onAxisChange != null)
+			onAxisChange(id, value);
 	}
 
 	function onButton(id:Int, value:Float) {
@@ -66,18 +69,20 @@ class JoystickProxy {
 		} else {
 			pressed.push(id);
 		}
-		if(onButtonChange!=null)onButtonChange(id,value);
+		if (onButtonChange != null)
+			onButtonChange(id, value);
 	}
 
 	public function update() {
 		released.splice(0, released.length);
 		pressed.splice(0, pressed.length);
 	}
-	public function clearInput(){
+
+	public function clearInput() {
 		released.splice(0, released.length);
 		pressed.splice(0, pressed.length);
-		for(i in 0...buttons.length){
-			buttons[i]=0;
+		for (i in 0...buttons.length) {
+			buttons[i] = 0;
 		}
 		onButtonChange = null;
 		onAxisChange = null;

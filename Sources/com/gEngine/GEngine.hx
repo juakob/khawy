@@ -1,6 +1,5 @@
 package com.gEngine;
 
-
 import com.gEngine.display.BlendMode;
 import com.gEngine.painters.PainterColorTransform;
 import com.gEngine.painters.PainterAlpha;
@@ -26,7 +25,6 @@ import kha.graphics4.DepthStencilFormat;
 import kha.graphics4.TextureFilter;
 import kha.math.FastMatrix3;
 import kha.math.FastMatrix4;
-
 
 @:allow(com.gEngine.painters.Painter)
 class GEngine {
@@ -56,11 +54,11 @@ class GEngine {
 
 	inline static var initialIndex:Int = 2;
 
-	public var oversample:Float=1;
+	public var oversample:Float = 1;
 
 	var renderTargetPool:RenderTargetPool;
 	var currentRenderTargetId:Int = -1;
-	var identity4x4=FastMatrix4.identity();
+	var identity4x4 = FastMatrix4.identity();
 	#if debugInfo
 	private var deltaTime:Float = 0.0;
 	private var totalFrames:Int = 0;
@@ -75,15 +73,14 @@ class GEngine {
 	public static var extraInfo:String = "";
 
 	var fontLoaded:Bool;
-
-	var identity3x3=FastMatrix3.identity();
+	var identity3x3 = FastMatrix3.identity();
 	#end
 
-	private function new(oversample:Float,antiAlias:Int) {
+	private function new(oversample:Float, antiAlias:Int) {
 		clearColor = Color.fromFloats(0, 0, 0, 1);
 
 		antiAliasing = antiAlias;
-		this.oversample=oversample;
+		this.oversample = oversample;
 
 		Window.get(0).notifyOnResize(resize);
 
@@ -92,25 +89,28 @@ class GEngine {
 		renderTargetPool = new RenderTargetPool();
 
 		textures = new Array();
-		
+
 		createPainters();
 
 		// createBuffer(Screen.getWidth(), Screen.getHeight());
-		trace( com.gEngine.helper.Screen.getWidth() + "x" +  com.gEngine.helper.Screen.getHeight());
-		createBuffer( com.gEngine.helper.Screen.getWidth(),  com.gEngine.helper.Screen.getHeight());
+		trace(com.gEngine.helper.Screen.getWidth() + "x" + com.gEngine.helper.Screen.getHeight());
+		createBuffer(com.gEngine.helper.Screen.getWidth(), com.gEngine.helper.Screen.getHeight());
 
 		var recTexture = Image.createRenderTarget(1, 1);
 		recTexture.g2.begin(true, Color.White);
 		recTexture.g2.end();
 		textures.push(recTexture);
-		RectangleDisplay.init(1);	
+		RectangleDisplay.init(1);
 	}
+
 	public function getSimplePainter(blend:BlendMode) {
 		return simplePainters[cast blend];
 	}
+
 	public function getAlphaPainter(blend:BlendMode) {
 		return alphaPainters[cast blend];
 	}
+
 	public function getColorTransformPainter(blend:BlendMode) {
 		return colorPainters[cast blend];
 	}
@@ -136,22 +136,20 @@ class GEngine {
 		realU = width / realWidth;
 		realV = height / realHeight;
 
-	
 		scaleWidth = (width / realWidth);
 		scaleHeigth = (height / realHeight);
 
-
 		modelViewMatrix = FastMatrix4.identity();
-		modelViewMatrix = modelViewMatrix.multmat(FastMatrix4
-			.scale((2.0 * renderScale) / virtualWidth * scaleWidth, -(2.0 * renderScale) / virtualHeight * scaleHeigth, 1));
-		modelViewMatrix = modelViewMatrix.multmat(FastMatrix4
-			.translation(-virtualWidth / scaleWidth / (2 * renderScale), -virtualHeight / scaleHeigth / (2 * renderScale), 0));
+		modelViewMatrix = modelViewMatrix.multmat(FastMatrix4.scale((2.0 * renderScale) / virtualWidth * scaleWidth,
+			-(2.0 * renderScale) / virtualHeight * scaleHeigth, 1));
+		modelViewMatrix = modelViewMatrix.multmat(FastMatrix4.translation(-virtualWidth / scaleWidth / (2 * renderScale),
+			-virtualHeight / scaleHeigth / (2 * renderScale), 0));
 
 		modelViewMatrixMirrorY = FastMatrix4.identity();
-		modelViewMatrixMirrorY = modelViewMatrixMirrorY.multmat(FastMatrix4
-			.scale((2.0 * renderScale) / virtualWidth * scaleWidth, -(2.0 * renderScale) / virtualHeight * scaleHeigth, 1));
-		modelViewMatrixMirrorY = modelViewMatrixMirrorY.multmat(FastMatrix4
-			.translation(-virtualWidth / scaleWidth / (2.0 * renderScale), virtualHeight / scaleHeigth / (2.0 * renderScale), 0));
+		modelViewMatrixMirrorY = modelViewMatrixMirrorY.multmat(FastMatrix4.scale((2.0 * renderScale) / virtualWidth * scaleWidth,
+			-(2.0 * renderScale) / virtualHeight * scaleHeigth, 1));
+		modelViewMatrixMirrorY = modelViewMatrixMirrorY.multmat(FastMatrix4.translation(-virtualWidth / scaleWidth / (2.0 * renderScale),
+			virtualHeight / scaleHeigth / (2.0 * renderScale), 0));
 		modelViewMatrixMirrorY = modelViewMatrixMirrorY.multmat(FastMatrix4.scale(1, -1, 1));
 
 		finalViewMatrix = FastMatrix4.identity();
@@ -163,8 +161,6 @@ class GEngine {
 		finalViewMatrixMirrorY = finalViewMatrixMirrorY.multmat(FastMatrix4.translation(-width / 2, height / 2, 0));
 		finalViewMatrixMirrorY = finalViewMatrixMirrorY.multmat(FastMatrix4.scale(1, -1, 1));
 
-
-
 		return true;
 	}
 
@@ -175,10 +171,10 @@ class GEngine {
 		painter.filter = TextureFilter.LinearFilter;
 	}
 
-	public static function init(virtualWidth:Int, virtualHeight:Int,oversample:Float, antiAlias:Int):Void {
+	public static function init(virtualWidth:Int, virtualHeight:Int, oversample:Float, antiAlias:Int):Void {
 		GEngine.virtualWidth = virtualWidth;
 		GEngine.virtualHeight = virtualHeight;
-		i = new GEngine(oversample,antiAlias);
+		i = new GEngine(oversample, antiAlias);
 		#if debugInfo
 		Assets.loadFont("mainfont", setFont);
 		#end
@@ -195,7 +191,7 @@ class GEngine {
 		if (availWidth == 0 || availWidth == 0)
 			return;
 		Input.i.screenScale.setTo(virtualWidth / availWidth, virtualHeight / availHeight);
-		if (false&&createBuffer(availWidth, availHeight)) {
+		if (false && createBuffer(availWidth, availHeight)) {
 			adjustRenderTargets();
 			trace("resize " + availWidth + " , " + availHeight);
 		}
@@ -230,15 +226,15 @@ class GEngine {
 	public var scaleHeigth:Float = 1;
 	public var clearColor:Color;
 
-	var currentCanvasActive:Bool=false;
-
+	var currentCanvasActive:Bool = false;
 	var simplePainters:Array<Painter>;
 	var alphaPainters:Array<PainterAlpha>;
 	var colorPainters:Array<PainterColorTransform>;
 
 	public function changeToBuffer() {
 		#if debug
-		if(currentCanvasActive) throw "end buffer before releasing it";
+		if (currentCanvasActive)
+			throw "end buffer before releasing it";
 		#end
 		currentRenderTargetId = mTempBufferID;
 		renderCustomBuffer = false;
@@ -253,60 +249,64 @@ class GEngine {
 			changeToBuffer();
 		}
 	}
+
 	public function setCanvasFromImage(image:Image):Void {
-			renderCustomBuffer = true;
-			customBuffer = image;
+		renderCustomBuffer = true;
+		customBuffer = image;
 	}
+
 	function createPainters() {
-			var defaultBlend:Blend = Blend.blendDefault();
-			var multipassBlend:Blend = Blend.blendMultipass();
-			var addBlend:Blend = Blend.blendAdd();
-			var multiplyBlend:Blend = Blend.blendMultiply();
-			var screenBlend:Blend = Blend.blendScreen();
-			simplePainters = [
-				new Painter(false, defaultBlend),
-				new Painter(false, multipassBlend),
-				new Painter(false, addBlend),
-				new Painter(false, multiplyBlend),
-				new Painter(false, screenBlend)
-			];
+		var defaultBlend:Blend = Blend.blendDefault();
+		var multipassBlend:Blend = Blend.blendMultipass();
+		var addBlend:Blend = Blend.blendAdd();
+		var multiplyBlend:Blend = Blend.blendMultiply();
+		var screenBlend:Blend = Blend.blendScreen();
+		simplePainters = [
+			new Painter(false, defaultBlend),
+			new Painter(false, multipassBlend),
+			new Painter(false, addBlend),
+			new Painter(false, multiplyBlend),
+			new Painter(false, screenBlend)
+		];
 
-			alphaPainters = [
-				new PainterAlpha(false, defaultBlend),
-				new PainterAlpha(false, multipassBlend),
-				new PainterAlpha(false, addBlend),
-				new PainterAlpha(false, multiplyBlend),
-				new PainterAlpha(false, screenBlend)
-			];
+		alphaPainters = [
+			new PainterAlpha(false, defaultBlend),
+			new PainterAlpha(false, multipassBlend),
+			new PainterAlpha(false, addBlend),
+			new PainterAlpha(false, multiplyBlend),
+			new PainterAlpha(false, screenBlend)
+		];
 
-			colorPainters = [
-				new PainterColorTransform(false, defaultBlend),
-				new PainterColorTransform(false, multipassBlend),
-				new PainterColorTransform(false, addBlend),
-				new PainterColorTransform(false, multiplyBlend),
-				new PainterColorTransform(false, screenBlend)
-			];
+		colorPainters = [
+			new PainterColorTransform(false, defaultBlend),
+			new PainterColorTransform(false, multipassBlend),
+			new PainterColorTransform(false, addBlend),
+			new PainterColorTransform(false, multiplyBlend),
+			new PainterColorTransform(false, screenBlend)
+		];
 	}
+
 	public function endCanvas() {
 		#if debug
-		if(!currentCanvasActive){
+		if (!currentCanvasActive) {
 			trace("Warning :start buffer before you end it");
-		}  
+		}
 		#end
-		if(currentCanvasActive){
+		if (currentCanvasActive) {
 			currentCanvas().g4.end();
-			currentCanvasActive=false;
+			currentCanvasActive = false;
 		}
 	}
+
 	public function beginCanvas() {
 		#if debug
-		if(currentCanvasActive)  {
+		if (currentCanvasActive) {
 			trace("Warning :end buffer before you start ");
 		}
 		#end
-		if(!currentCanvasActive){
+		if (!currentCanvasActive) {
 			currentCanvas().g4.begin();
-			currentCanvasActive=true;
+			currentCanvasActive = true;
 		}
 	}
 
@@ -329,56 +329,57 @@ class GEngine {
 	}
 
 	public function getMatrix():FastMatrix4 {
-			return modelViewMatrix;	
+		return modelViewMatrix;
 	}
 
-	
 	/*
-	public function renderBuffer2(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool, outScale:Float = 1,transform:FastMatrix4,projection:FastMatrix4) {
-			painter.textureID = source;
-			painter.setProjection(identity4x4);
+		public function renderBuffer2(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool, outScale:Float = 1,transform:FastMatrix4,projection:FastMatrix4) {
+				painter.textureID = source;
+				painter.setProjection(identity4x4);
 
-			var v1=transform.multvec(new FastVector4(x,y,-869.1168,1));
-			var v2=transform.multvec(new FastVector4(x+width,y,-869.1168,1));
-			var v3=transform.multvec(new FastVector4(x,y+height,-869.1168,1));
-			var v4=transform.multvec(new FastVector4(x + width,y + height,-869.1168,1));
+				var v1=transform.multvec(new FastVector4(x,y,-869.1168,1));
+				var v2=transform.multvec(new FastVector4(x+width,y,-869.1168,1));
+				var v3=transform.multvec(new FastVector4(x,y+height,-869.1168,1));
+				var v4=transform.multvec(new FastVector4(x + width,y + height,-869.1168,1));
 
-			writeVertexProjection(painter, projection.multvec(v1), outScale);
-			writeVertexProjection(painter, projection.multvec(v2), outScale);
-			writeVertexProjection(painter, projection.multvec(v3), outScale);
-			writeVertexProjection(painter, projection.multvec(v4), outScale);
+				writeVertexProjection(painter, projection.multvec(v1), outScale);
+				writeVertexProjection(painter, projection.multvec(v2), outScale);
+				writeVertexProjection(painter, projection.multvec(v3), outScale);
+				writeVertexProjection(painter, projection.multvec(v4), outScale);
 
-			painter.render(clear);
-	}
-	public static  function writeVertexProjection(painter:IPainter, vertex:FastVector4, resolution:Float) {
-		painter.write(vertex.x/vertex.w * resolution);
-		painter.write(vertex.y/vertex.w * resolution);
-		painter.write(vertex.z/vertex.w);
-		painter.write((vertex.x/vertex.w+1)*0.5);
-		painter.write((vertex.y/vertex.w+1)*0.5);
+				painter.render(clear);
+		}
+		public static  function writeVertexProjection(painter:IPainter, vertex:FastVector4, resolution:Float) {
+			painter.write(vertex.x/vertex.w * resolution);
+			painter.write(vertex.y/vertex.w * resolution);
+			painter.write(vertex.z/vertex.w);
+			painter.write((vertex.x/vertex.w+1)*0.5);
+			painter.write((vertex.y/vertex.w+1)*0.5);
 	}*/
-	public function renderBufferFull(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool, outScale:Float = 1) {
+	public function renderBufferFull(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool,
+			outScale:Float = 1) {
 		painter.textureID = source;
 		painter.setProjection(getMatrix());
-		var text=getTexture(source);
-		writeVertexFull(painter, x, y,0, 0, 0, outScale);
+		var text = getTexture(source);
+		writeVertexFull(painter, x, y, 0, 0, 0, outScale);
 
-		writeVertexFull(painter, (x + width)*scaleWidth, y*scaleHeigth,0, width*oversample/(text.realWidth), 0, outScale);
+		writeVertexFull(painter, (x + width) * scaleWidth, y * scaleHeigth, 0, width * oversample / (text.realWidth), 0, outScale);
 
-		writeVertexFull(painter, x*scaleWidth, (y + height)*scaleHeigth,0, 0, height*oversample/(text.realHeight), outScale);
+		writeVertexFull(painter, x * scaleWidth, (y + height) * scaleHeigth, 0, 0, height * oversample / (text.realHeight), outScale);
 
-		writeVertexFull(painter, (x + width)*scaleWidth,( y + height)*scaleHeigth,0, width*oversample/(text.realWidth), height*oversample/(text.realHeight), outScale);
-		
+		writeVertexFull(painter, (x + width) * scaleWidth, (y + height) * scaleHeigth, 0, width * oversample / (text.realWidth), height * oversample / (text
+			.realHeight), outScale);
+
 		painter.render(clear);
 	}
-	 inline function writeVertexFull(painter:IPainter, x:Float, y:Float,z:Float, sWidth:Float, sHeight:Float, resolution:Float) {
+
+	inline function writeVertexFull(painter:IPainter, x:Float, y:Float, z:Float, sWidth:Float, sHeight:Float, resolution:Float) {
 		painter.write(x * resolution);
 		painter.write(y * resolution);
 		painter.write(z);
 		painter.write(sWidth);
 		painter.write(sHeight);
 	}
-	
 
 	public function getTexture(id:Int):Image {
 		return textures[id];
@@ -389,7 +390,7 @@ class GEngine {
 	}
 
 	public function draw(frameBuffer:Framebuffer, clear:Bool = true):Void {
-		if (frameBuffer.width* oversample != width || frameBuffer.height* oversample != height)
+		if (frameBuffer.width * oversample != width || frameBuffer.height * oversample != height)
 			resize(frameBuffer.width, frameBuffer.height);
 		#if debugInfo
 		var currentTime:Float = kha.Scheduler.realTime();
@@ -417,13 +418,12 @@ class GEngine {
 		// Begin rendering
 		g.begin();
 		if (clear)
-			g.clear(clearColor,1);
+			g.clear(clearColor, 1);
 		g.end();
 		stage.render();
 		changeToBuffer();
-		
+
 		if (!directRender) {
-			
 			painter.textureID = mTempBufferID;
 			renderFinal = true;
 			beginCanvas();
@@ -476,20 +476,20 @@ class GEngine {
 				painter.write(realU);
 				painter.write(realV);
 			}
-			
+
 			painter.render(true);
 			endCanvas();
 			renderFinal = false;
 			#if debugInfo
-			 --drawCount; // dont count this
+			-- drawCount; // dont count this
 			#end
 		}
 		#if debugInfo
-		//frameBuffer.g2.transformation = FastMatrix3.identity();
+		// frameBuffer.g2.transformation = FastMatrix3.identity();
 		if (fontLoaded) {
-			var g2=frameBuffer.g2;
+			var g2 = frameBuffer.g2;
 			g2.begin(false);
-			g2.transformation=identity3x3;
+			g2.transformation = identity3x3;
 			g2.font = font;
 			g2.fontSize = 16;
 			g2.color = 0xFF000000;
@@ -501,21 +501,21 @@ class GEngine {
 		drawCount = 0;
 		#end
 	}
-	
+
 	public function addChild(draw:IDraw):Void {
 		stage.addChild(draw);
 	}
 
-	public function getRenderTarget(width:Int,height:Int):Int {
-		var id:Int = renderTargetPool.getFreeImageId(width,height);
+	public function getRenderTarget(width:Int, height:Int):Int {
+		var id:Int = renderTargetPool.getFreeImageId(width, height);
 		if (id == -1) {
-			var target:Image = Image.createRenderTarget(Std.int(width*oversample), Std.int(height*oversample), null, DepthStencilFormat.DepthOnly, antiAliasing);
+			var target:Image = Image.createRenderTarget(Std.int(width * oversample), Std.int(height * oversample), null, DepthStencilFormat.DepthOnly,
+				antiAliasing);
 			id = textures.push(target) - 1;
-			renderTargetPool.addRenderTarget(id,width,height);
+			renderTargetPool.addRenderTarget(id, width, height);
 		}
 		return id;
 	}
-	
 
 	public function releaseRenderTarget(id:Int) {
 		renderTargetPool.release(id);

@@ -29,13 +29,11 @@ class Object3dBonesPainter implements IPainter {
 	var projectionLocation:ConstantLocation;
 	var bonesLoction:ConstantLocation;
 	var textureLocation:TextureUnit;
-
 	var model:FastMatrix4;
 	var view:FastMatrix4;
 	var projection:FastMatrix4;
 	var texture:Image;
 	var bonesTransforms:Float32Array;
-
 	var vertexBuffer:VertexBuffer;
 	var indexBuffer:IndexBuffer;
 	var counter:Int = 0;
@@ -51,23 +49,23 @@ class Object3dBonesPainter implements IPainter {
 		var structure = new VertexStructure();
 		structure.add('pos', VertexData.Float3);
 		structure.add('normal', VertexData.Float3);
-		structure.add('uv',VertexData.Float2);
-		structure.add('weights',VertexData.Float4);
-		structure.add('boneIndex',VertexData.Float4);
+		structure.add('uv', VertexData.Float2);
+		structure.add('weights', VertexData.Float4);
+		structure.add('boneIndex', VertexData.Float4);
 
 		pipeline.blendSource = blend.blendSource;
 		pipeline.blendDestination = blend.blendDestination;
 		pipeline.alphaBlendSource = blend.alphaBlendSource;
 		pipeline.alphaBlendDestination = blend.alphaBlendDestination;
 		pipeline.inputLayout = [structure];
-		pipeline.depthWrite=true;
+		pipeline.depthWrite = true;
 		pipeline.depthMode = CompareMode.Less;
-		if(kha.Image.renderTargetsInvertedY()){
+		if (kha.Image.renderTargetsInvertedY()) {
 			pipeline.cullMode = CullMode.CounterClockwise;
-		}else{
-			pipeline.cullMode=CullMode.Clockwise;
+		} else {
+			pipeline.cullMode = CullMode.Clockwise;
 		}
-		
+
 		pipeline.compile();
 		getConstantLocation(pipeline);
 	}
@@ -92,14 +90,15 @@ class Object3dBonesPainter implements IPainter {
 
 	public function finish():Void {}
 
-	public function setRenderInfo(model:FastMatrix4,view:FastMatrix4,projection:FastMatrix4,texture:Image, vertexBuffer:VertexBuffer, indexBuffer:IndexBuffer,bonesTransforms:Float32Array) {
+	public function setRenderInfo(model:FastMatrix4, view:FastMatrix4, projection:FastMatrix4, texture:Image, vertexBuffer:VertexBuffer,
+			indexBuffer:IndexBuffer, bonesTransforms:Float32Array) {
 		this.view = view;
 		this.model = model;
 		this.projection = projection;
 		this.texture = texture;
 		this.bonesTransforms = bonesTransforms;
-		this.indexBuffer=indexBuffer;
-		this.vertexBuffer=vertexBuffer;
+		this.indexBuffer = indexBuffer;
+		this.vertexBuffer = vertexBuffer;
 		++counter;
 	}
 
@@ -109,7 +108,7 @@ class Object3dBonesPainter implements IPainter {
 		counter = 0;
 
 		var g4:Graphics = GEngine.i.currentCanvas().g4;
-	
+
 		if (cropArea != null)
 			g4.scissor(Std.int(cropArea.min.x), Std.int(cropArea.min.y), Std.int(cropArea.max.x), Std.int(cropArea.max.y));
 		g4.setIndexBuffer(indexBuffer);
@@ -124,14 +123,14 @@ class Object3dBonesPainter implements IPainter {
 	}
 
 	function setParameters(g4:Graphics) {
-		//var finalViewMatrix = GEngine.i.getMatrix();
-	//	var view = finalViewMatrix.multmat(view);
+		// var finalViewMatrix = GEngine.i.getMatrix();
+		//	var view = finalViewMatrix.multmat(view);
 		g4.setMatrix(projectionLocation, projection);
 		g4.setMatrix(viewLocation, view);
 		g4.setMatrix(modelLocation, model);
-		
-		g4.setTexture(textureLocation,texture);
-		g4.setFloats(bonesLoction,bonesTransforms);
+
+		g4.setTexture(textureLocation, texture);
+		g4.setFloats(bonesLoction, bonesTransforms);
 	}
 
 	public function canBatch(info:PaintInfo, size:Int):Bool {
@@ -159,12 +158,12 @@ class Object3dBonesPainter implements IPainter {
 	}
 
 	public function setVertexDataCounter(aData:Int):Void {}
-	public function setProjection(proj:FastMatrix4){
-		projection=proj;
-	}
-	
-	public function destroy():Void{
 
+	public function setProjection(proj:FastMatrix4) {
+		projection = proj;
+	}
+
+	public function destroy():Void {
 		pipeline.delete();
 	}
 }

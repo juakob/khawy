@@ -1,95 +1,92 @@
 package com.gEngine.helper;
+
 import com.gEngine.Label;
 
-class Timeline{
+class Timeline {
 	public var frameRate:Float;
-	public var frameSkiped:Int=0;
+	public var frameSkiped:Int = 0;
 	public var totalFrames:Int;
-	public var currentFrame(default,null):Int=0;
-	public var playing:Bool=true;
+	public var currentFrame(default, null):Int = 0;
+	public var playing:Bool = true;
 	public var frameChange:Bool;
-	public var loop:Bool=true;
+	public var loop:Bool = true;
 	public var frameJump:Bool;
-	public var currentAnimation(default,null):String;
+	public var currentAnimation(default, null):String;
 
 	var firstFrame:Int = 0;
 	var lastFrame:Int = 0;
-
 	private var labels:Array<Label>;
+	var currentTime:Float = 0;
 
-	var currentTime:Float=0;
-
-	public function new(frameRate:Float,totalFrames:Int,?labels:Array<Label>){
+	public function new(frameRate:Float, totalFrames:Int, ?labels:Array<Label>) {
 		this.frameRate = frameRate;
 		this.totalFrames = totalFrames;
-		if(totalFrames==1)playing=false;
+		if (totalFrames == 1)
+			playing = false;
 		this.labels = labels;
-		frameJump=true;
+		frameJump = true;
 	}
-	public  function update(dt:Float){
-		frameChange=false;
+
+	public function update(dt:Float) {
+		frameChange = false;
 		frameSkiped = 0;
-		frameJump=false;
-		if (!playing ) return;
+		frameJump = false;
+		if (!playing)
+			return;
 		currentTime += dt;
-		if (currentTime < frameRate) return;
-		
-		frameChange=true;
-		
+		if (currentTime < frameRate)
+			return;
+
+		frameChange = true;
+
 		frameSkiped = Math.floor(currentTime / frameRate);
-		currentTime -= frameRate*frameSkiped;
+		currentTime -= frameRate * frameSkiped;
 		currentFrame += frameSkiped;
-		if (currentFrame >=totalFrames )
-		{
-			if (loop)
-			{
-				if(currentFrame!=firstFrame){
-					frameJump=true;
+		if (currentFrame >= totalFrames) {
+			if (loop) {
+				if (currentFrame != firstFrame) {
+					frameJump = true;
 				}
 				currentFrame = firstFrame;
-			}
-			else
-			{
+			} else {
 				currentFrame = totalFrames - 1;
 				playing = false;
 			}
 		}
-		if (currentFrame<=lastFrame&&currentFrame>=firstFrame) return;
-		if ( currentAnimation!=null)
-		{
-			if(loop){
+		if (currentFrame <= lastFrame && currentFrame >= firstFrame)
+			return;
+		if (currentAnimation != null) {
+			if (loop) {
 				gotoAndPlay(firstFrame);
-			}else 
-			{
+			} else {
 				gotoAndStop(lastFrame);
 			}
 		}
 	}
-	public function gotoAndPlay(frame:Int)
-	{
-		currentFrame=frame;
-		currentTime=0;
-		playing=true;
-		frameJump=true;
-	}
-	public function gotoAndStop(frame:Int)
-	{
-		currentFrame=frame;
-		currentTime=0;
-		playing=false;
-		frameJump=true;
+
+	public function gotoAndPlay(frame:Int) {
+		currentFrame = frame;
+		currentTime = 0;
+		playing = true;
+		frameJump = true;
 	}
 
-	
+	public function gotoAndStop(frame:Int) {
+		currentFrame = frame;
+		currentTime = 0;
+		playing = false;
+		frameJump = true;
+	}
 
-	public function labelFrame(text:String):Label{
-		for(label in labels){
-			if(label.text==text){
+	public function labelFrame(text:String):Label {
+		for (label in labels) {
+			if (label.text == text) {
 				return label;
 			}
 		}
-		throw "label "+text +"not found";
+		throw "label " + text + "not found";
 	}
+
 	public function currentLabel():String {
 		var frame:Int;
 
@@ -104,50 +101,54 @@ class Timeline{
 		}
 		return null;
 	}
-	public function labelEnd(text:String):Int{
-		var counter:Int=0;
-		for(label in labels){
-			if(label.text==text){
-				if(labels.length==counter+1) return totalFrames-1;
-				return labels[counter+1].frame-1;
+
+	public function labelEnd(text:String):Int {
+		var counter:Int = 0;
+		for (label in labels) {
+			if (label.text == text) {
+				if (labels.length == counter + 1)
+					return totalFrames - 1;
+				return labels[counter + 1].frame - 1;
 			}
 			++counter;
 		}
-		throw "label "+text +"not found";
+		throw "label " + text + "not found";
 	}
-	public function labelEndEvent(text:String,indexStart:Int=0,prefixIgnore:String):Int
-	{
-		for(i in indexStart...labels.length ){
-			var label=labels[i];
-			if(label.text==text){
-				if(labels.length==i+1) return totalFrames-1;
-				if(labels[i+1].text.indexOf(prefixIgnore)==0)
-				{
-					return labelEndEvent(labels[i+1].text,i+1,prefixIgnore);
+
+	public function labelEndEvent(text:String, indexStart:Int = 0, prefixIgnore:String):Int {
+		for (i in indexStart...labels.length) {
+			var label = labels[i];
+			if (label.text == text) {
+				if (labels.length == i + 1)
+					return totalFrames - 1;
+				if (labels[i + 1].text.indexOf(prefixIgnore) == 0) {
+					return labelEndEvent(labels[i + 1].text, i + 1, prefixIgnore);
 				}
-				return labels[i+1].frame-1;
+				return labels[i + 1].frame - 1;
 			}
 		}
-		throw "label "+text +"not found";
+		throw "label " + text + "not found";
 	}
-	public function play(){
-		playing=true;
+
+	public function play() {
+		playing = true;
 	}
-	public function localFrame():Int{
-		return currentFrame-firstFrame;
+
+	public function localFrame():Int {
+		return currentFrame - firstFrame;
 	}
-	public function playAnimation(animation:String,loop:Bool=true,force:Bool=false,prefixCharIgnore:String=null):Void
-	{
+
+	public function playAnimation(animation:String, loop:Bool = true, force:Bool = false, prefixCharIgnore:String = null):Void {
 		var firstAnimationFrame:Int = labelFrame(animation).frame;
-		if ((currentAnimation != animation||force||!playing)&&firstAnimationFrame!=-1)
-		{
+		if ((currentAnimation != animation || force || !playing) && firstAnimationFrame != -1) {
 			this.loop = loop;
 			currentAnimation = animation;
 			firstFrame = firstAnimationFrame;
-			lastFrame = prefixCharIgnore==null?labelEnd(currentAnimation):labelEndEvent(animation,prefixCharIgnore);
+			lastFrame = prefixCharIgnore == null ? labelEnd(currentAnimation) : labelEndEvent(animation, prefixCharIgnore);
 			gotoAndPlay(firstFrame);
 		}
 	}
+
 	public function labelFrameAt(frame:Int):String {
 		for (label in labels) {
 			if (label.frame == frame) {
@@ -168,23 +169,21 @@ class Timeline{
 		}
 		return false;
 	}
-	public inline function interchange(animation:String):Void
-	{
-		if (currentAnimation != animation)
-		{
-			var delta = currentFrame-firstFrame;
+
+	public inline function interchange(animation:String):Void {
+		if (currentAnimation != animation) {
+			var delta = currentFrame - firstFrame;
 			currentAnimation = animation;
 			firstFrame = labelFrame(currentAnimation).frame;
-			gotoAndPlay(firstFrame+delta);
+			gotoAndPlay(firstFrame + delta);
 		}
 	}
-	public inline function stop():Void
-	{
-		playing=false;
+
+	public inline function stop():Void {
+		playing = false;
 	}
-	
-	public inline function isComplete():Bool
-	{
-		return !playing&&!loop;
+
+	public inline function isComplete():Bool {
+		return !playing && !loop;
 	}
 }

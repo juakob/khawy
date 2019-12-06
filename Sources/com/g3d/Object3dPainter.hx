@@ -28,12 +28,10 @@ class Object3dPainter implements IPainter {
 	var modelLocation:ConstantLocation;
 	var mvpLocation:ConstantLocation;
 	var textureLocation:TextureUnit;
-
 	var model:FastMatrix4;
 	var mvp:FastMatrix4;
 	var texture:Image;
 	var bonesTransforms:Float32Array;
-
 	var vertexBuffer:VertexBuffer;
 	var indexBuffer:IndexBuffer;
 	var counter:Int = 0;
@@ -42,24 +40,24 @@ class Object3dPainter implements IPainter {
 	public var resolution:Float;
 	public var filter:TextureFilter;
 	public var mipMapFilter:MipMapFilter;
+
 	var projection:FastMatrix4;
 
 	public function new(blend:Blend) {
 		pipeline = new PipelineState();
-		
+
 		var structure = new VertexStructure();
 		structure.add('pos', VertexData.Float3);
 		structure.add('normal', VertexData.Float3);
-		structure.add('uv',VertexData.Float2);
+		structure.add('uv', VertexData.Float2);
 
-		
 		pipeline.inputLayout = [structure];
-		pipeline.depthWrite=true;
+		pipeline.depthWrite = true;
 		pipeline.depthMode = CompareMode.Less;
-		if(kha.Image.renderTargetsInvertedY()){
+		if (kha.Image.renderTargetsInvertedY()) {
 			pipeline.cullMode = CullMode.CounterClockwise;
-		}else{
-			pipeline.cullMode=CullMode.Clockwise;
+		} else {
+			pipeline.cullMode = CullMode.Clockwise;
 		}
 		pipeline.blendSource = blend.blendSource;
 		pipeline.blendDestination = blend.blendDestination;
@@ -76,7 +74,7 @@ class Object3dPainter implements IPainter {
 	}
 
 	function getConstantLocation(pipeline:PipelineState) {
-	//	modelLocation = pipeline.getConstantLocation("model");
+		//	modelLocation = pipeline.getConstantLocation("model");
 		mvpLocation = pipeline.getConstantLocation("mvp");
 		textureLocation = pipeline.getTextureUnit("tex");
 	}
@@ -88,12 +86,13 @@ class Object3dPainter implements IPainter {
 
 	public function finish():Void {}
 
-	public function setRenderInfo(model:FastMatrix4,view:FastMatrix4,projection:FastMatrix4,texture:Image, vertexBuffer:VertexBuffer, indexBuffer:IndexBuffer) {
+	public function setRenderInfo(model:FastMatrix4, view:FastMatrix4, projection:FastMatrix4, texture:Image, vertexBuffer:VertexBuffer,
+			indexBuffer:IndexBuffer) {
 		this.model = model;
 		this.mvp = projection.multmat(view.multmat(model));
 		this.texture = texture;
-		this.indexBuffer=indexBuffer;
-		this.vertexBuffer=vertexBuffer;
+		this.indexBuffer = indexBuffer;
+		this.vertexBuffer = vertexBuffer;
 		++counter;
 	}
 
@@ -117,18 +116,17 @@ class Object3dPainter implements IPainter {
 
 	function setParameters(g4:Graphics) {
 		g4.setMatrix(mvpLocation, mvp);
-	//	g4.setMatrix(modelLocation, model);
-		g4.setTexture(textureLocation,texture);
-	//	g4.setTextureParameters(textureLocation,TextureAddressing.Repeat,TextureAddressing.Repeat,TextureFilter.LinearFilter,TextureFilter.LinearFilter,MipMapFilter.LinearMipFilter);
-		
+		//	g4.setMatrix(modelLocation, model);
+		g4.setTexture(textureLocation, texture);
+		//	g4.setTextureParameters(textureLocation,TextureAddressing.Repeat,TextureAddressing.Repeat,TextureFilter.LinearFilter,TextureFilter.LinearFilter,MipMapFilter.LinearMipFilter);
 	}
 
 	public function canBatch(info:PaintInfo, size:Int):Bool {
 		return false;
 	}
 
-	public function setProjection(proj:FastMatrix4):Void{
-		projection=proj;
+	public function setProjection(proj:FastMatrix4):Void {
+		projection = proj;
 	}
 
 	public function vertexCount():Int {
@@ -153,7 +151,7 @@ class Object3dPainter implements IPainter {
 
 	public function setVertexDataCounter(aData:Int):Void {}
 
-	public function destroy():Void{
+	public function destroy():Void {
 		pipeline.delete();
 	}
 }

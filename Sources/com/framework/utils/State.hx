@@ -10,15 +10,15 @@ import kha.Framebuffer;
 
 class State extends Entity {
 	public var stage:Stage;
-	public var timeScale(default,set):Float=1;
+	public var timeScale(default, set):Float = 1;
+
 	var subStates:Array<State>;
 	var parentState:State;
-
 	var resources:Resources;
 
 	public function new() {
 		super();
-		subStates=new Array();
+		subStates = new Array();
 	}
 
 	public function load(resources:Resources):Void {}
@@ -27,24 +27,26 @@ class State extends Entity {
 
 	public function addSubState(state:State):Void {
 		#if debug
-		if(state.resources==null) throw "call initSubState from parent befour adding";
+		if (state.resources == null)
+			throw "call initSubState from parent befour adding";
 		#end
 		subStates.push(state);
-		state.parentState=this;
+		state.parentState = this;
 		stage.addSubStage(state.stage);
 	}
+
 	public function removeSubState(state:State):Void {
 		subStates.remove(state);
 		stage.removeSubStage(state.stage);
-		state.parentState=null;
+		state.parentState = null;
 		state.die();
 	}
-	
+
 	public function initSubState(state:State) {
 		state.resources = new Resources();
 		state.load(state.resources);
-		state.stage=new Stage();
-		state.resources.load(function(){
+		state.stage = new Stage();
+		state.resources.load(function() {
 			state.init();
 		});
 	}
@@ -54,11 +56,11 @@ class State extends Entity {
 	}
 
 	public function stageColor(r:Float = 0, g:Float = 0, b:Float = 0, a:Float = 1) {
-		stage.color=Color.fromFloats(r,g,b,a);
+		stage.color = Color.fromFloats(r, g, b, a);
 	}
 
 	public function draw(framebuffer:Canvas):Void {
-		for(state in subStates){
+		for (state in subStates) {
 			state.draw(framebuffer);
 		}
 	}
@@ -67,27 +69,26 @@ class State extends Entity {
 
 	public function onDesactivate() {}
 
-	public function onMessage(message:Dynamic) {
-		
-	}
+	public function onMessage(message:Dynamic) {}
 
 	override public function destroy():Void {
-		if(resources!=null){
+		if (resources != null) {
 			resources.unload();
 		}
 		stage.destroy();
-		if(parentState!=null)
-		{
+		if (parentState != null) {
 			parentState.removeSubState(this);
 		}
 		super.destroy();
 	}
+
 	override function update(dt:Float) {
-		super.update(TimeManager.delta*timeScale);
+		super.update(TimeManager.delta * timeScale);
 	}
+
 	public function set_timeScale(scale:Float):Float {
-		timeScale=scale;
-		stage.timeScale=scale;
+		timeScale = scale;
+		stage.timeScale = scale;
 		return scale;
 	}
 }

@@ -1,13 +1,13 @@
 package com.g3d;
+
 import haxe.io.StringInput;
+
 using StringTools;
 
 // OpenGEX parser
 // http://opengex.org
-//source https://github.com/Kha-Samples/MeshLoader
-
+// source https://github.com/Kha-Samples/MeshLoader
 class Container {
-
 	public var name:String;
 	public var children:Array<Node> = [];
 
@@ -15,7 +15,6 @@ class Container {
 }
 
 class OgexData extends Container {
-
 	public var metrics:Array<Metric> = [];
 	public var geometryObjects:Array<GeometryObject> = [];
 	public var lightObjects:Array<LightObject> = [];
@@ -33,7 +32,7 @@ class OgexData extends Container {
 		try {
 			while (true) {
 				s = readLine();
-				switch(s[0]) {
+				switch (s[0]) {
 					case "Metric":
 						metrics.push(parseMetric(s));
 					case "Node":
@@ -56,25 +55,29 @@ class OgexData extends Container {
 						materials.push(parseMaterial(s));
 				}
 			}
-		}
-		catch(ex:haxe.io.Eof) { }
+		} catch (ex:haxe.io.Eof) {}
 
 		file.close();
 	}
 
-	public function getNode(name:String):Node { 
-		var res:Node = null; 
-		traverseNodes(function(it:Node) { 
-			if (it.name == name) { res = it; }
+	public function getNode(name:String):Node {
+		var res:Node = null;
+		traverseNodes(function(it:Node) {
+			if (it.name == name) {
+				res = it;
+			}
 		});
-		return res; 
+		return res;
 	}
-	public function getNodeBy(ref:String):Node { 
-		var res:Node = null; 
-		traverseNodes(function(it:Node) { 
-			if (it.ref == ref) { res = it; }
+
+	public function getNodeBy(ref:String):Node {
+		var res:Node = null;
+		traverseNodes(function(it:Node) {
+			if (it.ref == ref) {
+				res = it;
+			}
 		});
-		return res; 
+		return res;
 	}
 
 	public function traverseNodes(callback:Node->Void) {
@@ -82,7 +85,7 @@ class OgexData extends Container {
 			traverseNodesStep(children[i], callback);
 		}
 	}
-	
+
 	function traverseNodesStep(node:Node, callback:Node->Void) {
 		callback(node);
 		for (i in 0...node.children.length) {
@@ -92,28 +95,32 @@ class OgexData extends Container {
 
 	public function getGeometryObject(ref:String):GeometryObject {
 		for (go in geometryObjects) {
-			if (go.ref == ref) return go;
+			if (go.ref == ref)
+				return go;
 		}
 		return null;
 	}
 
 	public function getCameraObject(ref:String):CameraObject {
 		for (co in cameraObjects) {
-			if (co.ref == ref) return co;
+			if (co.ref == ref)
+				return co;
 		}
 		return null;
 	}
 
 	public function getLightObject(ref:String):LightObject {
 		for (lo in lightObjects) {
-			if (lo.ref == ref) return lo;
+			if (lo.ref == ref)
+				return lo;
 		}
 		return null;
 	}
 
 	public function getMaterial(ref:String):Material {
 		for (m in materials) {
-			if (m.ref == ref) return m;
+			if (m.ref == ref)
+				return m;
 		}
 		return null;
 	}
@@ -138,8 +145,7 @@ class OgexData extends Container {
 		var val = s[5].split("{")[1].split("}")[0];
 		if (s[4] == "{float") {
 			metric.value = Std.parseFloat(val);
-		}
-		else {
+		} else {
 			metric.value = val.split('"')[1];
 		}
 		return metric;
@@ -153,7 +159,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Name":
 					n.name = parseName(s);
 				case "Transform":
@@ -183,7 +189,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Name":
 					n.name = parseName(s);
 				case "ObjectRef":
@@ -217,7 +223,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Name":
 					n.name = parseName(s);
 				case "ObjectRef":
@@ -249,7 +255,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Name":
 					n.name = parseName(s);
 				case "ObjectRef":
@@ -281,7 +287,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Name":
 					n.name = parseName(s);
 				case "Transform":
@@ -303,7 +309,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Mesh":
 					go.mesh = parseMesh(s);
 				case "}":
@@ -319,7 +325,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "VertexArray":
 					m.vertexArrays.push(parseVertexArray(s));
 				case "IndexArray":
@@ -338,7 +344,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Transform":
 					skin.transform = parseTransform(s);
 				case "Skeleton":
@@ -361,7 +367,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "BoneRefArray":
 					skel.boneRefArray = parseBoneRefArray(s);
 				case "Transform":
@@ -375,74 +381,97 @@ class OgexData extends Container {
 
 	function parseBoneRefArray(s:Array<String>):BoneRefArray {
 		var bra = new BoneRefArray();
-		readLine2(); readLine2(); readLine2();
+		readLine2();
+		readLine2();
+		readLine2();
 		var ss = readLine2();
 		ss = StringTools.replace(ss, " ", "");
 		bra.refs = ss.split(",");
-		readLine2(); readLine2();
+		readLine2();
+		readLine2();
 		return bra;
 	}
 
 	function parseTransformArray(s:Array<String>):Array<Transform> {
 		var bra = new Array<Transform>();
-		readLine2(); readLine2(); readLine2();
+		readLine2();
+		readLine2();
+		readLine2();
 		while (true) {
-			var va =new Transform();
+			var va = new Transform();
 			var ss = readLine2();
 			ss = StringTools.replace(ss, "{", "");
 			ss = StringTools.replace(ss, "}", "");
 			s = ss.split(",");
 			var offset = s[s.length - 1] == "" ? 1 : 0;
-			for (i in 0...s.length - offset) va.values.push(Std.parseFloat(s[i]));
+			for (i in 0...s.length - offset)
+				va.values.push(Std.parseFloat(s[i]));
 			bra.push(va);
-			if (offset == 0) break;
+			if (offset == 0)
+				break;
 		}
-		readLine2(); readLine2();
+		readLine2();
+		readLine2();
 		return bra;
 	}
 
 	function parseBoneCountArray(s:Array<String>):BoneCountArray {
 		var bca = new BoneCountArray();
-		readLine2(); readLine2(); readLine2();
+		readLine2();
+		readLine2();
+		readLine2();
 		while (true) {
 			var ss = readLine2();
 			ss = StringTools.replace(ss, " ", "");
 			s = ss.split(",");
 			var offset = s[s.length - 1] == "" ? 1 : 0;
-			for (i in 0...s.length - offset) bca.values.push(Std.parseInt(s[i]));
-			if (offset == 0) break;
+			for (i in 0...s.length - offset)
+				bca.values.push(Std.parseInt(s[i]));
+			if (offset == 0)
+				break;
 		}
-		readLine2(); readLine2();
+		readLine2();
+		readLine2();
 		return bca;
 	}
 
 	function parseBoneIndexArray(s:Array<String>):BoneIndexArray {
 		var bia = new BoneIndexArray();
-		readLine2(); readLine2(); readLine2();
+		readLine2();
+		readLine2();
+		readLine2();
 		while (true) {
 			var ss = readLine2();
 			ss = StringTools.replace(ss, " ", "");
 			s = ss.split(",");
 			var offset = s[s.length - 1] == "" ? 1 : 0;
-			for (i in 0...s.length - offset) bia.values.push(Std.parseInt(s[i]));
-			if (offset == 0) break;
+			for (i in 0...s.length - offset)
+				bia.values.push(Std.parseInt(s[i]));
+			if (offset == 0)
+				break;
 		}
-		readLine2(); readLine2();
+		readLine2();
+		readLine2();
 		return bia;
 	}
 
 	function parseBoneWeightArray(s:Array<String>):BoneWeightArray {
 		var bwa = new BoneWeightArray();
-		readLine2(); readLine2(); readLine2();
+		readLine2();
+		readLine2();
+		readLine2();
 		while (true) {
 			var ss = readLine2();
 			ss = StringTools.replace(ss, " ", "");
 			s = ss.split(",");
 			var offset = s[s.length - 1] == "" ? 1 : 0;
-			for (i in 0...s.length - offset) bwa.values.push(Std.parseFloat(s[i]));
-			if (offset == 0) break;
+			for (i in 0...s.length - offset)
+				bwa.values.push(Std.parseFloat(s[i]));
+			if (offset == 0)
+				break;
 		}
-		readLine2(); readLine2();
+		readLine2();
+		readLine2();
 		return bwa;
 	}
 
@@ -453,7 +482,7 @@ class OgexData extends Container {
 		var ss = readLine2();
 		va.size = Std.parseInt(ss.split("[")[1].split("]")[0]);
 		readLine2();
-		
+
 		while (true) {
 			// TODO: unify float[] {} parsing
 			ss = readLine2();
@@ -461,10 +490,13 @@ class OgexData extends Container {
 			ss = StringTools.replace(ss, "}", "");
 			s = ss.split(",");
 			var offset = s[s.length - 1] == "" ? 1 : 0;
-			for (i in 0...s.length - offset) va.values.push(Std.parseFloat(s[i]));
-			if (offset == 0) break;
+			for (i in 0...s.length - offset)
+				va.values.push(Std.parseFloat(s[i]));
+			if (offset == 0)
+				break;
 		}
-		readLine2(); readLine2();
+		readLine2();
+		readLine2();
 		return va;
 	}
 
@@ -474,17 +506,20 @@ class OgexData extends Container {
 		var ss = readLine2();
 		ia.size = Std.parseInt(ss.split("[")[1].split("]")[0]);
 		readLine2();
-		
+
 		while (true) {
 			ss = readLine2();
 			ss = StringTools.replace(ss, "{", "");
 			ss = StringTools.replace(ss, "}", "");
 			s = ss.split(",");
 			var offset = s[s.length - 1] == "" ? 1 : 0;
-			for (i in 0...s.length - offset) ia.values.push(Std.parseInt(s[i]));
-			if (offset == 0) break;
+			for (i in 0...s.length - offset)
+				ia.values.push(Std.parseInt(s[i]));
+			if (offset == 0)
+				break;
 		}
-		readLine2(); readLine2();
+		readLine2();
+		readLine2();
 		return ia;
 	}
 
@@ -495,7 +530,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Color":
 					lo.color = parseColor(s);
 				case "Atten":
@@ -519,17 +554,18 @@ class OgexData extends Container {
 		}
 		return col;
 	}
+
 	function parseTexture(s:Array<String>):Texture {
 		var texture = new Texture();
 		texture.attrib = s[3].split('"')[1];
 		readLine();
-		s=file.readLine().split("string");
+		s = file.readLine().split("string");
 		var ss = s[1];
 		ss = StringTools.replace(ss, "{", "");
 		ss = StringTools.replace(ss, "}", "");
 		ss = StringTools.replace(ss, "\"", "");
-		texture.path=ss;
-		
+		texture.path = ss;
+
 		return texture;
 	}
 
@@ -539,7 +575,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Param":
 					a.params.push(parseParam(s));
 				case "}":
@@ -565,7 +601,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Param":
 					co.params.push(parseParam(s));
 				case "}":
@@ -581,7 +617,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Name":
 					mat.name = parseName(s);
 				case "Color":
@@ -612,8 +648,11 @@ class OgexData extends Container {
 	function parseTransform(s:Array<String>):Transform {
 		// TODO: Correct value parsing
 		var t = new Transform();
-		if (s.length > 1) t.ref = s[1];
-		readLine2(); readLine2(); readLine2();
+		if (s.length > 1)
+			t.ref = s[1];
+		readLine2();
+		readLine2();
+		readLine2();
 		var ss = readLine2().substr(1);
 		ss += readLine2();
 		ss += readLine2();
@@ -625,7 +664,8 @@ class OgexData extends Container {
 			var k = i % 4;
 			t.values.push(Std.parseFloat(s[j + k * 4]));
 		}
-		readLine2(); readLine2();
+		readLine2();
+		readLine2();
 		return t;
 	}
 
@@ -634,7 +674,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Track":
 					a.track = parseTrack(s);
 				case "}":
@@ -650,7 +690,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Time":
 					t.time = parseTime(s);
 				case "Value":
@@ -667,7 +707,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Key":
 					t.key = parseKey(s);
 				case "}":
@@ -682,7 +722,7 @@ class OgexData extends Container {
 		while (true) {
 			s = readLine();
 
-			switch(s[0]) {
+			switch (s[0]) {
 				case "Key":
 					v.key = parseKey(s);
 				case "}":
@@ -700,26 +740,29 @@ class OgexData extends Container {
 				k.values.push(Std.parseFloat(s[i]));
 			}
 			k.values.push(Std.parseFloat(s[s.length - 1].substr(0, s[s.length - 1].length - 3)));
-		}
-		else { // Multi line
-			readLine2(); readLine2(); readLine2();
+		} else { // Multi line
+			readLine2();
+			readLine2();
+			readLine2();
 			while (true) {
 				var ss = readLine2();
 				ss = StringTools.replace(ss, "{", "");
 				ss = StringTools.replace(ss, "}", "");
 				s = ss.split(",");
 				var offset = s[s.length - 1] == "" ? 1 : 0;
-				for (i in 0...s.length - offset) k.values.push(Std.parseFloat(s[i]));
-				if (offset == 0) break;
+				for (i in 0...s.length - offset)
+					k.values.push(Std.parseFloat(s[i]));
+				if (offset == 0)
+					break;
 			}
-			readLine2();readLine2();
+			readLine2();
+			readLine2();
 		}
 		return k;
 	}
 }
 
 class Metric {
-
 	public var key:String;
 	public var value:Dynamic;
 
@@ -727,41 +770,45 @@ class Metric {
 }
 
 class Node extends Container {
-
 	public var parent:Container;
 	public var ref:String;
 	public var objectRefs:Array<String> = [];
 	public var transform:Transform;
 
-	public function new() { super(); }
+	public function new() {
+		super();
+	}
 }
 
 class GeometryNode extends Node {
-
 	public var materialRefs:Array<String> = [];
 
-	public function new() { super(); }
+	public function new() {
+		super();
+	}
 }
 
 class LightNode extends Node {
-
-	public function new() { super(); }
+	public function new() {
+		super();
+	}
 }
 
 class CameraNode extends Node {
-
-	public function new() { super(); }
+	public function new() {
+		super();
+	}
 }
 
 class BoneNode extends Node {
-
 	public var animation:Animation;
 
-	public function new() { super(); }
+	public function new() {
+		super();
+	}
 }
 
 class GeometryObject {
-
 	public var ref:String;
 	public var mesh:Mesh;
 
@@ -769,7 +816,6 @@ class GeometryObject {
 }
 
 class LightObject {
-
 	public var ref:String;
 	public var type:String;
 	public var color:Color;
@@ -779,7 +825,6 @@ class LightObject {
 }
 
 class CameraObject {
-
 	public var ref:String;
 	public var params:Array<Param> = [];
 
@@ -787,17 +832,16 @@ class CameraObject {
 }
 
 class Material {
-
 	public var ref:String;
 	public var name:String;
 	public var colors:Array<Color> = [];
-	public var texture:Array<Texture>=[];
+	public var texture:Array<Texture> = [];
 	public var params:Array<Param> = [];
 
 	public function new() {}
 }
-class Texture
-{
+
+class Texture {
 	public var attrib:String;
 	public var path:String = "";
 
@@ -805,7 +849,6 @@ class Texture
 }
 
 class Transform {
-
 	public var ref:String = "";
 	public var values:Array<Float> = [];
 
@@ -813,7 +856,6 @@ class Transform {
 }
 
 class Mesh {
-
 	public var primitive:String;
 	public var vertexArrays:Array<VertexArray> = [];
 	public var indexArray:IndexArray;
@@ -823,14 +865,14 @@ class Mesh {
 
 	public function getArray(attrib:String):VertexArray {
 		for (va in vertexArrays) {
-			if (va.attrib == attrib) return va;
+			if (va.attrib == attrib)
+				return va;
 		}
 		return null;
 	}
 }
 
 class Skin {
-
 	public var transform:Transform;
 	public var skeleton:Skeleton;
 	public var boneCountArray:BoneCountArray;
@@ -841,7 +883,6 @@ class Skin {
 }
 
 class Skeleton {
-
 	public var boneRefArray:BoneRefArray;
 	public var transforms:Array<Transform>;
 
@@ -849,35 +890,30 @@ class Skeleton {
 }
 
 class BoneRefArray {
-
 	public var refs:Array<String> = [];
 
 	public function new() {}
 }
 
 class BoneCountArray {
-
 	public var values:Array<Int> = [];
 
 	public function new() {}
 }
 
 class BoneIndexArray {
-
 	public var values:Array<Int> = [];
 
 	public function new() {}
 }
 
 class BoneWeightArray {
-
 	public var values:Array<Float> = [];
 
 	public function new() {}
 }
 
 class VertexArray {
-
 	public var attrib:String;
 	public var size:Int;
 	public var values:Array<Float> = [];
@@ -886,7 +922,6 @@ class VertexArray {
 }
 
 class IndexArray {
-
 	public var size:Int;
 	public var values:Array<Int> = [];
 
@@ -894,7 +929,6 @@ class IndexArray {
 }
 
 class Color {
-
 	public var attrib:String;
 	public var values:Array<Float> = [];
 
@@ -902,7 +936,6 @@ class Color {
 }
 
 class Atten {
-
 	public var curve:String;
 	public var params:Array<Param> = [];
 
@@ -910,7 +943,6 @@ class Atten {
 }
 
 class Param {
-
 	public var attrib:String;
 	public var value:Float;
 
@@ -918,7 +950,6 @@ class Param {
 }
 
 class Animation {
-
 	public var track:Track;
 	public var target:String;
 
@@ -926,7 +957,6 @@ class Animation {
 }
 
 class Track {
-
 	public var target:String;
 	public var time:OgexTime;
 	public var value:Value;
@@ -935,21 +965,18 @@ class Track {
 }
 
 class OgexTime {
-
 	public var key:Key;
 
 	public function new() {}
 }
 
 class Value {
-
 	public var key:Key;
 
 	public function new() {}
 }
 
 class Key {
-
 	public var size = 0;
 	public var values:Array<Float> = [];
 

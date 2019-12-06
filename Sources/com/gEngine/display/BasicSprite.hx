@@ -1,6 +1,5 @@
 package com.gEngine.display;
 
-
 import com.gEngine.helper.Timeline;
 import kha.math.FastVector4;
 import kha.math.FastMatrix4;
@@ -24,9 +23,9 @@ class BasicSprite implements IAnimation implements IRotation {
 	public var x:FastFloat = 0;
 	public var y:FastFloat = 0;
 	public var z:FastFloat = 0;
-	public var scaleX:FastFloat=1;
-	public var scaleY:FastFloat=1;
-	public var scaleZ:FastFloat=1;
+	public var scaleX:FastFloat = 1;
+	public var scaleY:FastFloat = 1;
+	public var scaleZ:FastFloat = 1;
 	public var rotation(default, set):Float;
 	public var blend:BlendMode = BlendMode.Default;
 
@@ -60,23 +59,22 @@ class BasicSprite implements IAnimation implements IRotation {
 	private var textureId:Int = -1;
 	private var dataUnique:Bool = false;
 
-	public var smooth(get,set):Bool;
+	public var smooth(get, set):Bool;
 	public var textureFilter:TextureFilter = TextureFilter.LinearFilter;
 	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
 
 	var transform:FastMatrix4;
 
 	public var filter:Filter;
-
 	public var timeline(default, null):Timeline;
 
 	var paintInfo:PaintInfo;
 
-	public function new(name:String=null) {
-		if(name!=null){
-			animationData=com.basicDisplay.SpriteSheetDB.i.getData(name);
+	public function new(name:String = null) {
+		if (name != null) {
+			animationData = com.basicDisplay.SpriteSheetDB.i.getData(name);
 		}
-		transform=FastMatrix4.identity();
+		transform = FastMatrix4.identity();
 
 		paintInfo = new PaintInfo();
 		timeline = new Timeline(1 / 30, animationData.frames.length, animationData.labels);
@@ -88,10 +86,10 @@ class BasicSprite implements IAnimation implements IRotation {
 
 		textureId = animationData.texturesID;
 	}
-	
+
 	public function clone():BasicSprite {
 		var cl = new BasicSprite();
-		cl.animationData=animationData;
+		cl.animationData = animationData;
 		return cl;
 	}
 
@@ -110,43 +108,46 @@ class BasicSprite implements IAnimation implements IRotation {
 			cosAng = Math.cos(value);
 		}
 		return rotation;
-	 }
+	}
 
 	public function update(dt:Float):Void {
 		timeline.update(dt);
 	}
 
-	public function makeUnique()
-	{
+	public function makeUnique() {
 		animationData = animationData.clone();
 		dataUnique = true;
 	}
+
 	public function getAnimationData():AnimationData {
-		if (!dataUnique) makeUnique();
+		if (!dataUnique)
+			makeUnique();
 		return animationData;
 	}
-	inline function calculateTransform(){
-		this.transform._00=cosAng*scaleX;
-		this.transform._10=-sinAng*scaleY;
-		this.transform._30=x + pivotX*scaleX;
-		this.transform._01= sinAng*scaleX;
-		this.transform._11=cosAng*scaleY;
-		this.transform._31=y + pivotY*scaleY;
-		this.transform._32=z;
+
+	inline function calculateTransform() {
+		this.transform._00 = cosAng * scaleX;
+		this.transform._10 = -sinAng * scaleY;
+		this.transform._30 = x + pivotX * scaleX;
+		this.transform._01 = sinAng * scaleX;
+		this.transform._11 = cosAng * scaleY;
+		this.transform._31 = y + pivotY * scaleY;
+		this.transform._32 = z;
 	}
+
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
 		if (!visible) {
 			return;
 		}
-		if(filter!=null)filter.filterStart(this,paintMode,transform);
+		if (filter != null)
+			filter.filterStart(this, paintMode, transform);
 
 		calculateTransform();
 
 		var model = transform.multmat(this.transform);
-		
-	
-		//var model=paintMode.projection.multmat(a);
-		//var model=paintMode.projection;
+
+		// var model=paintMode.projection.multmat(a);
+		// var model=paintMode.projection;
 		var vertexX:FastFloat;
 		var vertexY:FastFloat;
 
@@ -159,92 +160,89 @@ class BasicSprite implements IAnimation implements IRotation {
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
 
+		if (colorTransform) {
+			var painter = GEngine.i.getColorTransformPainter(blend);
+			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			var redMul, blueMul, greenMul, alphaMul:Float;
+			var redAdd, blueAdd, greenAdd, alphaAdd:Float;
+			var buffer = painter.getVertexBuffer();
+			var vertexBufferCounter = painter.getVertexDataCounter();
 
-			if (colorTransform) {
-				var painter = GEngine.i.getColorTransformPainter(blend);
-				checkBatch(paintMode,paintInfo,Std.int(frame.vertexs.length / 2),painter);
-				var redMul, blueMul, greenMul, alphaMul:Float;
-				var redAdd, blueAdd, greenAdd, alphaAdd:Float;
-				var buffer = painter.getVertexBuffer();
-				var vertexBufferCounter = painter.getVertexDataCounter();
-				
-				redMul = this.mulRed;
-				greenMul = this.mulGreen;
-				blueMul = this.mulBlue;
-				alphaMul = this.alpha;
+			redMul = this.mulRed;
+			greenMul = this.mulGreen;
+			blueMul = this.mulBlue;
+			alphaMul = this.alpha;
 
-				redAdd = this.addRed;
-				greenAdd = this.addGreen;
-				blueAdd = this.addBlue;
-				alphaAdd = this.addAlpha;
-				var vertexIndex:Int=0;
-				var uvIndex:Int=0;
-				for (k in 0...4) {
-					vertexX = vertexs[vertexIndex++] - pivotX+offsetX;
-					vertexY = vertexs[vertexIndex++] - pivotY+offsetY;
-					var pos = model.multvec(new FastVector4(vertexX, vertexY,0));
-					writeColorVertex(pos.x, pos.y,pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd,
-						blueAdd, alphaAdd, buffer, vertexBufferCounter);
-						vertexBufferCounter += 13;
-				}
-				
-				painter.setVertexDataCounter(vertexBufferCounter);
-			} else if (alpha!=1) {
-				var painter = GEngine.i.getAlphaPainter(blend);
-				checkBatch(paintMode,paintInfo,Std.int(frame.vertexs.length / 2),painter);
-				var buffer = painter.getVertexBuffer();
-				var vertexBufferCounter = painter.getVertexDataCounter();
-				var vertexIndex:Int=0;
-				var uvIndex:Int=0;
-					for (i in 0...4) {
-						vertexX = vertexs[vertexIndex++] - pivotX+offsetX;
-						vertexY = vertexs[vertexIndex++] - pivotY+offsetY;
-						var pos = model.multvec(new FastVector4(vertexX, vertexY,0));
-						buffer.set(vertexBufferCounter++, pos.x);
-						buffer.set(vertexBufferCounter++, pos.y);
-						buffer.set(vertexBufferCounter++, pos.z);
-						buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-						buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-						buffer.set(vertexBufferCounter++, alpha);
-					}
-				
-				painter.setVertexDataCounter(vertexBufferCounter);
-				
-			} else {
-				var painter = GEngine.i.getSimplePainter(blend);
-				checkBatch(paintMode,paintInfo,Std.int(frame.vertexs.length / 2),painter);
-				var buffer = painter.getVertexBuffer();
-				var vertexBufferCounter = painter.getVertexDataCounter();
-				var vertexIndex:Int=0;
-				var uvIndex:Int=0;
-				for (i in 0...4) {
-					vertexX = vertexs[vertexIndex++] - pivotX+offsetX;
-					vertexY = vertexs[vertexIndex++] - pivotY+offsetY;
-					var pos = model.multvec(new FastVector4(vertexX, vertexY,0));
-					buffer.set(vertexBufferCounter++, pos.x);
-					buffer.set(vertexBufferCounter++, pos.y);
-					buffer.set(vertexBufferCounter++, pos.z);
-					buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-					buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-				}
-				
-				painter.setVertexDataCounter(vertexBufferCounter);
+			redAdd = this.addRed;
+			greenAdd = this.addGreen;
+			blueAdd = this.addBlue;
+			alphaAdd = this.addAlpha;
+			var vertexIndex:Int = 0;
+			var uvIndex:Int = 0;
+			for (k in 0...4) {
+				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
+				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
+				writeColorVertex(pos.x, pos.y, pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
+					buffer, vertexBufferCounter);
+				vertexBufferCounter += 13;
 			}
-			
-		
 
+			painter.setVertexDataCounter(vertexBufferCounter);
+		} else if (alpha != 1) {
+			var painter = GEngine.i.getAlphaPainter(blend);
+			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			var buffer = painter.getVertexBuffer();
+			var vertexBufferCounter = painter.getVertexDataCounter();
+			var vertexIndex:Int = 0;
+			var uvIndex:Int = 0;
+			for (i in 0...4) {
+				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
+				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
+				buffer.set(vertexBufferCounter++, pos.x);
+				buffer.set(vertexBufferCounter++, pos.y);
+				buffer.set(vertexBufferCounter++, pos.z);
+				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+				buffer.set(vertexBufferCounter++, alpha);
+			}
 
-		if(filter!=null)filter.filterEnd(paintMode);
+			painter.setVertexDataCounter(vertexBufferCounter);
+		} else {
+			var painter = GEngine.i.getSimplePainter(blend);
+			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			var buffer = painter.getVertexBuffer();
+			var vertexBufferCounter = painter.getVertexDataCounter();
+			var vertexIndex:Int = 0;
+			var uvIndex:Int = 0;
+			for (i in 0...4) {
+				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
+				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
+				buffer.set(vertexBufferCounter++, pos.x);
+				buffer.set(vertexBufferCounter++, pos.y);
+				buffer.set(vertexBufferCounter++, pos.z);
+				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+			}
+
+			painter.setVertexDataCounter(vertexBufferCounter);
+		}
+
+		if (filter != null)
+			filter.filterEnd(paintMode);
 	}
-	static  function checkBatch(paintMode:PaintMode,paintInfo:PaintInfo,count:Int,painter:IPainter) {
+
+	static function checkBatch(paintMode:PaintMode, paintInfo:PaintInfo, count:Int, painter:IPainter) {
 		if (!paintMode.canBatch(paintInfo, count, painter)) {
 			paintMode.render();
 			paintMode.changePainter(painter, paintInfo);
 		}
 	}
 
-	private static inline function writeColorVertex(x:Float, y:Float, z:Float, u:Float, v:Float, redMul:Float, greenMul:Float, blueMul:Float, alphaMul:Float,
-			redAdd:Float, greenAdd:Float, blueAdd:Float, alphaAdd:Float, buffer:Float32Array, offsetPos:Int) {
+	private static inline function writeColorVertex(x:Float, y:Float, z:Float, u:Float, v:Float, redMul:Float, greenMul:Float, blueMul:Float,
+			alphaMul:Float, redAdd:Float, greenAdd:Float, blueAdd:Float, alphaAdd:Float, buffer:Float32Array, offsetPos:Int) {
 		buffer.set(offsetPos++, x);
 		buffer.set(offsetPos++, y);
 		buffer.set(offsetPos++, z);
@@ -260,7 +258,6 @@ class BasicSprite implements IAnimation implements IRotation {
 		buffer.set(offsetPos++, alphaAdd);
 	}
 
-	
 	public function set_skewX(value:Float):Float {
 		tanSkewX = Math.tan(value);
 		return skewX = value;
@@ -274,7 +271,7 @@ class BasicSprite implements IAnimation implements IRotation {
 	public function removeFromParent() {
 		if (parent != null) {
 			parent.remove(this);
-			parent=null;
+			parent = null;
 		}
 	}
 
@@ -293,67 +290,68 @@ class BasicSprite implements IAnimation implements IRotation {
 		alpha = a;
 		colorTransform = !overrideColorTransform();
 	}
+
 	public function resetColorTransform() {
 		colorAdd();
 		colorMultiplication();
 	}
+
 	private inline function overrideColorTransform():Bool {
-		return mulRed ==1 && mulGreen == 1 && mulBlue ==1 && alpha == 1 &&
-			addRed == 0 && addGreen == 0 && addBlue == 0 && addAlpha == 0;
+		return mulRed == 1 && mulGreen == 1 && mulBlue == 1 && alpha == 1 && addRed == 0 && addGreen == 0 && addBlue == 0 && addAlpha == 0;
 	}
 
 	public function getTransformation():FastMatrix3 {
 		/*var transform = FastMatrix3.translation(x + pivotX + offsetX, y + pivotY + offsetY);
-		transform = transform.multmat(FastMatrix3.scale(scaleX, scaleY));
-		transform = transform.multmat(FastMatrix3.rotation(rotation));
-		return transform;*/
+			transform = transform.multmat(FastMatrix3.scale(scaleX, scaleY));
+			transform = transform.multmat(FastMatrix3.rotation(rotation));
+			return transform; */
 		return null;
 	}
+
 	public function getFinalTransformation():FastMatrix3 {
 		return null;
-		if(parent!=null){
+		if (parent != null) {
 			return parent.getTransformation().multmat(getTransformation());
-		}else{
+		} else {
 			return getTransformation();
 		}
 	}
 
-	public function getDrawArea(area:MinMax,transform:FastMatrix4):Void {
+	public function getDrawArea(area:MinMax, transform:FastMatrix4):Void {
 		calculateTransform();
-		var model=transform.multmat(this.transform);
+		var model = transform.multmat(this.transform);
 		var drawArea = animationData.frames[timeline.currentFrame].drawArea;
-		if(drawArea.maxX!=16){
-			drawArea.minX=drawArea.minX;
+		if (drawArea.maxX != 16) {
+			drawArea.minX = drawArea.minX;
 		}
-		area.mergeVec4(model.multvec(new FastVector4(drawArea.minX- pivotX+offsetX, drawArea.minY- pivotY+offsetY,0)));
-		area.mergeVec4(model.multvec(new FastVector4(drawArea.maxX- pivotX+offsetX, drawArea.minY- pivotY+offsetY,0)));
-		area.mergeVec4(model.multvec(new FastVector4(drawArea.minX- pivotX+offsetX, drawArea.maxY- pivotY+offsetY,0)));
-		area.mergeVec4(model.multvec(new FastVector4(drawArea.maxX- pivotX+offsetX, drawArea.maxY- pivotY+offsetY,0)));
+		area.mergeVec4(model.multvec(new FastVector4(drawArea.minX - pivotX + offsetX, drawArea.minY - pivotY + offsetY, 0)));
+		area.mergeVec4(model.multvec(new FastVector4(drawArea.maxX - pivotX + offsetX, drawArea.minY - pivotY + offsetY, 0)));
+		area.mergeVec4(model.multvec(new FastVector4(drawArea.minX - pivotX + offsetX, drawArea.maxY - pivotY + offsetY, 0)));
+		area.mergeVec4(model.multvec(new FastVector4(drawArea.maxX - pivotX + offsetX, drawArea.maxY - pivotY + offsetY, 0)));
 	}
-
 
 	public function localDrawArea():DrawArea {
 		return animationData.frames[timeline.currentFrame].drawArea;
 	}
+
 	public function width():Float {
 		return animationData.frames[timeline.currentFrame].drawArea.width;
 	}
+
 	public function height():Float {
 		return animationData.frames[timeline.currentFrame].drawArea.height;
 	}
 
 	public function get_smooth():Bool {
-		return textureFilter==LinearFilter;
+		return textureFilter == LinearFilter;
 	}
+
 	public function set_smooth(value:Bool):Bool {
-		if(!value){
-			textureFilter=PointFilter;
-		}else 
-		{
-			textureFilter=LinearFilter;
+		if (!value) {
+			textureFilter = PointFilter;
+		} else {
+			textureFilter = LinearFilter;
 		}
 		return value;
 	}
-
-	
 }

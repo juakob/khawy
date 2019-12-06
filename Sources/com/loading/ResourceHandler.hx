@@ -1,7 +1,5 @@
 package com.loading;
 
-
-interface ResourceHandler 
-{
+interface ResourceHandler {
 	function clear():Void;
 }

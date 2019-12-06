@@ -1,15 +1,14 @@
 package com.gEngine.helper;
+
 import com.gEngine.AnimationData;
 import com.gEngine.DrawArea;
 import com.gEngine.Frame;
 import com.gEngine.display.BasicSprite;
 
-
-class RectangleDisplay extends BasicSprite
-{
+class RectangleDisplay extends BasicSprite {
 	public static var data:AnimationData;
-	public static function init(textureID:Int):Void
-	{
+
+	public static function init(textureID:Int):Void {
 		data = new AnimationData();
 		data.name = "rec?";
 		var frame:Frame = new Frame();
@@ -18,16 +17,14 @@ class RectangleDisplay extends BasicSprite
 		frame.UVs = [0, 0, 1, 0, 0, 1, 1, 1];
 		data.frames = [frame];
 		data.texturesID = textureID;
-		
-		
 	}
+
 	public function new() {
-		animationData=data;
-		super();	
+		animationData = data;
+		super();
 	}
-	
-	public function setColor(r:Int, g:Int, b:Int)
-	{
+
+	public function setColor(r:Int, g:Int, b:Int) {
 		colorMultiplication(r / 255, g / 255, b / 255, 1);
 	}
 }
