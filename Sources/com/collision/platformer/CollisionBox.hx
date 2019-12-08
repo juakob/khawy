@@ -89,138 +89,44 @@ class CollisionBox implements ICollider {
 				colliderPonderation = 0;
 			}
 			if (overlapVsBox(boxCollider)) {
-				var overlapX:Float;
-				var overlapY:Float;
-				if (x < boxCollider.x) {
-					overlapX = boxCollider.x - (x + width);
-					if (y < boxCollider.y) {
-						overlapY = boxCollider.y - (y + height);
-						if (overlapY > overlapX) {
-							if ((collisionAllow & Sides.BOTTOM) > 0 && (boxCollider.collisionAllow & Sides.TOP) > 0) {
-								boxCollider.y -= overlapY * colliderPonderation;
-								y += overlapY * myPonderation;
-								if (boxCollider.velocityY < 0)
-									boxCollider.velocityY = 0;
-								if (velocityY > 0)
-									velocityY = 0;
-								touching |= Sides.BOTTOM;
-								boxCollider.touching |= Sides.TOP;
-								if (notifyCallback != null)
-									notifyCallback(this, boxCollider);
-								return true;
-							}
-						} else {
-							if ((collisionAllow & Sides.RIGHT) > 0 && (boxCollider.collisionAllow & Sides.LEFT) > 0) {
-								boxCollider.x -= overlapX * colliderPonderation;
-								x += overlapX * myPonderation;
-								if (boxCollider.velocityX < 0)
-									boxCollider.velocityX = 0;
-								if (velocityX > 0)
-									velocityX = 0;
-								touching |= Sides.RIGHT;
-								boxCollider.touching |= Sides.LEFT;
-								if (notifyCallback != null)
-									notifyCallback(this, boxCollider);
-								return true;
-							}
-						}
-					} else {
-						overlapY = y - (boxCollider.y + boxCollider.height);
-						if (overlapY > overlapX) {
-							if ((collisionAllow & Sides.TOP) > 0 && (boxCollider.collisionAllow & Sides.BOTTOM) > 0) {
-								boxCollider.y += overlapY * colliderPonderation;
-								y -= overlapY * myPonderation;
-								if (boxCollider.velocityY > 0)
-									boxCollider.velocityY = 0;
-								if (velocityY < 0)
-									velocityY = 0;
-								touching |= Sides.TOP;
-								boxCollider.touching |= Sides.BOTTOM;
-								if (notifyCallback != null)
-									notifyCallback(this, boxCollider);
-								return true;
-							}
-						} else {
-							if ((collisionAllow & Sides.RIGHT) > 0 && (boxCollider.collisionAllow & Sides.LEFT) > 0) {
-								boxCollider.x -= overlapX * colliderPonderation;
-								x += overlapX * myPonderation;
-								if (boxCollider.velocityX < 0)
-									boxCollider.velocityX = 0;
-								if (velocityX > 0)
-									velocityX = 0;
-								touching |= Sides.RIGHT;
-								boxCollider.touching |= Sides.LEFT;
-								if (notifyCallback != null)
-									notifyCallback(this, boxCollider);
-								return true;
-							}
-						}
-					}
-				} else {
-					overlapX = x - (boxCollider.x + boxCollider.width);
-					if (y < boxCollider.y) {
-						overlapY = boxCollider.y - (y + height);
-						if (overlapY > overlapX) {
-							if ((collisionAllow & Sides.BOTTOM) > 0 && (boxCollider.collisionAllow & Sides.TOP) > 0) {
-								boxCollider.y -= overlapY * colliderPonderation;
-								y += overlapY * myPonderation;
-								if (boxCollider.velocityY < 0)
-									boxCollider.velocityY = 0;
-								if (velocityY > 0)
-									velocityY = 0;
-								touching |= Sides.BOTTOM;
-								boxCollider.touching |= Sides.TOP;
-								if (notifyCallback != null)
-									notifyCallback(this, boxCollider);
-								return true;
-							}
-						} else {
-							if ((collisionAllow & Sides.LEFT) > 0 && (boxCollider.collisionAllow & Sides.RIGHT) > 0) {
-								boxCollider.x += overlapX * colliderPonderation;
-								x -= overlapX * myPonderation;
-								if (boxCollider.velocityX > 0)
-									boxCollider.velocityX = 0;
-								if (velocityX < 0)
-									velocityX = 0;
-								touching |= Sides.LEFT;
-								boxCollider.touching |= Sides.RIGHT;
-								if (notifyCallback != null)
-									notifyCallback(this, boxCollider);
-								return true;
-							}
-						}
-					} else {
-						overlapY = y - (boxCollider.y + boxCollider.height);
-						if (overlapY > overlapX) {
-							if ((collisionAllow & Sides.TOP) > 0 && (boxCollider.collisionAllow & Sides.BOTTOM) > 0) {
-								boxCollider.y += overlapY * colliderPonderation;
-								y -= overlapY * myPonderation;
-								if (boxCollider.velocityY > 0)
-									boxCollider.velocityY = 0;
-								if (velocityY < 0)
-									velocityY = 0;
-								touching |= Sides.TOP;
-								boxCollider.touching |= Sides.BOTTOM;
-								if (notifyCallback != null)
-									notifyCallback(this, boxCollider);
-								return true;
-							}
-						} else {
-							if ((collisionAllow & Sides.LEFT) > 0 && (boxCollider.collisionAllow & Sides.RIGHT) > 0) {
-								boxCollider.x += overlapX * colliderPonderation;
-								x -= overlapX * myPonderation;
-								if (boxCollider.velocityX > 0)
-									boxCollider.velocityX = 0;
-								if (velocityX < 0)
-									velocityX = 0;
-								touching |= Sides.LEFT;
-								boxCollider.touching |= Sides.RIGHT;
-								if (notifyCallback != null)
-									notifyCallback(this, boxCollider);
-								return true;
-							}
-						}
-					}
+				var overlapX:Float = width * 0.5 + boxCollider.width * 0.5 - Math.abs((x + width * 0.5) - (boxCollider.x + boxCollider.width * 0.5));
+				var overlapY:Float = height * 0.5 + boxCollider.height * 0.5 - Math.abs((y + height * 0.5) - (boxCollider.y + boxCollider.height * 0.5));
+				var overlapXSmaller:Bool=overlapX<overlapY;
+				var myCollisionNeededX:Int = Sides.LEFT;
+				var colliderNeededX:Int = Sides.RIGHT;
+				var myCollisionNeededY:Int = Sides.TOP;
+				var colliderNeededY:Int = Sides.BOTTOM;
+
+				if ((x + width * 0.5) < (boxCollider.x + boxCollider.width * 0.5)) {
+					myCollisionNeededX = Sides.RIGHT;
+					colliderNeededX = Sides.LEFT;
+					overlapX *= -1;
+				} 
+				
+				if ((y + height * 0.5) < (boxCollider.y + boxCollider.height * 0.5)) {
+					myCollisionNeededY = Sides.BOTTOM;
+					colliderNeededY = Sides.TOP;
+					overlapY *= -1;
+					
+				}
+				if (overlapXSmaller
+					&& (collisionAllow & myCollisionNeededX > 0)
+					&& (boxCollider.collisionAllow & colliderNeededX > 0)) {
+					x += overlapX * myPonderation;
+					boxCollider.x -= overlapX * colliderPonderation;
+					boxCollider.velocityX=0;
+					velocityX=0;
+					touching |= myCollisionNeededX;
+					boxCollider.touching |= colliderNeededX;
+					return true;
+				} else if ((collisionAllow & myCollisionNeededY > 0) && (boxCollider.collisionAllow & colliderNeededY > 0)) {
+					y += overlapY * myPonderation;
+					boxCollider.y -= overlapY * colliderPonderation;
+					boxCollider.velocityY=0;
+					velocityY=0;
+					touching |= myCollisionNeededY;
+					boxCollider.touching |= colliderNeededY;
+					return true;
 				}
 			}
 			return false;
