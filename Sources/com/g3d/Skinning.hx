@@ -7,9 +7,9 @@ class Skinning {
 	private var bones:Array<Bone>;
 	private var matrices:Float32Array;
 
-	public function new(aBones:Array<Bone>) {
-		bones = aBones;
-		matrices = new Float32Array(aBones.length * 16);
+	public function new(bones:Array<Bone>) {
+		this.bones = bones;
+		matrices = new Float32Array(bones.length * 16);
 	}
 
 	public function getBonesTransformations():Float32Array {

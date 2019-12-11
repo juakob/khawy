@@ -12,14 +12,14 @@ class SkeletonLoader {
 		return skeletons;
 	}
 
-	public static function findSkeleton(aNode:Node, skeletons:Array<SkeletonD>, current:Bone) {
+	public static function findSkeleton(node:Node, skeletons:Array<SkeletonD>, current:Bone) {
 		var skeleton:SkeletonD = null;
-		for (node in aNode.children) {
+		for (node in node.children) {
 			if (Std.is(node, BoneNode)) {
 				var boneNode:BoneNode = cast node;
 				if (skeleton == null && current == null) {
 					skeleton = new SkeletonD();
-					skeleton.ID = aNode.ref;
+					skeleton.ID = node.ref;
 					skeletons.push(skeleton);
 				}
 				var bone = createBone(boneNode);

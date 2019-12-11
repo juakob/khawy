@@ -33,29 +33,29 @@ class Bone {
 		return cl;
 	}
 
-	public function addChild(aBone:Bone) {
-		children.push(aBone);
+	public function addChild(bone:Bone) {
+		children.push(bone);
 	}
 
-	public function setFrame(aFrame:Int, transform:FastMatrix4) {
+	public function setFrame(frame:Int, transform:FastMatrix4) {
 		if (!animated) {
 			finalTransform = bindTransform;
 		} else {
-			matrixFromArray(animations, aFrame * 16, finalTransform);
+			matrixFromArray(animations, frame * 16, finalTransform);
 		}
 		var toPass:FastMatrix4 = transform.multmat(finalTransform);
 		finalTransform = toPass.multmat(bindTransform.inverse());
 
 		for (child in children) {
-			child.setFrame(aFrame, toPass);
+			child.setFrame(frame, toPass);
 		}
 	}
 
-	public function getBone(aId:String):Bone {
+	public function getBone(id:String):Bone {
 		for (child in children) {
-			if (child.id == aId)
+			if (child.id == id)
 				return child;
-			var result = child.getBone(aId);
+			var result = child.getBone(id);
 			if (result != null)
 				return result;
 		}

@@ -12,9 +12,9 @@ class SkeletonD {
 		bones = new Array();
 	}
 
-	public function setFrame(aFrame:Int) {
+	public function setFrame(frame:Int) {
 		for (child in bones) {
-			child.setFrame(aFrame, transformation);
+			child.setFrame(frame, transformation);
 		}
 	}
 
@@ -24,11 +24,11 @@ class SkeletonD {
 		return Std.int(bones[0].animations.length / 16);
 	}
 
-	public function getBone(aId:String):Bone {
+	public function getBone(id:String):Bone {
 		for (child in bones) {
-			if (child.id == aId)
+			if (child.id == id)
 				return child;
-			var result = child.getBone(aId);
+			var result = child.getBone(id);
 			if (result != null)
 				return result;
 		}

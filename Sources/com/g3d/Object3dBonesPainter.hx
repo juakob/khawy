@@ -145,7 +145,7 @@ class Object3dBonesPainter implements IPainter {
 		return true;
 	}
 
-	public function adjustRenderArea(aArea:MinMax):Void {}
+	public function adjustRenderArea(area:MinMax):Void {}
 
 	public function resetRenderArea():Void {}
 
@@ -157,7 +157,7 @@ class Object3dBonesPainter implements IPainter {
 		return 0;
 	}
 
-	public function setVertexDataCounter(aData:Int):Void {}
+	public function setVertexDataCounter(data:Int):Void {}
 
 	public function setProjection(proj:FastMatrix4) {
 		projection = proj;

@@ -13,20 +13,20 @@ import kha.Image;
 import kha.Assets;
 
 class MeshExtractor {
-	public static function extract(aData:OgexData, aSkeletons:Array<SkeletonD>):Array<Object3dData> {
+	public static function extract(data:OgexData, skeletons:Array<SkeletonD>):Array<Object3dData> {
 		var structure = new VertexStructure();
 		structure.add('pos', VertexData.Float3);
 		structure.add('normal', VertexData.Float3);
 		structure.add('uv', VertexData.Float2);
-		if (aSkeletons != null && aSkeletons.length != 0) {
+		if (skeletons != null && skeletons.length != 0) {
 			structure.add('weights', VertexData.Float4);
 			structure.add('boneIndex', VertexData.Float4);
 		}
 		var result = new Array<Object3dData>();
-		for (node in aData.children) {
+		for (node in data.children) {
 			if (Std.is(node, GeometryNode)) {} else if (Std.is(node, BoneNode)) {}
 		}
-		var geometries = aData.geometryObjects;
+		var geometries = data.geometryObjects;
 		for (geomtry in geometries) {
 			var vertices = geomtry.mesh.vertexArrays[0].values;
 			var normals = geomtry.mesh.vertexArrays[1].values;
@@ -34,8 +34,8 @@ class MeshExtractor {
 			var indices = geomtry.mesh.indexArray.values;
 			var skin = geomtry.mesh.skin;
 			var textureName = null;
-			for (child in aData.children) {
-				textureName = getTextureName(child, aData, geomtry.ref);
+			for (child in data.children) {
+				textureName = getTextureName(child, data, geomtry.ref);
 				if (textureName != null)
 					break;
 			}
@@ -48,7 +48,7 @@ class MeshExtractor {
 
 			var boneIndexs = new Array<Int>();
 			var boneWeight = new Array<Float>();
-			if (aSkeletons != null && aSkeletons.length != 0) {
+			if (skeletons != null && skeletons.length != 0) {
 				var counter:Int = 0;
 				for (numAffectingBones in skin.boneCountArray.values) {
 					for (i in 0...numAffectingBones) {
@@ -68,7 +68,7 @@ class MeshExtractor {
 
 			var vertexBuffer = new VertexBuffer(vertices.length, structure, Usage.StaticUsage);
 			var buffer = vertexBuffer.lock();
-			if (aSkeletons != null && aSkeletons.length != 0) {
+			if (skeletons != null && skeletons.length != 0) {
 				for (i in 0...Std.int(vertices.length / 3)) {
 					buffer.set(i * 16 + 0, vertices[i * 3 + 0]);
 					buffer.set(i * 16 + 1, vertices[i * 3 + 1]);
@@ -109,12 +109,12 @@ class MeshExtractor {
 			indexBuffer.unlock();
 			var object3dData = new Object3dData();
 
-			if (aSkeletons != null && aSkeletons.length != 0) {
+			if (skeletons != null && skeletons.length != 0) {
 				var bones:Array<Bone> = new Array();
 				var skeleton = skin.skeleton;
 				var bonesNames = skeleton.boneRefArray.refs;
 				for (name in bonesNames) {
-					for (sk in aSkeletons) {
+					for (sk in skeletons) {
 						var bone = sk.getBone(name);
 						if (bone != null) {
 							bones.push(bone);
@@ -136,18 +136,18 @@ class MeshExtractor {
 			object3dData.vertexBuffer = vertexBuffer;
 			object3dData.indexBuffer = indexBuffer;
 
-			object3dData.animated = (aSkeletons != null && aSkeletons.length != 0);
+			object3dData.animated = (skeletons != null && skeletons.length != 0);
 			object3dData.texture = texture;
 			result.push(object3dData);
 		}
 		return result;
 	}
 
-	static function getTextureName(aNode:Node, aData:OgexData, aRef:String):String {
-		if (Std.is(aNode, GeometryNode)) {
-			var gNode:GeometryNode = cast aNode;
-			if (aRef == gNode.objectRefs[0]) {
-				var material = aData.getMaterial(gNode.materialRefs[0]);
+	static function getTextureName(node:Node, data:OgexData, ref:String):String {
+		if (Std.is(node, GeometryNode)) {
+			var gNode:GeometryNode = cast node;
+			if (ref == gNode.objectRefs[0]) {
+				var material = data.getMaterial(gNode.materialRefs[0]);
 				if (material.texture.length == 0)
 					return "";
 				var path = material.texture[0].path;
@@ -158,8 +158,8 @@ class MeshExtractor {
 				return ss.split(".")[0];
 			}
 		}
-		for (node in aNode.children) {
-			var name = getTextureName(node, aData, aRef);
+		for (node in node.children) {
+			var name = getTextureName(node, data, ref);
 			if (name != null)
 				return name;
 		}
