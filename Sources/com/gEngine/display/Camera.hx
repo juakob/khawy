@@ -83,8 +83,6 @@ class Camera extends Layer {
 	}
 
 	function setOrthogonalProjection(width:Float, height:Float) {
-		// width=width*GEngine.i.oversample;
-		// height=height*GEngine.i.oversample;
 		if (kha.Image.renderTargetsInvertedY()) {
 			orthogonal = FastMatrix4.scale(1, -1, 1).multmat(FastMatrix4.orthogonalProjection(0, width, height, 0, 0, 5000));
 		} else {

@@ -46,14 +46,14 @@ class Layer implements IDraw implements IContainer {
 		this.transform = FastMatrix4.identity();
 	}
 
-	function calculateTransform(transform:FastMatrix4) {
-		var scale = FastMatrix4.scale(scaleX, scaleY, 1).multmat(FastMatrix4.translation(-pivotX, -pivotY, 0));
-		var rotation = new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1);
-		var translation = FastMatrix4.translation(x, y, z);
-		var model = transform.multmat(translation.multmat(scale).multmat(rotation));
+	inline function calculateTransform(transform:FastMatrix4) {
+		var model = FastMatrix4.translation(-pivotX, -pivotY, 0);
+		model = model.multmat(FastMatrix4.scale(scaleX, scaleY, 1));
+		model = model.multmat(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1));
+		model = model.multmat(FastMatrix4.translation(x, y, z));
 		model._30 *= paralaxX;
 		model._31 *= paralaxY;
-		this.transform.setFrom(model);
+		this.transform.setFrom(model.multmat(transform));
 	}
 
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
@@ -162,7 +162,7 @@ class Layer implements IDraw implements IContainer {
 		haxe.ds.ArraySort.sort(children, functionSort);
 	}
 
-	public function getTransformation():FastMatrix3 {
+	inline public function getTransformation():FastMatrix3 {
 		var transform = FastMatrix3.translation(-pivotX, -pivotY);
 		transform = transform.multmat(FastMatrix3.scale(scaleX, scaleY));
 		transform = transform.multmat(new FastMatrix3(cosAng, -sinAng, 0, sinAng, cosAng, 0, 0, 0, 1));
