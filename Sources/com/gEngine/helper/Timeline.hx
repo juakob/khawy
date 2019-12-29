@@ -140,8 +140,8 @@ class Timeline {
 
 	public function playAnimation(animation:String, loop:Bool = true, force:Bool = false, prefixCharIgnore:String = null):Void {
 		var firstAnimationFrame:Int = labelFrame(animation).frame;
+		this.loop = loop;
 		if ((currentAnimation != animation || force || !playing) && firstAnimationFrame != -1) {
-			this.loop = loop;
 			currentAnimation = animation;
 			firstFrame = firstAnimationFrame;
 			lastFrame = prefixCharIgnore == null ? labelEnd(currentAnimation) : labelEndEvent(animation, prefixCharIgnore);

@@ -152,7 +152,7 @@ class Camera extends Layer {
 	}
 
 	public inline function worldToCameraX(x:Float):Float {
-		return ((x - this.x) -width / 2) * scaleX + width / 2;
+		return ((x + this.x) -width / 2) * scaleX + width / 2;
 	}
 
 	public inline function worldToCameraY(y:Float):Float {
@@ -160,11 +160,11 @@ class Camera extends Layer {
 	}
 
 	public inline function screenToWorldX(x:Float):Float {
-		return (x - width / 2) * 1 / scaleX + width / 2 + this.x;
+		return (x - width / 2) * 1 / scaleX + width / 2 - this.x;
 	}
 
 	public inline function screenToWorldY(y:Float):Float {
-		return ((y - height / 2) * 1 / scaleY + height / 2) * angleInverse + this.y;
+		return ((y - height / 2) * 1 / scaleY + height / 2)  + this.y;
 	}
 
 	override function destroy() {
@@ -177,8 +177,8 @@ class Camera extends Layer {
 	override public function update(dt:Float):Void {
 		var deltaX:Float = this.x - targetPos.x;
 		var deltaY:Float = this.y - targetPos.y;
-		this.x = this.x - deltaX * 0.2;
-		this.y = this.y - deltaY * 0.2;
+		this.x = targetPos.x;
+		this.y = targetPos.y;
 		if (deltaX * deltaX + deltaY * deltaY > maxSeparationFromTarget * maxSeparationFromTarget) {
 			var length:Float = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 			this.x = targetPos.x + (deltaX / length) * maxSeparationFromTarget;
@@ -216,11 +216,11 @@ class Camera extends Layer {
 	}
 
 	public inline function cameraCenterX():Float {
-		return this.x + width * 0.5 * scale;
+		return screenToWorldX(width*0.5);
 	}
 
 	public inline function cameraCenterY():Float {
-		return this.y + height * 0.5 * scale;
+		return screenToWorldY(height*0.5);
 	}
 
 	private function adjustToLimits():Void {
