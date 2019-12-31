@@ -51,9 +51,9 @@ class Layer implements IDraw implements IContainer {
 		model = model.multmat(FastMatrix4.scale(scaleX, scaleY, 1));
 		model = model.multmat(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1));
 		model = model.multmat(FastMatrix4.translation(x, y, z));
-		model._30 *= paralaxX;
-		model._31 *= paralaxY;
 		this.transform.setFrom(model.multmat(transform));
+		this.transform._30 *= paralaxX;
+		this.transform._31 *= paralaxY;
 	}
 
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {

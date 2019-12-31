@@ -15,8 +15,7 @@ class Camera extends Layer {
 	private var targetPos:FastPoint;
 
 	public var min:FastPoint;
-
-	private var max:FastPoint;
+	public var max:FastPoint;
 
 	public var width(default, null):Int;
 	public var height(default, null):Int;
