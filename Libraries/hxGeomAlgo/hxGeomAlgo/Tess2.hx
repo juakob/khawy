@@ -435,6 +435,16 @@ private class TessMesh
     this.eHead = e;			/* dummy header for edge list */
     this.eHeadSym = eSym;	/* and its symmetric counterpart */
   }
+  public function tessMeshDelete( ) {
+    while(fHead.next!=fHead){
+      zapFace(fHead.next);
+    }
+    ///var halfEdge = eHead;
+    while(eHead.next!=eHead){
+      delete(eHead.next);
+    }
+    
+  }
   
   /* The mesh operations below have three motivations: completeness,
   * convenience, and efficiency.  The basic mesh operations are MakeEdge,
@@ -644,6 +654,9 @@ private class TessMesh
     /* delete from circular doubly-linked list */
     var eNext = eDel.next;
     var ePrev = eDel.Sym.next;
+    eDel.activeRegion=null;
+    eDel.next=null;
+    eDel.Sym.next=null;
     eNext.Sym.next = ePrev;
     ePrev.Sym.next = eNext;
   }
@@ -664,6 +677,8 @@ private class TessMesh
     /* delete from circular doubly-linked list */
     var vPrev = vDel.prev;
     var vNext = vDel.next;
+    vDel.prev=null;
+    vDel.next=null;
     vNext.prev = vPrev;
     vPrev.next = vNext;
   }
@@ -685,6 +700,10 @@ private class TessMesh
     /* delete from circular doubly-linked list */
     var fPrev = fDel.prev;
     var fNext = fDel.next;
+    fDel.prev=null;
+    fDel.next=null;
+    fDel.anEdge=null;
+    fDel.trail=null;
     fNext.prev = fPrev;
     fPrev.next = fNext;
   }

@@ -199,9 +199,9 @@ class Painter implements IPainter {
 	}
 
 	public function destroy():Void {
-		//	vertexBuffer.delete();
-		//	indexBuffer.delete();
-		//	pipeline.delete();
+			vertexBuffer.delete();
+			indexBuffer.delete();
+			pipeline.delete();
 	}
 
 	public function adjustRenderArea(area:MinMax):Void {}

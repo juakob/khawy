@@ -1,5 +1,6 @@
 package com.loading.basicResources;
 
+import kha.graphics4.PipelineState;
 import kha.graphics4.MipMapFilter;
 import kha.graphics4.TextureFilter;
 import kha.graphics4.TextureAddressing;
@@ -34,20 +35,22 @@ class FontLoader extends TilesheetLoader {
 		fromKhaFont();
 		callback();
 	}
-
+	var tex:Image;
+	static var pipeline:PipelineState;
 	private function fromKhaFont() {
 		var font:Font = Reflect.field(kha.Assets.fonts, imageName);
 		var kravurImage = font._get(size);
-		var tex = kravurImage.getTexture();
+		tex = kravurImage.getTexture();
 		animation = new com.gEngine.FontData(size);
 		var frames:Array<Frame> = new Array();
 		var labels:Array<Label> = new Array();
 		bitmaps = new Array();
 		var bakedQuadCache = new kha.Kravur.AlignedQuad();
 		var counter:Int = 0;
-		var pipeline = Graphics2.createTextPipeline(Graphics2.createTextVertexStructure());
-
-		pipeline.compile();
+		if(pipeline==null) {
+			pipeline = Graphics2.createTextPipeline(Graphics2.createTextVertexStructure());
+			pipeline.compile();
+		}
 		while (true) {
 			var q = kravurImage.getBakedQuad(bakedQuadCache, counter, 0, 0);
 			if (q != null) {
@@ -77,6 +80,10 @@ class FontLoader extends TilesheetLoader {
 		animation.name = imageName;
 		animation.labels = labels;
 		SpriteSheetDB.i.add(animation);
+	}
+	override function update(atlasId:Int) {
+		super.update(atlasId);
+		tex.unload();
 	}
 
 	override function unload() {}

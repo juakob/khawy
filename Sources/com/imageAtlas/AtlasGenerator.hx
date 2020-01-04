@@ -41,8 +41,8 @@ class AtlasGenerator {
 		}
 		g.end();
 		// hack for electron bug
-		var img = Image.createRenderTarget(1, 1);
-		img.unload();
+		//var img = Image.createRenderTarget(1, 1);
+		//img.unload();
 
 		atlasImage.generateMipmaps(4);
 		return atlasImage;

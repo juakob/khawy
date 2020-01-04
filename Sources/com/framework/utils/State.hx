@@ -75,6 +75,10 @@ class State extends Entity {
 		if (resources != null) {
 			resources.unload();
 		}
+
+		while(subStates.length>0){
+			removeSubState(subStates[0]);
+		}
 		stage.destroy();
 		if (parentState != null) {
 			parentState.removeSubState(this);

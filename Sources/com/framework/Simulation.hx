@@ -100,7 +100,7 @@ class Simulation {
 		mLastFrameTime = time;
 		if (!isPause) {
 			TimeManager.setDelta(mFrameByFrameTime, Scheduler.realTime());
-			update(1 / 60);
+			update(mFrameByFrameTime);
 		}
 		if (requestChangeState) {
 			requestChangeState = false;
@@ -136,7 +136,6 @@ class Simulation {
 	private function update(dt:Float):Void {
 		if (!initialized)
 			return;
-		var tt = TimeManager.multiplier;
 		var fullIterations = Math.floor(TimeManager.multiplier + iterationRest);
 		for (i in 0...fullIterations) {
 			currentState.update(dt);

@@ -153,11 +153,13 @@ class VirtualGamepad {
 	}
 
 	function onKeyDown(key:KeyCode) {
+		if(!keyButton.exists(key))return;
 		var id = keyButton.get(key);
 		onButtonChange(id, 1);
 	}
 
 	function onKeyUp(key:KeyCode) {
+		if(!keyButton.exists(key))return;
 		var id = keyButton.get(key);
 		onButtonChange(id, 0);
 	}
