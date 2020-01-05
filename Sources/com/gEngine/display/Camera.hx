@@ -1,5 +1,6 @@
 package com.gEngine.display;
 
+import com.framework.utils.Perlin;
 import kha.graphics4.TextureFilter;
 import kha.graphics1.Graphics4;
 import com.g3d.OgexData.Color;
@@ -23,12 +24,13 @@ class Camera extends Layer {
 	public var angle:Float = 1;
 	public var angleInverse:Float = 1;
 
-	private var time:Float;
-	private var maxShakeX:Float;
-	private var maxShakeY:Float;
-	private var totalTime:Float;
-	private var shakeInterval:Float = 0;
-	private var lastShake:Float = 0;
+	var time:Float=0;
+	var maxShakeX:Float;
+	var maxShakeY:Float;
+	var shakeRotation:Float;
+	var totalTime:Float;
+	var shakeInterval:Float = 0;
+	var lastShake:Float = 0;
 
 	public var smooth(get, set):Bool;
 	public var autoCrop:Bool;
@@ -46,6 +48,10 @@ class Camera extends Layer {
 	public var onPreRender:Camera->FastMatrix4->Void;
 	public var renderTarget:Int = -1;
 	public var postProcess:Painter = null;
+
+	var shakeX:Float=0;
+	var shakeY:Float=0;
+	var perlin:Perlin;
 
 	var textureFilter:TextureFilter = TextureFilter.LinearFilter;
 
@@ -68,6 +74,7 @@ class Camera extends Layer {
 		renderTarget = GEngine.i.getRenderTarget(width, height);
 		setOrthogonalProjection(width, height);
 		projection = orthogonal;
+		perlin=new Perlin(1);
 	}
 
 	public function updateView() {
@@ -144,10 +151,14 @@ class Camera extends Layer {
 	public function setTarget(x:Float, y:Float):Void {
 		targetPos.setTo(-x + width * 0.5, -y + height * 0.5);
 	}
+	public function move(deltaX:Float, deltaY:Float):Void {
+		targetPos.x += deltaX;
+		targetPos.y += deltaY ;
+	}
 
 	public function goTo(x:Float, y:Float):Void {
-		x = x - width * 0.5;
-		y = y - height * 0.5 * angleInverse;
+		this.x = x - width * 0.5;
+		this.y = y - height * 0.5 ;
 	}
 
 	public inline function worldToCameraX(x:Float):Float {
@@ -178,26 +189,26 @@ class Camera extends Layer {
 		var deltaY:Float = this.y - targetPos.y;
 		this.x = targetPos.x;
 		this.y = targetPos.y;
-		if (deltaX * deltaX + deltaY * deltaY > maxSeparationFromTarget * maxSeparationFromTarget) {
-			var length:Float = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
-			this.x = targetPos.x + (deltaX / length) * maxSeparationFromTarget;
-			this.y = targetPos.y + (deltaY / length) * maxSeparationFromTarget;
-		}
-
+		//if (deltaX * deltaX + deltaY * deltaY > maxSeparationFromTarget * maxSeparationFromTarget) {
+		//	var length:Float = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+		//	this.x = targetPos.x + (deltaX / length) * maxSeparationFromTarget;
+		//	this.y = targetPos.y + (deltaY / length) * maxSeparationFromTarget;
+		//}
+		shakeX = 0;
+		shakeY = 0;
 		adjustToLimits();
 		if (time > 0) {
 			time -= dt;
-			lastShake += dt;
-			if (lastShake >= shakeInterval) {
-				lastShake = 0;
-				var s:Float = time / totalTime;
-
-				var shakeX = maxShakeX * s;
-				var shakeY = maxShakeY * s;
-				this.x += shakeX - Math.random() * shakeX * 2;
-				this.y += shakeY - Math.random() * shakeY * 2;
-			}
+		
+				var s=time/totalTime;
+				shakeX = maxShakeX-perlin.OctavePerlin(time*s,time,time, 8, s,s)* maxShakeX*2  ;
+				shakeY = maxShakeY-perlin.OctavePerlin(-time,-time,-time, 8, s, s)* maxShakeY*2 ;
+				this.rotation=shakeRotation-2*shakeRotation*perlin.OctavePerlin(time,time,time, 8, s, s);
+				
+			
 		}
+		this.x+=shakeX;
+		this.y+=shakeY;
 	}
 
 	public function isVisible(x:Float, y:Float, radio:Float = 0):Bool {
@@ -240,13 +251,17 @@ class Camera extends Layer {
 		}
 	}
 
-	public function shake(time:Float = -1, maxX:Float = 10, maxY:Float = 10, shakeInterval:Float = 0.1):Void {
+	public function shake(time:Float = -1, maxX:Float = 10, maxY:Float = 10, rotation:Float=0, shakeInterval:Float = 0.1):Void {
 		this.time = totalTime = time;
-		if (this.time < 0) {
-			this.time = Math.POSITIVE_INFINITY;
+		if (time < 0) {
+			this.time = 100000;
+			totalTime =1;
 		}
+		
+		shakeRotation = rotation;
 		maxShakeX = maxX;
 		maxShakeY = maxY;
+
 		this.shakeInterval = shakeInterval;
 	}
 

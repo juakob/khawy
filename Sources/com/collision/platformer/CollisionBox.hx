@@ -15,7 +15,7 @@ class CollisionBox implements ICollider {
 	public var accelerationY:Float = 0;
 	public var dragX:Float = 1;
 	public var dragY:Float = 1;
-	public var Static:Bool = false;
+	public var staticObject:Bool = false;
 	public var maxVelocityX:Float = Math.POSITIVE_INFINITY;
 	public var maxVelocityY:Float = Math.POSITIVE_INFINITY;
 	public var touching:Int = Sides.NONE;
@@ -81,10 +81,10 @@ class CollisionBox implements ICollider {
 			var boxCollider:CollisionBox = cast collider;
 			var myPonderation:Float = 0.5;
 			var colliderPonderation:Float = 0.5;
-			if (Static) {
+			if (staticObject) {
 				myPonderation = 0;
 				colliderPonderation = 1;
-			} else if (boxCollider.Static) {
+			} else if (boxCollider.staticObject) {
 				myPonderation = 1;
 				colliderPonderation = 0;
 			}
@@ -120,12 +120,20 @@ class CollisionBox implements ICollider {
 					boxCollider.touching |= colliderNeededX;
 					return true;
 				} else if ((collisionAllow & myCollisionNeededY > 0) && (boxCollider.collisionAllow & colliderNeededY > 0)) {
-					y += overlapY * myPonderation;
+					if(velocityY*overlapY>0){ //dot product to se direction
+						y += overlapY * myPonderation;
+						velocityY=0;
+					}
+					if(boxCollider.velocityY*overlapY>0){ //dot product to se direction
 					boxCollider.y -= overlapY * colliderPonderation;
 					boxCollider.velocityY=0;
-					velocityY=0;
+					}
+					
 					touching |= myCollisionNeededY;
 					boxCollider.touching |= colliderNeededY;
+					if(notifyCallback!=null){
+						notifyCallback(this,collider);
+					}
 					return true;
 				}
 			}
