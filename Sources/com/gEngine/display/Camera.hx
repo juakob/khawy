@@ -201,9 +201,9 @@ class Camera extends Layer {
 			time -= dt;
 		
 				var s=time/totalTime;
-				shakeX = maxShakeX-perlin.OctavePerlin(time*s,time,time, 8, s,s)* maxShakeX*2  ;
-				shakeY = maxShakeY-perlin.OctavePerlin(-time,-time,-time, 8, s, s)* maxShakeY*2 ;
-				this.rotation=shakeRotation-2*shakeRotation*perlin.OctavePerlin(time,time,time, 8, s, s);
+				shakeX = maxShakeX-perlin.OctavePerlin(time*s,time,time, 8, s,shakeInterval)* maxShakeX*2  ;
+				shakeY = maxShakeY-perlin.OctavePerlin(-time,-time,-time, 8, s, shakeInterval)* maxShakeY*2 ;
+				this.rotation=shakeRotation-2*shakeRotation*perlin.OctavePerlin(time,time,time, 8, s, shakeInterval);
 				
 			
 		}

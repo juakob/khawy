@@ -12,13 +12,10 @@ import kha.Kravur.KravurImage;
 class Text extends Layer {
 	private var mLetters:Array<BasicSprite>;
 
-	public var spaceSeparation:Float = 10;
 	public var mType:String;
-	public var separation:Float;
-	public var heigthSeparation:Float;
 	public var text(default, set):String;
-	public var letterWidth:Float = 20;
 	public var fontSize:Int = 0;
+
 
 	var sourceFontSize:Int = 0;
 
