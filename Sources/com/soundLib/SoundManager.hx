@@ -13,8 +13,8 @@ class SoundManager {
 	private static var musicName:String;
 	private static var musicPosition:Float = 0;
 	//
-	private static var soundMuted(default, null):Bool = false;
-	private static var musicMuted(default, null):Bool = false;
+	public static var soundMuted(default, null):Bool = false;
+	public static var musicMuted(default, null):Bool = false;
 	public static var initied:Bool;
 
 	public static function init():Void {

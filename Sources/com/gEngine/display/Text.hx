@@ -34,6 +34,7 @@ class Text extends Layer {
 	}
 
 	public function set_text(aText:String):String {
+		if(text==aText)return text;
 		text = aText;
 		var counter:Int = 0;
 		var displayLetter:BasicSprite;
