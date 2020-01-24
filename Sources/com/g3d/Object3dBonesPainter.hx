@@ -118,8 +118,9 @@ class Object3dBonesPainter implements IPainter {
 		g4.drawIndexedVertices();
 		if (cropArea != null)
 			g4.disableScissor();
-
+		#if debugInfo
 		++GEngine.drawCount;
+		#end
 	}
 
 	function setParameters(g4:Graphics) {

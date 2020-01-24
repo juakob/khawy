@@ -17,7 +17,7 @@ class Object3d implements IAnimation {
 	public var z:FastFloat = 0;
 	public var offsetX:FastFloat = 1;
 	public var offsetY:FastFloat = 1;
-	public var rotation(default, set):Float;
+	public var rotation(default, set):Float=0;
 	public var scaleX:FastFloat = 1;
 	public var scaleY:FastFloat = 1;
 	public var scaleZ:FastFloat = 1;
