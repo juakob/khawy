@@ -31,7 +31,7 @@ class Blend {
 		var blend:Blend = new Blend();
 		blend.blendSource = BlendingFactor.DestinationColor;
 		blend.blendDestination = BlendingFactor.InverseSourceAlpha;
-		blend.alphaBlendSource = BlendingFactor.BlendOne;
+		blend.alphaBlendSource = BlendingFactor.DestinationAlpha;
 		blend.alphaBlendDestination = BlendingFactor.InverseSourceAlpha;
 		return blend;
 	}

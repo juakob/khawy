@@ -49,15 +49,15 @@ class Layer implements IDraw implements IContainer {
 
 	inline function calculateTransform(transform:FastMatrix4) {
 		var model = FastMatrix4.translation(-pivotX, -pivotY, 0);
-		model.setFrom(model.multmat(FastMatrix4.scale(scaleX, scaleY, 1)));
+		model.setFrom((FastMatrix4.scale(scaleX, scaleY, 1)).multmat(model));
 		if(billboard){
 			var rotation=transform.inverse();
 			rotation._30=rotation._31=rotation._32=0;
-			model.setFrom(model.multmat(rotation));
+			model.setFrom(rotation.multmat(model));
 		}else{
-			model.setFrom(model.multmat(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)));
+			model.setFrom(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).multmat(model));
 		}
-		model.setFrom(model.multmat(FastMatrix4.translation(x, y, z)));
+		model.setFrom(FastMatrix4.translation(x, y, z).multmat(model));
 		this.transform.setFrom(transform.multmat(model));
 		this.transform._30 *= paralaxX;
 		this.transform._31 *= paralaxY;
