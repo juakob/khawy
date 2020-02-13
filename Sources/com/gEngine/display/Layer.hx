@@ -39,6 +39,20 @@ class Layer implements IDraw implements IContainer {
 	var transform:FastMatrix4;
 	public var billboard:Bool=false;
 
+	var colorTransform:Bool=false;
+	var mulR:Float = 1;
+	var mulG:Float = 1;
+	var mulB:Float = 1;
+	var mulA:Float = 1;
+
+	public function setColorMultiply(r:Float, g:Float, b:Float, a:Float) {
+		this.mulR = r;
+		this.mulB = b;
+		this.mulG = g;
+		this.mulA = a;
+		colorTransform=true;
+	}
+
 	public function new() {
 		children = new Array();
 		rotation = 0;
@@ -68,6 +82,16 @@ class Layer implements IDraw implements IContainer {
 		if (!visible) {
 			return;
 		}
+		var oldMulR=paintMode.mulR;
+		var oldMulG=paintMode.mulG;
+		var oldMulB=paintMode.mulB;
+		var oldMulA=paintMode.mulA;
+
+		paintMode.mulR = mulR;
+		paintMode.mulG = mulG;
+		paintMode.mulB = mulB;
+		paintMode.mulA = mulA;
+		paintMode.colorTransform=true;
 
 		if (drawArea != null) {
 			paintMode.render();
@@ -88,6 +112,10 @@ class Layer implements IDraw implements IContainer {
 			paintMode.render();
 			paintMode.resetRenderArea();
 		}
+		paintMode.mulR = oldMulR;
+		paintMode.mulG = oldMulG;
+		paintMode.mulB = oldMulB;
+		paintMode.mulA = oldMulA;
 	}
 
 	var drawAreaTemp:MinMax = new MinMax();

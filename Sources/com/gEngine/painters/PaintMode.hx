@@ -20,6 +20,13 @@ class PaintMode {
 	public var targetHeight:Int;
 	public var buffer:Int;
 
+	public var mulR:Float = 1;
+	public var mulG:Float = 1;
+	public var mulB:Float = 1;
+	public var mulA:Float = 1;
+
+	public var colorTransform:Bool;
+
 	public function new() {
 		renderArea = new Array();
 		renderAreaUnion = new MinMax();
