@@ -35,7 +35,7 @@ class CollisionTileMap implements ICollider {
 		helperTile = new CollisionBox();
 		helperTile.width = aTileWidth;
 		helperTile.height = aTileHeight;
-		helperTile.Static = true;
+		helperTile.staticObject = true;
 		edges = new Array();
 		for (i in 0...tiles.length) {
 			edges.push(0);
