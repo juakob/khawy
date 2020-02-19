@@ -160,7 +160,7 @@ class BasicSprite implements IAnimation implements IRotation {
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
 
-		if (colorTransform) {
+		if (colorTransform||paintMode.colorTransform) {
 			var painter = GEngine.i.getColorTransformPainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
 			var redMul, blueMul, greenMul, alphaMul:Float;
@@ -168,10 +168,11 @@ class BasicSprite implements IAnimation implements IRotation {
 			var buffer = painter.getVertexBuffer();
 			var vertexBufferCounter = painter.getVertexDataCounter();
 
-			redMul = this.mulRed;
-			greenMul = this.mulGreen;
-			blueMul = this.mulBlue;
-			alphaMul = this.alpha;
+			redMul = this.mulRed*paintMode.mulR;
+			greenMul = this.mulGreen*paintMode.mulG;
+			blueMul = this.mulBlue*paintMode.mulB;
+			alphaMul = this.alpha*paintMode.mulA;
+			
 
 			redAdd = this.addRed;
 			greenAdd = this.addGreen;
