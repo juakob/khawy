@@ -83,7 +83,6 @@ class FontLoader extends TilesheetLoader {
 	}
 	override function update(atlasId:Int) {
 		super.update(atlasId);
-		tex.unload();
 	}
 
 	override function unload() {}
