@@ -40,6 +40,7 @@ class State extends Entity {
 		stage.removeSubStage(state.stage);
 		state.parentState = null;
 		state.die();
+		state.destroy();
 	}
 
 	public function initSubState(state:State) {
@@ -87,7 +88,11 @@ class State extends Entity {
 	}
 
 	override function update(dt:Float) {
-		super.update(TimeManager.delta * timeScale);
+		var dt=TimeManager.delta * timeScale;
+		super.update(dt);
+		for(state in subStates){
+			state.update(dt);
+		}
 	}
 
 	public function set_timeScale(scale:Float):Float {

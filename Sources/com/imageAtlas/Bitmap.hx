@@ -17,6 +17,7 @@ class Bitmap {
 	public var minUV:Point = new Point(0, 0);
 	public var maxUV:Point = new Point(1, 1);
 	public var specialPipeline:PipelineState = null;
+	public var hasMipMap:Bool=false;
 
 	public function new() {}
 }

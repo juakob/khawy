@@ -91,11 +91,18 @@ class Input {
 	function onTouchMove(id:Int, x:Int, y:Int) {
 		touchPos[id * 2] = x;
 		touchPos[id * 2 + 1] = y;
+		if(id==0){
+			mousePosition.setTo(x,y);
+		}
 	}
 
 	function onTouchEnd(id:Int, x:Int, y:Int) {
 		touchActive.remove(id);
 		--activeTouchSpots;
+		if(id==0){
+			mousePosition.setTo(x,y);
+			mouseIsDown=false;
+		}
 	}
 
 	function onTouchStart(id:Int, x:Int, y:Int) {
@@ -103,6 +110,10 @@ class Input {
 		touchActive.push(id);
 		touchPos[id * 2] = x;
 		touchPos[id * 2 + 1] = y;
+		if(id==0){
+			mousePosition.setTo(x,y);
+			mouseIsDown=true;
+		}
 	}
 
 	function onMouseMove(x:Int, y:Int, speedX:Int, speedY:Int):Void {

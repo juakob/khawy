@@ -27,6 +27,7 @@ class Simulation {
 	var initState:Bool = false;
 	var resources:Resources;
 	var resourcesHandlers:Array<ResourceHandler>;
+	public var startingSeed:Float;
 
 	public static var i:Simulation;
 
@@ -36,6 +37,8 @@ class Simulation {
 	var iterationRest:Float = 0;
 
 	public function new(initialState:Class<State>, virtualWidth:Int, virtualHeight:Int, oversample:Float = 1, antiAlias:Int = 0) {
+		startingSeed=Math.random()*3000;
+		com.framework.utils.Random.init(Std.int(startingSeed));
 		this.initialState = initialState;
 		resourcesHandlers = new Array();
 		i = this;

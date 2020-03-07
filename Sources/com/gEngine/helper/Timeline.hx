@@ -16,7 +16,7 @@ class Timeline {
 	var firstFrame:Int = 0;
 	var lastFrame:Int = 0;
 	private var labels:Array<Label>;
-	var currentTime:Float = 0;
+	public var currentTime:Float = 0;
 
 	public function new(frameRate:Float, totalFrames:Int, ?labels:Array<Label>) {
 		this.frameRate = frameRate;
@@ -92,7 +92,7 @@ class Timeline {
 
 		for (label in labels) {
 			frame = label.frame;
-			if (frame > currentFrame - frameSkiped && frame <= currentFrame) {
+			if (frame == currentFrame || (frame > currentFrame - frameSkiped && frame <= currentFrame)) {
 				return label.text;
 			}
 			if (frame > currentFrame) {
