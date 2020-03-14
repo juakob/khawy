@@ -19,7 +19,7 @@ import kha.graphics4.MipMapFilter;
 import kha.graphics4.TextureFilter;
 import kha.math.FastMatrix3;
 
-class BasicSprite implements IAnimation implements IRotation {
+class Sprite implements IAnimation implements IRotation {
 	public var x:FastFloat = 0;
 	public var y:FastFloat = 0;
 	public var z:FastFloat = 0;
@@ -87,8 +87,8 @@ class BasicSprite implements IAnimation implements IRotation {
 		textureId = animationData.texturesID;
 	}
 
-	public function clone():BasicSprite {
-		var cl = new BasicSprite();
+	public function clone():Sprite {
+		var cl = new Sprite();
 		cl.animationData = animationData;
 		return cl;
 	}

@@ -41,21 +41,18 @@ class Entity {
 			++offset;
 		}
 		toDelete.splice(0, toDelete.length);
-		onUpdate(dt);
 	}
 
 	public function render():Void {
 		for (child in children) {
 			child.render();
 		}
-		onRender();
 	}
 
 	public function destroy():Void {
 		for (child in children) {
 			child.destroy();
 		}
-		onDestroy();
 		parent = null;
 	}
 
@@ -85,12 +82,6 @@ class Entity {
 		addChild(obj);
 		return obj;
 	}
-
-	private function onUpdate(aDt:Float):Void {}
-
-	private function onRender():Void {}
-
-	private function onDestroy():Void {}
 
 	public function die():Void {
 		dead = true;

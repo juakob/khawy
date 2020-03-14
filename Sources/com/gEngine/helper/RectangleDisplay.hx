@@ -3,9 +3,9 @@ package com.gEngine.helper;
 import com.gEngine.AnimationData;
 import com.gEngine.DrawArea;
 import com.gEngine.Frame;
-import com.gEngine.display.BasicSprite;
+import com.gEngine.display.Sprite;
 
-class RectangleDisplay extends BasicSprite {
+class RectangleDisplay extends Sprite {
 	public static var data:AnimationData;
 
 	public static function init(textureID:Int):Void {
