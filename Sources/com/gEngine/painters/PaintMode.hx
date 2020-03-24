@@ -25,6 +25,11 @@ class PaintMode {
 	public var mulB:Float = 1;
 	public var mulA:Float = 1;
 
+	public var addR:Float = 0;
+	public var addG:Float = 0;
+	public var addB:Float = 0;
+	public var addA:Float = 0;
+
 	public var colorTransform:Bool;
 
 	public function new() {

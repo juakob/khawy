@@ -7,4 +7,5 @@ enum CollisionType {
 	Box;
 	TileMap;
 	Group;
+	Circle;
 }
