@@ -28,7 +28,11 @@ class AtlasGenerator {
 			#end
 			g.pipeline = bitmap.specialPipeline;
 			g.imageScaleQuality = ImageScaleQuality.High;
-			if(bitmap.hasMipMap) g.mipmapScaleQuality = ImageScaleQuality.High;
+			if(bitmap.hasMipMap){ 
+				g.mipmapScaleQuality = ImageScaleQuality.High;
+			}else{
+				g.mipmapScaleQuality = ImageScaleQuality.Low;
+			}
 			g.drawScaledSubImage(bitmap.image,bitmap.x*bitmap.scaleX, bitmap.y*bitmap.scaleY,bitmap.width*bitmap.scaleX, bitmap.height*bitmap.scaleY,rectangle.x, rectangle.y, bitmap.width, bitmap.height);
 			rectangle.x += bitmap.extrude;
 			rectangle.y += bitmap.extrude;
