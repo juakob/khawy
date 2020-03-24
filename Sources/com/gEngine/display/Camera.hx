@@ -2,10 +2,7 @@ package com.gEngine.display;
 
 import com.framework.utils.Perlin;
 import kha.graphics4.TextureFilter;
-import kha.graphics1.Graphics4;
-import com.g3d.OgexData.Color;
 import com.gEngine.painters.Painter;
-import kha.math.FastVector4;
 import kha.math.FastVector3;
 import com.gEngine.painters.PaintMode;
 import kha.math.FastMatrix4;
