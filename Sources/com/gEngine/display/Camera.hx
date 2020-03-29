@@ -56,7 +56,7 @@ class Camera extends Layer {
 
 	public function new() {
 		super();
-		targetPos = new FastPoint();
+		
 		width = GEngine.virtualWidth;
 		height = GEngine.virtualHeight;
 		eye = new FastVector3(width / 2, height / 2, 869.1168);
@@ -64,9 +64,10 @@ class Camera extends Layer {
 		up = new FastVector3(0, 1, 0);
 		view = FastMatrix4.identity();
 		updateView();
-
-		pivotX = -(x + width * 0.5);
-		pivotY = -(y + height * 0.5);
+		targetPos = new FastPoint(width*0.5,height*0.5);
+		//pivotX = -(x + width * 0.5);
+		//pivotY = -(y + height * 0.5);
+		
 		setDrawArea(0, 0, width, height);
 		renderTarget = GEngine.i.getRenderTarget(width, height);
 		setOrthogonalProjection(width, height);
@@ -146,7 +147,7 @@ class Camera extends Layer {
 	}
 
 	public function setTarget(x:Float, y:Float):Void {
-		targetPos.setTo(-x + width * 0.5, -y + height * 0.5);
+		targetPos.setTo(-x+ width  , -y + height );
 	}
 	public function move(deltaX:Float, deltaY:Float):Void {
 		targetPos.x += deltaX;
@@ -163,7 +164,7 @@ class Camera extends Layer {
 	}
 
 	public inline function worldToCameraY(y:Float):Float {
-		return (((y - this.y) -height) * scaleY + height) * angle;
+		return (((y - this.y) -height) * scaleY + height) ;
 	}
 
 	public inline function screenToWorldX(x:Float):Float {
@@ -186,6 +187,8 @@ class Camera extends Layer {
 		//var deltaY:Float = this.y - targetPos.y;
 		this.x = targetPos.x;
 		this.y = targetPos.y;
+		this.pivotX=targetPos.x+(width*0.5-targetPos.x)*2;
+		this.pivotY=targetPos.y+(height*0.5-targetPos.y)*2;
 		/*if (deltaX * deltaX + deltaY * deltaY > maxSeparationFromTarget * maxSeparationFromTarget) {
 			var length:Float = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 			this.x = targetPos.x + (deltaX / length) * maxSeparationFromTarget;

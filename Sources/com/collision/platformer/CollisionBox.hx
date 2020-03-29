@@ -19,7 +19,9 @@ class CollisionBox extends Body implements ICollider {
 			parent.remove(this);
 	}
 
-	public function new() {}
+	public function new() {
+		super();
+	}
 
 	/* INTERFACE ICollider */
 	public function collisionType():CollisionType {
