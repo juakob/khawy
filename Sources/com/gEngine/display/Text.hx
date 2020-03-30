@@ -10,7 +10,7 @@ import kha.Kravur.KravurImage;
  * @author Joaquin
  */
 class Text extends Layer {
-	private var mLetters:Array<BasicSprite>;
+	private var mLetters:Array<Sprite>;
 
 	public var mType:String;
 	public var text(default, set):String;
@@ -37,8 +37,8 @@ class Text extends Layer {
 		if(text==aText)return text;
 		text = aText;
 		var counter:Int = 0;
-		var displayLetter:BasicSprite;
-		var currentWordLetters:Array<BasicSprite> = new Array();
+		var displayLetter:Sprite;
+		var currentWordLetters:Array<Sprite> = new Array();
 		var font = Assets.fonts.get(mType)._get(fontSize);
 		var xpos = 0.;
 		var ypos = 0.;
@@ -57,7 +57,7 @@ class Text extends Layer {
 			var q = font.getBakedQuad(bakedQuadCache, charCodeIndex, xpos, ypos);
 			if (q != null) {
 				if (mLetters.length <= counter) {
-					displayLetter = new BasicSprite(mType);
+					displayLetter = new Sprite(mType);
 					addChild(displayLetter);
 					mLetters.push(displayLetter);
 				} else {
@@ -84,7 +84,7 @@ class Text extends Layer {
 		return aText;
 	}
 
-	public function getLetter(aId:Int):BasicSprite {
+	public function getLetter(aId:Int):Sprite {
 		return mLetters[aId];
 	}
 

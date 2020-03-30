@@ -167,12 +167,12 @@ class Camera extends Layer {
 		return (((y - this.y) -height) * scaleY + height) ;
 	}
 
-	public inline function screenToWorldX(x:Float):Float {
-		return (x - width / 2) * 1 / scaleX + width / 2 - this.x;
+	public  function screenToWorldX(x:Float):Float {
+		return (x+width*0.5 )*1/scaleX- this.x+width*0.5;
 	}
 
-	public inline function screenToWorldY(y:Float):Float {
-		return ((y - height / 2) * 1 / scaleY + height / 2)  + this.y;
+	public  function screenToWorldY(y:Float):Float {
+		return (y+height*0.5 )*1/scaleY- this.y+height*0.5;
 	}
 
 	override function destroy() {
