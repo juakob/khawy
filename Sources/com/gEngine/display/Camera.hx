@@ -161,7 +161,7 @@ class Camera extends Layer {
 
 	public inline function worldToCameraX(x:Float):Float {
 		return ((x + this.x) -width / 2) * scaleX + width / 2;
-	}
+	} 
 
 	public inline function worldToCameraY(y:Float):Float {
 		return (((y - this.y) -height) * scaleY + height) ;

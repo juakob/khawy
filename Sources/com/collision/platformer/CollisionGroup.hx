@@ -65,4 +65,11 @@ class CollisionGroup implements ICollider {
 	public function collisionType():CollisionType {
 		return CollisionType.Group;
 	}
+	#if DEBUGDRAW
+	public function debugDraw(canvas:kha.Canvas):Void{
+		for(col in colliders){
+			col.debugDraw(canvas);
+		}
+	}
+	#end
 }
