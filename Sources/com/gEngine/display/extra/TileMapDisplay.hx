@@ -1,7 +1,7 @@
 package com.gEngine.display.extra;
 
 import com.basicDisplay.SpriteSheetDB;
-import com.gEngine.display.BasicSprite;
+import com.gEngine.display.Sprite;
 import com.gEngine.display.Layer;
 import kha.graphics4.TextureFilter;
 
@@ -19,7 +19,7 @@ class TileMapDisplay extends Layer {
 		this.widthInTiles = widthInTiles;
 		this.heightInTiles = heightInTiles;
 		for (i in 0...widthInTiles * heightInTiles) {
-			var sprite = new BasicSprite(tileType);
+			var sprite = new Sprite(tileType);
 			sprite.textureFilter = TextureFilter.PointFilter;
 			sprite.x = (i % widthInTiles) * tileWidth;
 			sprite.y = Std.int(i / widthInTiles) * tileHeight;
@@ -34,7 +34,7 @@ class TileMapDisplay extends Layer {
 	}
 
 	public function setTile2(index:Int, value:Int) {
-		var sprite:BasicSprite = cast children[index];
+		var sprite:Sprite = cast children[index];
 		if (value < 0) {
 			sprite.visible = false;
 		} else {
