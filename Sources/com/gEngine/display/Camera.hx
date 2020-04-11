@@ -159,8 +159,8 @@ class Camera {
 	}
 
 	public function limits(x:Float, y:Float, width:Float, height:Float):Void {
-		min = new FastPoint(x - this.width * 0.5, y - this.height * 0.5);
-		max = new FastPoint(x + width - this.width * 0.5, y + height - this.height * 0.5);
+		min = new FastPoint(x - this.width , y - this.height );
+		max = new FastPoint(x + width - this.width , y + height - this.height );
 	}
 
 	public function setTarget(x:Float, y:Float):Void {
