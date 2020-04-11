@@ -176,11 +176,11 @@ class Camera {
 		this.y = y - height * 0.5 ;
 	}
 
-	public inline function worldToScreen(x:Float,y:Float,z:Float):FastVector2 {
+	public  function worldToScreen(x:Float,y:Float,z:Float):FastVector2 {
 		var transform=projection.multmat(view);
 		var screen=transform.multvec(new FastVector4(x,y,z));
 		screen.mult(screen.w);
-		return new FastVector2(width*0.5 + screen.x*width, height*0.5 + screen.y*height);
+		return new FastVector2(width*0.5 + screen.x, height*0.5 + screen.y);
 	}
 
 	public  function screenToWorld(targetX:Float,targetY:Float,targetZ:Float=0):FastVector2 {
