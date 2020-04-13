@@ -82,7 +82,7 @@ class Filter {
 		paintMode.render();
 		finishTarget = GEngine.i.currentCanvasId();
 		var finshTargetImage:Image=cast GEngine.i.currentCanvas();
-		workTargetId = GEngine.i.getRenderTarget(paintMode.targetWidth, paintMode.targetHeight);
+		workTargetId = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 		GEngine.i.endCanvas();
 		GEngine.i.setCanvas(workTargetId);
 		var g4 = GEngine.i.currentCanvas().g4;
@@ -132,12 +132,12 @@ class Filter {
 			}
 			for (i in 0...length) {
 				var sourceImg = workTargetId;
-				workTargetId = GEngine.i.getRenderTarget(paintMode.targetWidth, paintMode.targetHeight);
+				workTargetId = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 
 				GEngine.i.setCanvas(workTargetId);
 				GEngine.i.beginCanvas();
 				var filter:IPainter = filters[i];
-				filter.setProjection(paintMode.orthogonal);
+				filter.setProjection(paintMode.camera.orthogonal);
 				filter.adjustRenderArea(drawArea);
 				renderBuffer(sourceImg, filter, drawArea.min.x, drawArea.min.y, drawArea.width(), drawArea.height(), 1 / resolution, true, resolution * filter
 					.resolution);
@@ -150,7 +150,7 @@ class Filter {
 				GEngine.i.setCanvas(finishTarget);
 				GEngine.i.beginCanvas();
 				var filter:IPainter = filters[filters.length - 1];
-				filter.setProjection(paintMode.orthogonal);
+				filter.setProjection(paintMode.camera.orthogonal);
 				filter.adjustRenderArea(drawArea);
 				var scale = 1 / resolution;
 				renderBuffer(workTargetId, filter, drawArea.min.x, drawArea.min.y, drawArea.width(), drawArea.height(), scale, false);

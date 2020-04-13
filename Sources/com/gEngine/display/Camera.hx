@@ -14,7 +14,7 @@ import com.helpers.FastPoint;
 
 class Camera {
 	private var targetPos:FastPoint;
-	static inline var zMapDistance:Float=869.1168; //distance where x,y are map to the screen if z=0;
+	static inline var zMapDistance:Float=869.1168-223; //distance where x,y are map to the screen if z=0;
 	public var min:FastPoint;
 	public var max:FastPoint;
 
@@ -31,16 +31,16 @@ class Camera {
 	var shakeInterval:Float = 0;
 	var lastShake:Float = 0;
 
-	public var scaleX:Float=0;
-	public var scaleY:Float=0;
 	var x:Float=0;
 	var y:Float=0;
 	var z:Float=0;
+	
+	public var offsetEye:FastVector3=new FastVector3();
 
 	public var smooth(get, set):Bool;
 	public var autoCrop:Bool;
 	public var clearColor:kha.Color = kha.Color.fromFloats(0, 0, 0, 0);
-	public var projection(default, null):FastMatrix4;
+	public var projection:FastMatrix4;
 	public var orthogonal:FastMatrix4;
 
 
@@ -69,6 +69,8 @@ class Camera {
 
 	public var camera2d:Bool=true;
 
+	public var projectionIsOrthogonal:Bool=false;
+
 	public function new() {
 		
 		width = GEngine.virtualWidth;
@@ -83,27 +85,34 @@ class Camera {
 		
 		setDrawArea(0, 0, width, height);
 		renderTarget = GEngine.i.getRenderTarget(width, height);
-		setOrthogonalProjection(width, height);
-		setProjection(FastMatrix4.perspectiveProjection(45,width/height,0.1,5000));
+		setOrthogonalProjection();
+		projection=orthogonal;
+		projectionIsOrthogonal=true;
 		perlin=new Perlin(1);
 	}
 
 	public function updateView() {
 		view.setFrom(FastMatrix4.lookAt(eye, at, up));
+		if(projectionIsOrthogonal){
+			view.setFrom(FastMatrix4.scale(scale,scale,1).multmat(view));
+		}
 	}
 
 	public function setArea(x:Int, y:Int, width:Int, height:Int) {
 		setDrawArea(x, y, width, height);
 		GEngine.i.releaseRenderTarget(renderTarget);
-		setOrthogonalProjection(Std.int(width), Std.int(height));
+		setOrthogonalProjection();
 		renderTarget = GEngine.i.getRenderTarget(width, height);
 	}
 
-	function setOrthogonalProjection(width:Float, height:Float) {
+	function setOrthogonalProjection() {
+		orthogonal=createOrthogonalProjection();
+	}
+	public function createOrthogonalProjection():FastMatrix4 {
 		if (kha.Image.renderTargetsInvertedY()) {
-			orthogonal = FastMatrix4.scale(1, -1, 1).multmat(FastMatrix4.orthogonalProjection(0, width, height, 0, 0, 5000));
+			return FastMatrix4.scale(1, -1, 1).multmat(FastMatrix4.orthogonalProjection(-width*0.5, width*0.5, height*0.5, -height*0.5, -5000, 5000));
 		} else {
-			orthogonal = FastMatrix4.orthogonalProjection(0, width, height, 0, 0, 5000);
+			return FastMatrix4.orthogonalProjection(-width*0.5, width*0.5, height*0.5, -height*0.5, -5000, 5000);
 		}
 	}
 
@@ -113,6 +122,7 @@ class Camera {
 		} else {
 			projection = mat;
 		}
+		projectionIsOrthogonal=Math.abs(projection.determinant()) < 0.000001;
 	}
 
 	inline function setDrawArea(x:Int, y:Int, width:Int, height:Int) {
@@ -124,10 +134,10 @@ class Camera {
 	}
 
 	public function set_angle(value:Float):Float {
-		
+		angle=value;
 		up.x=Math.sin(value);
 		up.y=Math.cos(value);
-		return value;
+		return angle;
 	}
 
 
@@ -138,11 +148,7 @@ class Camera {
 
 		g.clear(clearColor, 1);
 
-		paintMode.projection = projection;
-		paintMode.orthogonal = orthogonal;
-		paintMode.targetWidth = width;
-		paintMode.targetHeight = height;
-		paintMode.buffer = renderTarget;
+		paintMode.camera=this;
 
 		if (onPreRender != null)
 			onPreRender(this, view);
@@ -184,11 +190,19 @@ class Camera {
 	}
 
 	public  function screenToWorld(targetX:Float,targetY:Float,targetZ:Float=0):FastVector2 {
-		targetX=(targetX/width)*2-1;
-		targetY=Image.renderTargetsInvertedY()?(targetY/height)*2-1:1-(targetY/height)*2;
-		var transform=(projection.multmat(view)).inverse();
-		var farRaw:FastVector4=transform.multvec(new FastVector4(targetX,targetY,-1,1));
-		var nearRaw:FastVector4=transform.multvec(new FastVector4(targetX,targetY,1,1));
+		var homogeneousTargetX=(targetX/width)*2-1;
+		var homogeneousTargetY=Image.renderTargetsInvertedY()?(targetY/height)*2-1:1-(targetY/height)*2;
+		var transform:FastMatrix4;
+		if(projectionIsOrthogonal){
+			homogeneousTargetX=targetX-width*0.5;
+			homogeneousTargetY=targetY-height*0.5;
+			transform=view.inverse();
+			//transform.setFrom(transform.multmat(FastMatrix4.scale(scale,scale,1)));
+		}else{
+			transform=(projection.multmat(view)).inverse();
+		}
+		var farRaw:FastVector4=transform.multvec(new FastVector4(homogeneousTargetX,homogeneousTargetY,-1,1));
+		var nearRaw:FastVector4=transform.multvec(new FastVector4(homogeneousTargetX,homogeneousTargetY,1,1));
 		var far = farRaw.mult(1/farRaw.w);
 		var near = nearRaw.mult(1/nearRaw.w);
 		var dir=far.sub(near);
@@ -209,6 +223,10 @@ class Camera {
 		if(camera2d){
 			this.x = targetPos.x;
 			this.y = targetPos.y;
+			/*if(projectionIsOrthogonal){
+				this.x-=width*0.5*1/scale;
+				this.y-=height*0.5*1/scale;
+			}*/
 			this.z=zMapDistance*1/scale;
 
 			shakeX = 0;
@@ -224,7 +242,7 @@ class Camera {
 					
 				
 			}
-			eye.setFrom(new FastVector3(this.x,this.y,this.z));
+			eye.setFrom((new FastVector3(this.x,this.y,this.z)).sub(offsetEye));
 			at.setFrom(new FastVector3(this.x,this.y,0));
 		}
 		
@@ -255,18 +273,18 @@ class Camera {
 
 	private function adjustToLimits():Void {
 		if (min != null) {
-			if (width * 1 / scaleX > max.x - min.x || height * 1 / scaleY > max.y - min.y)
+			if (width * 1 / scale > max.x - min.x || height * 1 / scale > max.y - min.y)
 				return;
-			if (-this.x - width * 0.5 * 1 / scaleX < min.x) {
-				this.x = -(min.x + width * 0.5 * 1 / scaleX);
-			} else if (-this.x + width * 0.5 * 1 / scaleX > max.x) {
-				this.x = -(max.x - width * 0.5 * 1 / scaleX);
+			if (-this.x - width * 0.5 * 1 / scale < min.x) {
+				this.x = -(min.x + width * 0.5 * 1 / scale);
+			} else if (-this.x + width * 0.5 * 1 / scale > max.x) {
+				this.x = -(max.x - width * 0.5 * 1 / scale);
 			}
 
-			if (-this.y - height * 0.5 * 1 / scaleY < min.y) {
-				this.y = -(min.y + height * 0.5 * 1 / scaleY);
-			} else if (-this.y + height * 0.5 * 1 / scaleY > max.y) {
-				this.y = -(max.y - height * 0.5 * 1 / scaleY);
+			if (-this.y - height * 0.5 * 1 / scale < min.y) {
+				this.y = -(min.y + height * 0.5 * 1 / scale);
+			} else if (-this.y + height * 0.5 * 1 / scale > max.y) {
+				this.y = -(max.y - height * 0.5 * 1 / scale);
 			}
 		}
 	}

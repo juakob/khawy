@@ -1,5 +1,6 @@
 package com.gEngine.painters;
 
+import com.gEngine.display.Camera;
 import kha.math.FastMatrix4;
 import kha.arrays.Float32Array;
 import com.helpers.MinMax;
@@ -14,11 +15,7 @@ class PaintMode {
 	var renderArea:Array<MinMax>;
 	var renderAreaUnion:MinMax;
 
-	public var projection:FastMatrix4;
-	public var orthogonal:FastMatrix4;
-	public var targetWidth:Int;
-	public var targetHeight:Int;
-	public var buffer:Int;
+	public var camera:Camera;
 
 	public var mulR:Float = 1;
 	public var mulG:Float = 1;
@@ -39,7 +36,7 @@ class PaintMode {
 
 	public function render(clear:Bool = false):Void {
 		if (currentPainter != null) {
-			currentPainter.setProjection(projection);
+			currentPainter.setProjection(camera.projection);
 			if (renderArea.length > 0) {
 				currentPainter.render(clear, renderAreaUnion);
 			} else {
