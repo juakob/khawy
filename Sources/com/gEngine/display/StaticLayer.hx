@@ -9,7 +9,7 @@ class StaticLayer extends Layer {
 	override function render(paintMode:PaintMode, transform:FastMatrix4) {
 		paintMode.render();
 		var proj=paintMode.camera.projection;
-		paintMode.camera.projection=paintMode.camera.orthogonal;
+		paintMode.camera.projection=paintMode.camera.screenTransform;
 		super.render(paintMode, identity);
 		paintMode.render();
 		paintMode.camera.projection=proj;

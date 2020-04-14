@@ -42,11 +42,8 @@ class GEngine {
 	private var textures:Array<Image>;
 	private var stage:Stage;
 	var modelViewMatrix:FastMatrix4;
-	var modelViewMatrixMirrorY:FastMatrix4;
 	var tempToTempBuffMatrix:FastMatrix4;
 	var tempToTempBuffMatrixMirrorY:FastMatrix4;
-	var finalViewMatrix:FastMatrix4;
-	var finalViewMatrixMirrorY:FastMatrix4;
 	private var painter:Painter;
 
 	inline static var initialIndex:Int = 2;
@@ -136,27 +133,7 @@ class GEngine {
 		scaleWidth = (width / realWidth);
 		scaleHeigth = (height / realHeight);
 
-		modelViewMatrix = FastMatrix4.identity();
-		modelViewMatrix = modelViewMatrix.multmat(FastMatrix4.scale((2.0 * renderScale) / virtualWidth * scaleWidth,
-			-(2.0 * renderScale) / virtualHeight * scaleHeigth, 1));
-		modelViewMatrix = modelViewMatrix.multmat(FastMatrix4.translation(-virtualWidth / scaleWidth / (2 * renderScale),
-			-virtualHeight / scaleHeigth / (2 * renderScale), 0));
-
-		modelViewMatrixMirrorY = FastMatrix4.identity();
-		modelViewMatrixMirrorY = modelViewMatrixMirrorY.multmat(FastMatrix4.scale((2.0 * renderScale) / virtualWidth * scaleWidth,
-			-(2.0 * renderScale) / virtualHeight * scaleHeigth, 1));
-		modelViewMatrixMirrorY = modelViewMatrixMirrorY.multmat(FastMatrix4.translation(-virtualWidth / scaleWidth / (2.0 * renderScale),
-			virtualHeight / scaleHeigth / (2.0 * renderScale), 0));
-		modelViewMatrixMirrorY = modelViewMatrixMirrorY.multmat(FastMatrix4.scale(1, -1, 1));
-
-		finalViewMatrix = FastMatrix4.identity();
-		finalViewMatrix = finalViewMatrix.multmat(FastMatrix4.scale(2.0 / width, -2.0 / height, 1));
-		finalViewMatrix = finalViewMatrix.multmat(FastMatrix4.translation(-width / 2, -height / 2, 0));
-
-		finalViewMatrixMirrorY = FastMatrix4.identity();
-		finalViewMatrixMirrorY = finalViewMatrixMirrorY.multmat(FastMatrix4.scale(2.0 / width, -2.0 / height, 1));
-		finalViewMatrixMirrorY = finalViewMatrixMirrorY.multmat(FastMatrix4.translation(-width / 2, height / 2, 0));
-		finalViewMatrixMirrorY = finalViewMatrixMirrorY.multmat(FastMatrix4.scale(1, -1, 1));
+		modelViewMatrix= FastMatrix4.orthogonalProjection(0, width, height,0 , 0, 5000);
 
 		return true;
 	}

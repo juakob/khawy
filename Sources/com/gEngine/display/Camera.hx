@@ -42,7 +42,7 @@ class Camera {
 	public var clearColor:kha.Color = kha.Color.fromFloats(0, 0, 0, 0);
 	public var projection:FastMatrix4;
 	public var orthogonal:FastMatrix4;
-
+	public var screenTransform:FastMatrix4;
 
 	var finalX:Float = 0;
 	var finalY:Float = 0;
@@ -80,7 +80,7 @@ class Camera {
 		up = new FastVector3(0, 1, 0);
 		view = FastMatrix4.identity();
 		updateView();
-		targetPos = new FastPoint(0,0);
+		targetPos = new FastPoint(width*0.5,height*0.5);
 
 		
 		setDrawArea(0, 0, width, height);
@@ -88,6 +88,7 @@ class Camera {
 		setOrthogonalProjection();
 		projection=orthogonal;
 		projectionIsOrthogonal=true;
+		screenTransform = createScreenTransform();
 		perlin=new Perlin(1);
 	}
 
@@ -113,6 +114,13 @@ class Camera {
 			return FastMatrix4.scale(1, -1, 1).multmat(FastMatrix4.orthogonalProjection(-width*0.5, width*0.5, height*0.5, -height*0.5, -5000, 5000));
 		} else {
 			return FastMatrix4.orthogonalProjection(-width*0.5, width*0.5, height*0.5, -height*0.5, -5000, 5000);
+		}
+	}
+	function createScreenTransform():FastMatrix4 {
+		if (kha.Image.renderTargetsInvertedY()) {
+			return FastMatrix4.scale(1, -1, 1).multmat(FastMatrix4.orthogonalProjection(0, width, height, 0, 0, 5000));
+		} else {
+			return FastMatrix4.orthogonalProjection(0, width, height, 0, 0, 5000);
 		}
 	}
 
@@ -154,6 +162,7 @@ class Camera {
 			onPreRender(this, view);
 
 		world.render(paintMode, view);
+		paintMode.render();
 		GEngine.i.endCanvas();
 		GEngine.i.changeToBuffer();
 		GEngine.i.beginCanvas();
@@ -182,14 +191,14 @@ class Camera {
 		this.y = y - height * 0.5 ;
 	}
 
-	public  function worldToScreen(x:Float,y:Float,z:Float):FastVector2 {
+	public inline function worldToScreen(x:Float,y:Float,z:Float):FastVector2 {
 		var transform=projection.multmat(view);
 		var screen=transform.multvec(new FastVector4(x,y,z));
 		screen.mult(screen.w);
 		return new FastVector2(width*0.5 + screen.x, height*0.5 + screen.y);
 	}
 
-	public  function screenToWorld(targetX:Float,targetY:Float,targetZ:Float=0):FastVector2 {
+	public inline function screenToWorld(targetX:Float,targetY:Float,targetZ:Float=0):FastVector2 {
 		var homogeneousTargetX=(targetX/width)*2-1;
 		var homogeneousTargetY=Image.renderTargetsInvertedY()?(targetY/height)*2-1:1-(targetY/height)*2;
 		var transform:FastMatrix4;
