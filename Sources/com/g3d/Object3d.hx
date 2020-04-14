@@ -60,7 +60,7 @@ class Object3d implements IAnimation {
 		if (animated) {
 			skeleton.setFrame(timeline.currentFrame);
 		}
-		var projection = paintMode.projection;
+		var projection = paintMode.camera.projection;
 		paintMode.render();
 		for (part in parts) {
 			if (part.skin != null) {

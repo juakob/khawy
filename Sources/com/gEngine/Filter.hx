@@ -81,14 +81,19 @@ class Filter {
 		}
 		paintMode.render();
 		finishTarget = GEngine.i.currentCanvasId();
-		workTargetId = GEngine.i.getRenderTarget(paintMode.targetWidth, paintMode.targetHeight);
+		var finshTargetImage:Image=cast GEngine.i.currentCanvas();
+		workTargetId = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 		GEngine.i.endCanvas();
 		GEngine.i.setCanvas(workTargetId);
 		var g4 = GEngine.i.currentCanvas().g4;
 		// g4.scissor(0, 0, paintMode.targetWidth,paintMode.targetHeight);
 		// g4.begin();
+		
+		var currentWorkingTarget:Image=cast GEngine.i.currentCanvas();
+		currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
 		GEngine.i.beginCanvas();
-		g4.clear(Color.fromFloats(red, green, blue, alpha), 1);
+		
+		g4.clear(Color.fromFloats(red, green, blue, alpha));
 		if (cropScreen) {
 			drawArea.reset();
 			display.getDrawArea(drawArea, transform);
@@ -127,12 +132,12 @@ class Filter {
 			}
 			for (i in 0...length) {
 				var sourceImg = workTargetId;
-				workTargetId = GEngine.i.getRenderTarget(paintMode.targetWidth, paintMode.targetHeight);
+				workTargetId = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 
 				GEngine.i.setCanvas(workTargetId);
 				GEngine.i.beginCanvas();
 				var filter:IPainter = filters[i];
-				filter.setProjection(paintMode.orthogonal);
+				filter.setProjection(paintMode.camera.orthogonal);
 				filter.adjustRenderArea(drawArea);
 				renderBuffer(sourceImg, filter, drawArea.min.x, drawArea.min.y, drawArea.width(), drawArea.height(), 1 / resolution, true, resolution * filter
 					.resolution);
@@ -145,7 +150,7 @@ class Filter {
 				GEngine.i.setCanvas(finishTarget);
 				GEngine.i.beginCanvas();
 				var filter:IPainter = filters[filters.length - 1];
-				filter.setProjection(paintMode.orthogonal);
+				filter.setProjection(paintMode.camera.orthogonal);
 				filter.adjustRenderArea(drawArea);
 				var scale = 1 / resolution;
 				renderBuffer(workTargetId, filter, drawArea.min.x, drawArea.min.y, drawArea.width(), drawArea.height(), scale, false);

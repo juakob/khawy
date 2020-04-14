@@ -56,7 +56,8 @@ class Emitter extends Entity {
 		timePlaying = false;
 	}
 
-	override private function onUpdate(dt:Float):Void {
+	override function update(dt:Float):Void {
+		super.update(dt);
 		if (timePlaying) {
 			time -= dt;
 			if (time < 0) {

@@ -25,7 +25,7 @@ class Stage {
 	public function new() {
 		world = new Layer();
 		cameras = [new Camera()];
-		cameras[0].addChild(world);
+		cameras[0].world = world;
 		matrix = FastMatrix4.identity();
 		painterMode = new PaintMode();
 		subStages = new Array();
@@ -75,7 +75,7 @@ class Stage {
 	}
 
 	public function addCamera(camera:Camera):Int {
-		camera.addChild(world);
+		camera.world=world;
 		camera.clearColor = color;
 		return cameras.push(camera);
 	}
