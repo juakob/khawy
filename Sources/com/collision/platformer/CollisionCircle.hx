@@ -40,5 +40,9 @@ class CollisionCircle extends Body implements ICollider {
     public function removeFromParent():Void{
         parent.remove(this);
     }
+    #if DEBUGDRAW
+	public function debugDraw(canvas:kha.Canvas):Void{
         
+    }
+	#end
 }
