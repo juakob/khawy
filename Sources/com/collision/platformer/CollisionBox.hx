@@ -139,4 +139,13 @@ class CollisionBox extends Body implements ICollider {
 	function overlapVsBox(box:CollisionBox):Bool {
 		return (box.x < x + width && box.x + box.width > x && box.y < y + height && box.y + box.height > y);
 	}
+	#if DEBUGDRAW
+	public function debugDraw(canvas:kha.Canvas):Void{
+		var g2=canvas.g2;
+		g2.drawLine(x,y,x+width,y);
+		g2.drawLine(x+width,y,x+width,y+height);
+		g2.drawLine(x+width,y+height,x,y+height);
+		g2.drawLine(x,y+height,x,y);
+	}
+	#end
 }

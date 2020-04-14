@@ -10,4 +10,7 @@ interface ICollider {
 	public var userData:Dynamic;
 	public var parent:CollisionGroup; // TODO create ICollisionContainer
 	public function removeFromParent():Void;
+	#if DEBUGDRAW
+	public function debugDraw(canvas:kha.Canvas):Void;
+	#end
 }

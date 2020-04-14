@@ -87,6 +87,19 @@ class Text extends Layer {
 	public function getLetter(aId:Int):Sprite {
 		return mLetters[aId];
 	}
+	public function width():Float {
+		var min:Float=Math.POSITIVE_INFINITY;
+		var max:Float=Math.NEGATIVE_INFINITY;
+		for(letter in mLetters){
+			if(letter.x<min){
+				min=letter.x;
+			}else 
+			if(letter.x+letter.width()>max){
+				max=letter.x+letter.width();
+			}
+		}
+		return max-min;
+	}
 
 	private static function findIndex(charCode:Int):Int {
 		var blocks = KravurImage.charBlocks;
@@ -102,8 +115,8 @@ class Text extends Layer {
 	}
 
 	public function set_color(color:Color):Color {
-		for (child in children) {
-			(cast child).colorMultiplication(color.R, color.G, color.B, color.A);
+		for (child in mLetters) {
+			child.colorMultiplication(color.R, color.G, color.B, color.A);
 		}
 		this.color = color;
 		return color;
