@@ -33,10 +33,7 @@ class Filter {
 		this.cropScreen = cropScreen;
 		renderPass = new Array();
 		drawArea = new MinMax();
-		if (!this.cropScreen) {
-			drawArea.min.setTo(0, 0);
-			drawArea.max.setTo(GEngine.i.width, GEngine.i.height);
-		}
+		
 
 		if (filters != null) {
 			setPasses(filters);
@@ -76,6 +73,10 @@ class Filter {
 	}
 
 	public function filterStart(display:IDraw, paintMode:PaintMode, transform:FastMatrix4):Void {
+		if (!this.cropScreen) {
+			drawArea.min.setTo(0, 0);
+			drawArea.max.setTo(paintMode.camera.width,paintMode.camera.height);
+		}
 		if (renderPass.length == 0) {
 			return;
 		}
@@ -165,7 +166,6 @@ class Filter {
 
 	public function renderBuffer(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool, outScale:Float = 1) {
 		painter.textureID = source;
-		// painter.setProjection(getMatrix());
 		var tex = GEngine.i.getTexture(source);
 		var texWidth = tex.realWidth * sourceScale;
 		var texHeight = tex.realHeight * sourceScale;

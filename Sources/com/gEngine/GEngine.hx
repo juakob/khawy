@@ -71,7 +71,7 @@ class GEngine {
 	#end
 
 	private function new(oversample:Float, antiAlias:Int) {
-		clearColor = Color.fromFloats(0, 0, 0, 1);
+		clearColor = Color.fromFloats(1, 0, 0, 1);
 
 		antiAliasing = antiAlias;
 		this.oversample = oversample;
@@ -133,8 +133,8 @@ class GEngine {
 		scaleWidth = (width / realWidth);
 		scaleHeigth = (height / realHeight);
 
-		modelViewMatrix= FastMatrix4.orthogonalProjection(0, width, height,0 , 0, 5000);
-
+		modelViewMatrix=FastMatrix4.orthogonalProjection(0,virtualWidth / scaleWidth / ( renderScale),
+		virtualHeight / scaleHeigth / ( renderScale),0,0,5000);
 		return true;
 	}
 
