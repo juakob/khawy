@@ -78,14 +78,14 @@ class CollisionBox extends Body implements ICollider {
 					boxCollider.touching |= colliderNeededX;
 					return true;
 				} else if ((collisionAllow & myCollisionNeededY > 0) && (boxCollider.collisionAllow & colliderNeededY > 0)) {
-					if(velocityY*overlapY>0){ //dot product to se direction
+					//if(velocityY*overlapY>=0){ //dot product to se direction
 						y += overlapY * myPonderation;
 						velocityY=0;
-					}
-					if(boxCollider.velocityY*overlapY>0){ //dot product to se direction
-					boxCollider.y -= overlapY * colliderPonderation;
-					boxCollider.velocityY=0;
-					}
+					//}
+					//if(boxCollider.velocityY*overlapY>=0){ //dot product to se direction
+						boxCollider.y -= overlapY * colliderPonderation;
+						boxCollider.velocityY=0;
+					//}
 					
 					touching |= myCollisionNeededY;
 					boxCollider.touching |= colliderNeededY;
