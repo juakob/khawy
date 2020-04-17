@@ -10,8 +10,8 @@ import kha.graphics4.TextureFilter;
  * @author Joaquin
  */
 class TileMapDisplay extends Layer {
-	var widthInTiles:Int;
-	var heightInTiles:Int;
+	public var widthInTiles:Int;
+	public var heightInTiles:Int;
 
 	public function new(tileType:String, widthInTiles:Int, heightInTiles:Int, tileWidth:Int, tileHeight:Int) {
 		super();
@@ -29,8 +29,11 @@ class TileMapDisplay extends Layer {
 		}
 	}
 
+	public function getTile(indexX:Int, indexY:Int):Int {
+		return (cast children[indexX + widthInTiles * indexY]).timeline.currentFrame;
+	}
 	public function setTile(indexX:Int, indexY:Int, value:Int) {
-		setTile2(indexX + widthInTiles * indexX, value);
+		setTile2(indexX + widthInTiles * indexY, value);
 	}
 
 	public function setTile2(index:Int, value:Int) {
