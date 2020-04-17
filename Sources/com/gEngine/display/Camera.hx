@@ -174,8 +174,8 @@ class Camera {
 	}
 
 	public function limits(x:Float, y:Float, width:Float, height:Float):Void {
-		min = new FastPoint(x - this.width , y - this.height );
-		max = new FastPoint(x + width - this.width , y + height - this.height );
+		min = new FastPoint(x  , y  );
+		max = new FastPoint(x + width , y + height  );
 	}
 
 	public function setTarget(x:Float, y:Float):Void {
@@ -282,18 +282,18 @@ class Camera {
 
 	private function adjustToLimits():Void {
 		if (min != null) {
-			if (width * 1 / scale > max.x - min.x || height * 1 / scale > max.y - min.y)
-				return;
-			if (-this.x - width * 0.5 * 1 / scale < min.x) {
-				this.x = -(min.x + width * 0.5 * 1 / scale);
-			} else if (-this.x + width * 0.5 * 1 / scale > max.x) {
-				this.x = -(max.x - width * 0.5 * 1 / scale);
+		//if (width * 1 / scale > max.x - min.x || height * 1 / scale > max.y - min.y)
+			//	return;
+			if (this.x - width * 0.5 * 1 / scale < min.x) {
+				this.x = (min.x + width * 0.5 * 1 / scale);
+			} else if (this.x + width * 0.5 * 1 / scale > max.x) {
+				this.x = (max.x - width * 0.5 * 1 / scale);
 			}
 
-			if (-this.y - height * 0.5 * 1 / scale < min.y) {
-				this.y = -(min.y + height * 0.5 * 1 / scale);
-			} else if (-this.y + height * 0.5 * 1 / scale > max.y) {
-				this.y = -(max.y - height * 0.5 * 1 / scale);
+			if (this.y - height * 0.5 * 1 / scale < min.y) {
+				this.y = (min.y + height * 0.5 * 1 / scale);
+			} else if (this.y + height * 0.5 * 1 / scale > max.y) {
+				this.y = (max.y - height * 0.5 * 1 / scale);
 			}
 		}
 	}
