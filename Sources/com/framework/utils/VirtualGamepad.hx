@@ -83,7 +83,7 @@ class VirtualGamepad {
 				button.touchId = id;
 				onButtonChange(button.id, 1);
 				trace("button active " + id);
-				return;
+				
 			}
 		}
 		for (stick in sticksTouch) {
@@ -92,7 +92,7 @@ class VirtualGamepad {
 				onAxisChange(stick.idY, stick.axisY);
 				stick.active = true;
 				stick.touchId = id;
-				return;
+				
 			}
 		}
 		if (!globalStick.active) {
@@ -131,7 +131,7 @@ class VirtualGamepad {
 				button.active = false;
 				onButtonChange(button.id, 0);
 				button.touchId = -1;
-				return;
+			
 			}
 		}
 		for (stick in sticksTouch) {
@@ -140,7 +140,7 @@ class VirtualGamepad {
 				onAxisChange(stick.idY, 0);
 				stick.active = false;
 				stick.touchId = -1;
-				return;
+			
 			}
 		}
 		if (globalStick.touchId == id) {
@@ -148,7 +148,7 @@ class VirtualGamepad {
 			onAxisChange(globalStick.idY, 0);
 			globalStick.active = false;
 			globalStick.touchId = -1;
-			return;
+		
 		}
 	}
 
