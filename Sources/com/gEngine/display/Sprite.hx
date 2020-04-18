@@ -128,10 +128,10 @@ class Sprite implements IAnimation implements IRotation {
 	inline function calculateTransform() {
 		this.transform._00 = cosAng * scaleX;
 		this.transform._10 = -sinAng * scaleY;
-		this.transform._30 = x + pivotX * scaleX;
+		this.transform._30 = x + pivotX ;
 		this.transform._01 = sinAng * scaleX;
 		this.transform._11 = cosAng * scaleY;
-		this.transform._31 = y + pivotY * scaleY;
+		this.transform._31 = y + pivotY ;
 		this.transform._32 = z;
 	}
 
@@ -181,10 +181,10 @@ class Sprite implements IAnimation implements IRotation {
 			var vertexIndex:Int = 0;
 			var uvIndex:Int = 0;
 			for (k in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
-				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				vertexX = vertexs[vertexIndex++] - pivotX ;
+				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				writeColorVertex(pos.x, pos.y, pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
+				writeColorVertex(pos.x+ offsetX, pos.y+ offsetY, pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
 					buffer, vertexBufferCounter);
 				vertexBufferCounter += 13;
 			}
@@ -198,11 +198,11 @@ class Sprite implements IAnimation implements IRotation {
 			var vertexIndex:Int = 0;
 			var uvIndex:Int = 0;
 			for (i in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
-				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				vertexX = vertexs[vertexIndex++] - pivotX ;
+				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				buffer.set(vertexBufferCounter++, pos.x);
-				buffer.set(vertexBufferCounter++, pos.y);
+				buffer.set(vertexBufferCounter++, pos.x+ offsetX);
+				buffer.set(vertexBufferCounter++, pos.y+ offsetY);
 				buffer.set(vertexBufferCounter++, pos.z);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
@@ -218,11 +218,11 @@ class Sprite implements IAnimation implements IRotation {
 			var vertexIndex:Int = 0;
 			var uvIndex:Int = 0;
 			for (i in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
-				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				vertexX = vertexs[vertexIndex++] - pivotX ;
+				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				buffer.set(vertexBufferCounter++, pos.x);
-				buffer.set(vertexBufferCounter++, pos.y);
+				buffer.set(vertexBufferCounter++, pos.x+ offsetX);
+				buffer.set(vertexBufferCounter++, pos.y+ offsetY);
 				buffer.set(vertexBufferCounter++, pos.z);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
