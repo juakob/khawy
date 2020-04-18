@@ -5,6 +5,7 @@ class Body {
 	public var y:Float = 0;
 	public var velocityX:Float = 0;
 	public var velocityY:Float = 0;
+	public var bounce:Float=0;
 	public var accelerationX:Float = 0;
 	public var accelerationY:Float = 0;
 	public var dragX:Float = 1;

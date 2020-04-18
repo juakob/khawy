@@ -145,4 +145,7 @@ class CollisionTileMap implements ICollider {
 	public function changeEdgeType(tileX:Int, tileY:Int, edgeType:Int):Void {
 		edges[tileX + tileY * widthIntTiles] = edgeType;
 	}
+	#if DEBUGDRAW
+	public function debugDraw(canvas:kha.Canvas):Void{}
+	#end
 }
