@@ -39,11 +39,11 @@ class SoundManager {
 	}
 
 	public static function playMusic(soundName:String, loop:Bool = true):Void {
-		// #if debug
+		#if debug
 		if (!map.exists(soundName)) {
 			throw "Sound not found " + soundName;
 		}
-		// #end
+		#end
 		if (music != null) {
 			music.stop();
 		}
