@@ -1,5 +1,6 @@
 package com.collision.platformer;
 
+import com.framework.utils.LERP;
 import kha.Color;
 import kha.math.FastMatrix3;
 import com.gEngine.display.Camera;
@@ -33,6 +34,24 @@ class CollisionEngine {
 		colliders.push(B);
 		#end
 		return A.collide(B,aCallBack);
+	}
+	//temporal function needs to be more generic
+	public static function bulletCollide(A:CollisionBox, B:ICollider,iterations:Int, aCallBack:ICollider->ICollider->Void = null):Bool {
+		#if DEBUGDRAW
+		colliders.push(A);
+		colliders.push(B);
+		#end
+		var AendX:Float=A.x;
+		var AendY:Float=A.y;
+		for(i in 1...(iterations+1)){
+			A.x=LERP.f(A.lastX,AendX,i/iterations);
+			A.y=LERP.f(A.lastY,AendY,i/iterations);
+			if(A.collide(B,aCallBack)){
+				return true;
+			}
+		}
+		
+		return false;
 	}
 	public static function overlap(A:ICollider, B:ICollider, aCallBack:ICollider->ICollider->Void = null):Bool {
 		#if DEBUGDRAW

@@ -71,7 +71,7 @@ class Layer implements IDraw implements IContainer {
 		}else{
 			model.setFrom(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).multmat(model));
 		}
-		model.setFrom(FastMatrix4.translation(x+pivotX, y+pivotY, z).multmat(model));
+		model.setFrom(FastMatrix4.translation(x+pivotX+offsetX, y+pivotY+offsetY, z).multmat(model));
 		this.transform.setFrom(transform.multmat(model));
 		this.transform._30 *= paralaxX;
 		this.transform._31 *= paralaxY;
@@ -213,8 +213,8 @@ class Layer implements IDraw implements IContainer {
 		}
 	}
 
-	public var offsetX:FastFloat;
-	public var offsetY:FastFloat;
+	public var offsetX:FastFloat=0;
+	public var offsetY:FastFloat=0;
 	public var rotation(default, set):Float;
 
 	public function set_rotation(value:Float):FastFloat {

@@ -22,7 +22,8 @@ class DataLoader implements Resource {
 	}
 
 	public function unload():Void {
-		Reflect.callMethod(Assets.blobs, Reflect.field(Assets.blobs, name + "Unload"), []);
+		Assets.blobs.get(name).unload();
+		Reflect.setField(Assets.blobs, name, null);
 	}
 
 	public function unloadLocal():Void {}

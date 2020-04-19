@@ -36,7 +36,8 @@ class SoundLoader implements Resource {
 	}
 
 	public function unload():Void {
-		Reflect.callMethod(Assets.sounds, Reflect.field(Assets.sounds, name + "Unload"), []);
+		Assets.sounds.get(name).unload();
+		Reflect.setField(Assets.sounds, name, null);
 	}
 
 	public function unloadLocal():Void {}

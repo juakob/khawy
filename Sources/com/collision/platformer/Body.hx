@@ -1,6 +1,8 @@
 package com.collision.platformer;
 
 class Body {
+	public var lastX:Float=0;
+	public var lastY:Float=0;
     public var x:Float = 0;
 	public var y:Float = 0;
 	public var velocityX:Float = 0;
@@ -20,6 +22,8 @@ class Body {
     
     public function update(dt:Float):Void {
 		touching = Sides.NONE;
+		lastX=x;
+		lastY=y;
 		velocityX += accelerationX * dt;
 		velocityY += accelerationY * dt;
 		if (Math.abs(velocityX) > maxVelocityX) {
