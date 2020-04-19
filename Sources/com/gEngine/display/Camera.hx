@@ -55,6 +55,8 @@ class Camera {
 	public var renderTarget:Int = -1;
 	public var postProcess:Painter = null;
 
+	public var pixelSnap:Bool=false;
+
 	var shakeX:Float=0;
 	var shakeY:Float=0;
 	var perlin:Perlin;
@@ -96,6 +98,10 @@ class Camera {
 		view.setFrom(FastMatrix4.lookAt(eye, at, up));
 		if(projectionIsOrthogonal){
 			view.setFrom(FastMatrix4.scale(scale,scale,1).multmat(view));
+		}
+		if(pixelSnap){
+			view._30=Std.int(view._30);
+			view._31=Std.int(view._31);
 		}
 	}
 
