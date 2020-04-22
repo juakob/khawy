@@ -1,5 +1,6 @@
 package com.gEngine.display.extra;
 
+import kha.math.FastVector2;
 import com.gEngine.painters.PaintMode;
 import kha.math.FastMatrix4;
 import com.basicDisplay.SpriteSheetDB;
@@ -31,13 +32,6 @@ class TileMapDisplay extends Layer {
 		tile=new Sprite(tileType);
 		for (i in 0...widthInTiles * heightInTiles) {
 			tiles.push(-1);
-			/*var sprite = ;
-			sprite.textureFilter = TextureFilter.PointFilter;
-			sprite.x = (i % widthInTiles) * tileWidth;
-			sprite.y = Std.int(i / widthInTiles) * tileHeight;
-			sprite.visible = false;
-			sprite.timeline.stop();
-			addChild(sprite);*/
 		}
 	}
 
@@ -53,31 +47,46 @@ class TileMapDisplay extends Layer {
 	}
 	override function render(paintMode:PaintMode, transform:FastMatrix4) {
 		super.render(paintMode, transform);
-		var initialPos=paintMode.camera.screenToWorld(0,0);
-		var endPos=paintMode.camera.screenToWorld(paintMode.camera.width,paintMode.camera.height);
-		var startInTilesX=Std.int(initialPos.x/tileWidth)-1;
-		var endInTilesX=Std.int(endPos.x/tileWidth)+1;
-		var startInTilesY=Std.int(initialPos.y/tileHeight)-1;
-		var endInTilesY=Std.int(endPos.y/tileHeight)+1;
+		var min:FastVector2=paintMode.camera.screenToWorld(0,0);
+		var max:FastVector2=new FastVector2(min.x,min.y);
+		mergeMinMax(paintMode.camera.screenToWorld(paintMode.camera.width,0),min,max);
+		mergeMinMax(paintMode.camera.screenToWorld(paintMode.camera.width,paintMode.camera.height),min,max);
+		mergeMinMax(paintMode.camera.screenToWorld(0,paintMode.camera.height),min,max);
+		var startInTilesX=Std.int(min.x/tileWidth)-1;
+		var endInTilesX=Std.int(max.x/tileWidth)+1;
+		var startInTilesY=Std.int(min.y/tileHeight)-1;
+		var endInTilesY=Std.int(max.y/tileHeight)+1;
+		if(startInTilesX<0)startInTilesX=0;
+		if(startInTilesY<0)startInTilesY=0;
+		if(endInTilesX>widthInTiles)endInTilesX=widthInTiles;
+		if(endInTilesY>heightInTiles)endInTilesY=heightInTiles;
 		for(y in startInTilesY...endInTilesY){
 			for(x in startInTilesX...endInTilesX){
 				var index=x + widthInTiles * y;
-				if(index<0||index>tiles.length) continue;
-				var frame=tiles[index];
-				if(frame>=0){
-					tile.timeline.gotoAndStop(frame);
-					tile.x=x*tileWidth;
-					tile.y=y*tileHeight;
-					tile.render(paintMode,transform);
+				if(index>=0 && index<tiles.length) {
+					 var frame=tiles[index];
+					if(frame>=0){
+						tile.timeline.gotoAndStop(frame);
+						tile.x=x*tileWidth;
+						tile.y=y*tileHeight;
+						tile.render(paintMode,transform);
+					}
 				}
 			}
 		}
 	}
 	public function get_smooth():Bool{
 		return tile.smooth;
-	}
+	} 
 	public function set_smooth(value:Bool):Bool{
 		tile.smooth=value;
 		return tile.smooth;
+	}
+	static inline function mergeMinMax(point:FastVector2,min:FastVector2,max:FastVector2) {
+		if(point.x<min.x)min.x=point.x;
+		if(point.y<min.y)min.y=point.y;
+		if(point.x>max.x)max.x=point.x;
+		if(point.y>max.y)max.y=point.y;
+		
 	}
 }
