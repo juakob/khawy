@@ -15,6 +15,7 @@ class Text extends Layer {
 	public var mType:String;
 	public var text(default, set):String;
 	public var fontSize:Int = 0;
+	public var smooth(default,set):Bool;
 
 
 	var sourceFontSize:Int = 0;
@@ -58,6 +59,7 @@ class Text extends Layer {
 			if (q != null) {
 				if (mLetters.length <= counter) {
 					displayLetter = new Sprite(mType);
+					displayLetter.smooth=smooth;
 					addChild(displayLetter);
 					mLetters.push(displayLetter);
 				} else {
@@ -82,6 +84,13 @@ class Text extends Layer {
 		}
 		color = color;
 		return aText;
+	}
+	public function set_smooth(value:Bool):Bool {
+		for(sprite in mLetters){
+			sprite.smooth=value;
+		}
+		smooth=value;
+		return smooth;
 	}
 
 	public function getLetter(aId:Int):Sprite {
