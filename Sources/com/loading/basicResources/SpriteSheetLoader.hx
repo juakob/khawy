@@ -40,4 +40,11 @@ class Sequence {
         this.name = name;
         this.frames = frames;
     }
+    public static function at(name:String,start:Int,end:Int) {
+        var frames=new Array<Int>();
+        for(i in start...(end+1)){
+            frames.push(i);
+        }
+        return new Sequence(name,frames);
+    }
 }
