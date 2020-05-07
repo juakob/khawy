@@ -20,7 +20,7 @@ class Timeline {
 
 	public function new(frameRate:Float, totalFrames:Int, ?labels:Array<Label>) {
 		this.frameRate = frameRate;
-		this.totalFrames = totalFrames;
+		this.lastFrame=this.totalFrames = totalFrames;
 		if (totalFrames == 1)
 			playing = false;
 		this.labels = labels;
@@ -86,7 +86,16 @@ class Timeline {
 		}
 		throw "label " + text + "not found";
 	}
-
+	public function nextFrame() {
+		if (currentFrame+1 >= lastFrame) {
+			if (loop) {
+				return firstFrame;
+			} else {
+				return lastFrame;
+			}
+		}
+		return currentFrame+1;
+	}
 	public function currentLabel():String {
 		var frame:Int;
 
