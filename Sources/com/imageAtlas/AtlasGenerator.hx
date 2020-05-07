@@ -26,6 +26,11 @@ class AtlasGenerator {
 				throw "not enough space on the atlas texture , atlas id " + bitmap.name + ", create another atlas";
 			}
 			#end
+			if(bitmap.hasPreRender){
+				g.end();
+				bitmap.preRender();
+				g.begin(false);
+			}
 			g.pipeline = bitmap.specialPipeline;
 			g.imageScaleQuality = ImageScaleQuality.High;
 			if(bitmap.hasMipMap){ 

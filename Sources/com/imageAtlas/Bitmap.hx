@@ -18,6 +18,8 @@ class Bitmap {
 	public var maxUV:Point = new Point(1, 1);
 	public var specialPipeline:PipelineState = null;
 	public var hasMipMap:Bool=false;
-
+	public var hasPreRender:Bool=false;
+	
 	public function new() {}
+	public function preRender():Void{}
 }
