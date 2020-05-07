@@ -18,10 +18,9 @@ class TileMapDisplay extends Layer {
 	var tileWidth:Int;
 	var tileHeight:Int;
 	var tiles:Array<Int>;
-	var tile:Sprite;
-	public var smooth(get,set):Bool;
+	var tile:IAnimation;
 
-	public function new(tileType:String, widthInTiles:Int, heightInTiles:Int, tileWidth:Int, tileHeight:Int) {
+	public function new(tileType:IAnimation, widthInTiles:Int, heightInTiles:Int, tileWidth:Int, tileHeight:Int) {
 		super();
 		// stop();
 		this.widthInTiles = widthInTiles;
@@ -29,7 +28,7 @@ class TileMapDisplay extends Layer {
 		this.tileWidth = tileWidth;
 		this.tileHeight = tileHeight;
 		tiles=new Array();
-		tile=new Sprite(tileType);
+		tile= tileType;
 		for (i in 0...widthInTiles * heightInTiles) {
 			tiles.push(-1);
 		}
@@ -74,13 +73,6 @@ class TileMapDisplay extends Layer {
 				}
 			}
 		}
-	}
-	public function get_smooth():Bool{
-		return tile.smooth;
-	} 
-	public function set_smooth(value:Bool):Bool{
-		tile.smooth=value;
-		return tile.smooth;
 	}
 	static inline function mergeMinMax(point:FastVector2,min:FastVector2,max:FastVector2) {
 		if(point.x<min.x)min.x=point.x;

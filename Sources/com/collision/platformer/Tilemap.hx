@@ -1,8 +1,10 @@
 package com.collision.platformer;
 
+import com.gEngine.display.IAnimation;
 import format.tmx.Data.TmxObject;
 import format.tmx.Data.TmxTileLayer;
 import com.gEngine.display.extra.TileMapDisplay;
+import com.gEngine.display.extra.TileMapAdvanceDisplay;
 import format.tmx.Data.TmxTile;
 import format.tmx.Data.TmxLayer;
 import kha.Assets;
@@ -11,7 +13,6 @@ import com.gEngine.display.Layer;
 
 class Tilemap {
 	var tmxData:String;
-	var tilesImg:String;
 	var scale:Float;
 	var tileWidth:Int;
 	var tileHeight:Int;
@@ -21,9 +22,8 @@ class Tilemap {
 	public var widthIntTiles(default, null):Int = 0;
 	public var heightInTiles(default, null):Int = 0;
 
-	public function new(tmxData:String, tilesImg:String, scale:Float = 1) {
+	public function new(tmxData:String, scale:Float = 1) {
 		this.tmxData = tmxData;
-		this.tilesImg = tilesImg;
 		this.scale = scale;
 		collision = new CollisionGroup();
 		display = new Layer();
@@ -38,16 +38,38 @@ class Tilemap {
 		this.collision.add(collision);
 		return collision;
 	}
-
-	public function createDisplay(tileMap:TmxTileLayer):TileMapDisplay {
+	/**
+	 * [creates and adds a tile map display]
+	 * @param tileMap tile layer 
+	 * @param display tile type to use when render
+	 * @return TileMapDisplay
+	 */
+	public function createDisplay(tileMap:TmxTileLayer,display:IAnimation):TileMapDisplay {
 		var tiles:Array<TmxTile> = cast tileMap.data.tiles;
-		var tileMapDisplay:TileMapDisplay = new TileMapDisplay(tilesImg, tileMap.width, tileMap.height, tileWidth, tileHeight);
+		var tileMapDisplay:TileMapDisplay = new TileMapDisplay(display, tileMap.width, tileMap.height, tileWidth, tileHeight);
 		tileMapDisplay.scaleX = tileMapDisplay.scaleY = scale;
 		var counter:Int = 0;
 		for (tile in tiles) {
 			tileMapDisplay.setTile2(counter++, tile.gid - 1);
 		}
-		display.addChild(tileMapDisplay);
+		this.display.addChild(tileMapDisplay);
+		return tileMapDisplay;
+	}
+	/**
+	 * [creates and adds an advance tile map display, use when more complex tile needed otherwise use createDisplay]
+	 * @param tileMap tile layer 
+	 * @param displayConstructor callback use to create all the tile displays
+	 * @return TileMapAdvanceDisplay
+	 */
+	public function createAdvanceDisplay(tileMap:TmxTileLayer,displayConstructor:Int->IAnimation):TileMapAdvanceDisplay {
+		var tiles:Array<TmxTile> = cast tileMap.data.tiles;
+		var tileMapDisplay:TileMapAdvanceDisplay = new TileMapAdvanceDisplay(displayConstructor, tileMap.width, tileMap.height, tileWidth, tileHeight);
+		tileMapDisplay.scaleX = tileMapDisplay.scaleY = scale;
+		var counter:Int = 0;
+		for (tile in tiles) {
+			tileMapDisplay.setTile2(counter++, tile.gid - 1);
+		}
+		this.display.addChild(tileMapDisplay);
 		return tileMapDisplay;
 	}
 
