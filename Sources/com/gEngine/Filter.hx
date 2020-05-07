@@ -25,11 +25,7 @@ class Filter {
 	var workTargetId:Int;
 	var scaleRenderArea:MinMax = new MinMax();
 
-	public function new(filters:Array<IPainter> = null, r:FastFloat = 0, g:FastFloat = 0, b:FastFloat = 0, a:FastFloat = 0, cropScreen:Bool = true) {
-		red = r;
-		green = g;
-		blue = b;
-		alpha = a;
+	public function new(filters:Array<IPainter> = null, cropScreen:Bool = true) {
 		this.cropScreen = cropScreen;
 		renderPass = new Array();
 		drawArea = new MinMax();

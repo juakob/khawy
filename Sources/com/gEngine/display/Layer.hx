@@ -52,6 +52,13 @@ class Layer implements IDraw implements IContainer {
 		this.mulA = a;
 		colorTransform=true;
 	}
+	public function setBlendFilter(blend:Blend,r:Float,g:Float,b:Float,a:Float=1) {
+		filter=new Filter([new Painter(true,blend)],false);
+		filter.red=r;
+		filter.green=g;
+		filter.blue=b;
+		filter.alpha=a;
+	}
 
 	public function new() {
 		children = new Array();
@@ -87,10 +94,10 @@ class Layer implements IDraw implements IContainer {
 		var oldMulB=paintMode.mulB;
 		var oldMulA=paintMode.mulA;
 
-		paintMode.mulR = mulR;
-		paintMode.mulG = mulG;
-		paintMode.mulB = mulB;
-		paintMode.mulA = mulA;
+		paintMode.mulR *= mulR;
+		paintMode.mulG *= mulG;
+		paintMode.mulB *= mulB;
+		paintMode.mulA *= mulA;
 		paintMode.colorTransform=true;
 
 		if (drawArea != null) {
