@@ -159,6 +159,7 @@ class Sprite implements IAnimation implements IRotation {
 		paintInfo.mipMapFilter = mipMapFilter;
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
+		var cameraScale=paintMode.camera.scale;
 
 		if (colorTransform||paintMode.colorTransform) {
 			var painter = GEngine.i.getColorTransformPainter(blend);
@@ -184,7 +185,7 @@ class Sprite implements IAnimation implements IRotation {
 				vertexX = vertexs[vertexIndex++] - pivotX ;
 				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				writeColorVertex(pos.x+ offsetX, pos.y+ offsetY, pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
+				writeColorVertex(pos.x+ offsetX*cameraScale, pos.y+ offsetY*cameraScale, pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
 					buffer, vertexBufferCounter);
 				vertexBufferCounter += 13;
 			}
@@ -201,8 +202,8 @@ class Sprite implements IAnimation implements IRotation {
 				vertexX = vertexs[vertexIndex++] - pivotX ;
 				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				buffer.set(vertexBufferCounter++, pos.x+ offsetX);
-				buffer.set(vertexBufferCounter++, pos.y+ offsetY);
+				buffer.set(vertexBufferCounter++, pos.x+ offsetX*cameraScale);
+				buffer.set(vertexBufferCounter++, pos.y+ offsetY*cameraScale);
 				buffer.set(vertexBufferCounter++, pos.z);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
@@ -221,8 +222,8 @@ class Sprite implements IAnimation implements IRotation {
 				vertexX = vertexs[vertexIndex++] - pivotX ;
 				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				buffer.set(vertexBufferCounter++, pos.x+ offsetX);
-				buffer.set(vertexBufferCounter++, pos.y+ offsetY);
+				buffer.set(vertexBufferCounter++, pos.x+ offsetX*cameraScale);
+				buffer.set(vertexBufferCounter++, pos.y+ offsetY*cameraScale);
 				buffer.set(vertexBufferCounter++, pos.z);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
