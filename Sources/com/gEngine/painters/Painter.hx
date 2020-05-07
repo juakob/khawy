@@ -52,7 +52,7 @@ class Painter implements IPainter {
 	var buffer:Float32Array;
 
 	public var textureID:Int = -1;
-	public var filter:TextureFilter = TextureFilter.PointFilter;
+	public var filter:TextureFilter = TextureFilter.LinearFilter;
 	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
 	public var paintInfo:PaintInfo;
 
