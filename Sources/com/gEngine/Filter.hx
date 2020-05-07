@@ -15,10 +15,10 @@ import kha.FastFloat;
 
 class Filter {
 	private var renderPass:Array<RenderPass>;
-	var red:FastFloat = 0;
-	var green:FastFloat = 0;
-	var blue:FastFloat = 0;
-	var alpha:FastFloat = 0;
+	public var red:FastFloat = 0;
+	public var green:FastFloat = 0;
+	public var blue:FastFloat = 0;
+	public var alpha:FastFloat = 0;
 	var cropScreen:Bool;
 	var drawArea:MinMax;
 	var finishTarget:Int;
