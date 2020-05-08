@@ -190,7 +190,7 @@ class GEngine {
 
 	private var renderCustomBuffer:Bool;
 	private var customBuffer:Image;
-	private var antiAliasing:Int = 4;
+	private var antiAliasing:Int = 0;
 
 	public static var virtualWidth:Int;
 	public static var virtualHeight:Int;
