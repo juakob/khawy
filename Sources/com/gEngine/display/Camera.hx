@@ -73,10 +73,12 @@ class Camera {
 
 	public var projectionIsOrthogonal:Bool=false;
 
-	public function new() {
+	public function new(width:Int=-1,height:Int=-1) {
 		
-		width = GEngine.virtualWidth;
-		height = GEngine.virtualHeight;
+		if(width<0||height<0){
+			width = GEngine.virtualWidth;
+			height = GEngine.virtualHeight;
+		}
 		eye = new FastVector3(0, 0, zMapDistance);
 		at = new FastVector3(0, 0, 0);
 		up = new FastVector3(0, 1, 0);
