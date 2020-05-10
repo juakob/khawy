@@ -31,9 +31,9 @@ class Camera {
 	var shakeInterval:Float = 0;
 	var lastShake:Float = 0;
 
-	var x:Float=0;
-	var y:Float=0;
-	var z:Float=0;
+	public var x:Float=0;
+	public var y:Float=0;
+	public var z:Float=0;
 	
 	public var offsetEye:FastVector3=new FastVector3();
 
