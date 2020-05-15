@@ -25,6 +25,7 @@ class CollisionGroup implements ICollider {
 	}
 
 	public function remove(aCollider:ICollider) {
+		aCollider.parent=null;
 		colliders.remove(aCollider);
 	}
 

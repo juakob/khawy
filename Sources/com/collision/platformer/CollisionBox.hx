@@ -17,7 +17,6 @@ class CollisionBox extends Body implements ICollider {
 	public function removeFromParent() {
 		if (parent != null){
 			parent.remove(this);
-			parent=null;
 		}
 	}
 
