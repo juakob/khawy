@@ -162,6 +162,7 @@ class Layer implements IDraw implements IContainer {
 	}
 
 	public function addChild(child:IDraw):Void {
+		if(child.parent==this)return;
 		child.parent = this;
 		children.push(cast child);
 	}
