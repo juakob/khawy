@@ -2,6 +2,9 @@
 Kha game framework inspire in haxeflixel but with a more flexible design (aggregation instead of inheritance). 
 Also is power by the awesome Kha engine that enables khawy to run in almost any device and it makes it super fast.
 
+Wiki:
+https://github.com/juakob/khawy/wiki
+
 Examples:
 ludum dare: http://maleficgames.com/web/FireLogs/ 
 source: https://github.com/juakob/LD46
