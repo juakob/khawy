@@ -18,8 +18,9 @@ class CollisionEngine {
 			canvas.g2.begin(false);
 			canvas.g2.color=Color.Yellow;
 			var cV=camera.view;
-
-			canvas.g2.transformation=new FastMatrix3(cV._00,cV._10,cV._30+camera.width*0.5,cV._01,cV._11,cV._31+camera.height*0.5,cV._03,cV._13,cV._33);
+			var scaleX = canvas.width/camera.width;
+			var scaleY = canvas.height/camera.height;
+			canvas.g2.transformation=FastMatrix3.scale(scaleX,scaleY).multmat(new FastMatrix3(cV._00,cV._10,cV._30+camera.width*0.5,cV._01,cV._11,cV._31+camera.height*0.5,cV._03,cV._13,cV._33));
 			for(collider in colliders){
 				collider.debugDraw(canvas);
 			}
