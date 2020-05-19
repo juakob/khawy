@@ -162,6 +162,7 @@ class Layer implements IDraw implements IContainer {
 	}
 
 	public function addChild(child:IDraw):Void {
+		if(child.parent==this)return;
 		child.parent = this;
 		children.push(cast child);
 	}
@@ -181,6 +182,7 @@ class Layer implements IDraw implements IContainer {
 
 	public function remove(child:IDraw):Void {
 		var counter:Int = 0;
+		child.parent=null;
 		for (childIter in children) {
 			if (childIter == child) {
 				children.splice(counter, 1);
