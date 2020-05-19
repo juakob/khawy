@@ -193,28 +193,23 @@ class SequenceCode
 	
 	public function dispose():Void 
 	{
-		//waitTimes);
-		//functions);
-		//doForFunctions);
-		//condition);
-		//anyFunctions);
-		currentFunction = null;
+		flush();
 	}
 	
 	public function flush():Void 
 	{
-		//functions);
-		//waitTimes);
-		//doForFunctions);
-		//instant);
-		//condition);
-		//anyFunctions);
+		functions.splice(0,functions.length);
+		waitTimes.splice(0,waitTimes.length);
+		doForFunctions.splice(0,doForFunctions.length);
+		instant.splice(0,instant.length);
+		condition.splice(0,condition.length);
+		anyFunctions.splice(0,anyFunctions.length);
 		currentFunction=null;
 	}
 	
 	public function active():Bool
 	{
-		return functions.length > 0;
+		return functions.length+waitTimes.length > 0;
 	}
 	
 	
