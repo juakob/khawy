@@ -16,16 +16,16 @@ class BakeLayer extends Layer {
     var height:Int=0;
     var scale:Float=1;
 
-    public function bake(scale:Float=1,width:Int=-1,height:Int=-1) {
+    public function bake(resolution:Float=1,width:Int=-1,height:Int=-1) {
         if(width<0 ||height<0){
             var area=new MinMax();
             getDrawArea(area,FastMatrix4.identity());
             width=Math.ceil(area.width());
             height=Math.ceil(area.height());
         }
-        this.width=Math.ceil(width*scale);
-        this.height=Math.ceil(height*scale);
-        this.scale=scale;
+        this.width=Math.ceil(width*resolution);
+        this.height=Math.ceil(height*resolution);
+        this.scale=resolution;
 
         if(renderCamera!=null){
             if(renderCamera.width != this.width || renderCamera.height != this.height){
@@ -35,7 +35,7 @@ class BakeLayer extends Layer {
         }else{
             renderCamera = new Camera(this.width,this.height);
         }
-       renderCamera.scale=scale;
+       renderCamera.scale=resolution;
         
         renderBake=renderUpdate=true;
     }
