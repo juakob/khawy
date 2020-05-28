@@ -98,10 +98,13 @@ class Input {
 
 	function onTouchEnd(id:Int, x:Int, y:Int) {
 		touchActive.remove(id);
+		touchPos[id * 2] = x;
+		touchPos[id * 2 + 1] = y;
 		--activeTouchSpots;
 		if(id==0){
 			mousePosition.setTo(x,y);
 			mouseIsDown=false;
+			mouseReleased = true;
 		}
 	}
 
@@ -113,15 +116,20 @@ class Input {
 		if(id==0){
 			mousePosition.setTo(x,y);
 			mouseIsDown=true;
+			mousePressed=true;
 		}
 	}
 
 	function onMouseMove(x:Int, y:Int, speedX:Int, speedY:Int):Void {
+		touchPos[0] = x;
+		touchPos[1] = y;
 		mousePosition.x = x;
 		mousePosition.y = y;
 	}
 
 	function onMouseUp(button:Int, x:Int, y:Int):Void {
+		touchActive.remove(0);
+		--activeTouchSpots;
 		mousePosition.x = x;
 		mousePosition.y = y;
 		mouseReleased = (button == 0);
@@ -129,6 +137,10 @@ class Input {
 	}
 
 	function onMouseDown(button:Int, x:Int, y:Int):Void {
+		++activeTouchSpots;
+		touchActive.push(0);
+		touchPos[0] = x;
+		touchPos[1] = y;
 		mousePosition.x = x;
 		mousePosition.y = y;
 		mousePressed = mouseIsDown = (button == 0);
