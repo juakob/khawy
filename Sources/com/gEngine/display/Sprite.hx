@@ -64,6 +64,7 @@ class Sprite implements IAnimation implements IRotation {
 	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
 
 	var transform:FastMatrix4;
+	var rotation3d:FastMatrix4;
 
 	public var filter:Filter;
 	public var timeline(default, null):Timeline;
@@ -97,8 +98,14 @@ class Sprite implements IAnimation implements IRotation {
 		var rec = localDrawArea();
 		pivotX = rec.x + rec.width / 2;
 		pivotY = rec.y + rec.height / 2;
-		// x = aX;
-		// y = aY;
+	}
+	public function rotation3D(yaw: FastFloat, pitch: FastFloat, roll: FastFloat) {
+		var rotation=FastMatrix4.rotation(yaw,pitch,roll);
+		if(rotation3d==null){
+			rotation3d=rotation;
+		}else{
+			rotation3d.setFrom(rotation);
+		}
 	}
 
 	public function set_rotation(value:Float):FastFloat {
@@ -126,6 +133,7 @@ class Sprite implements IAnimation implements IRotation {
 	}
 
 	inline function calculateTransform() {
+		transform.setFrom(FastMatrix4.identity());
 		this.transform._00 = cosAng * scaleX;
 		this.transform._10 = -sinAng * scaleY;
 		this.transform._30 = x + pivotX ;
@@ -133,6 +141,9 @@ class Sprite implements IAnimation implements IRotation {
 		this.transform._11 = cosAng * scaleY;
 		this.transform._31 = y + pivotY ;
 		this.transform._32 = z;
+		if(rotation3d!=null){
+			transform.setFrom(transform.multmat(rotation3d));
+		}
 	}
 
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
