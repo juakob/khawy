@@ -20,7 +20,8 @@ class Timeline {
 
 	public function new(frameRate:Float, totalFrames:Int, ?labels:Array<Label>) {
 		this.frameRate = frameRate;
-		this.lastFrame=this.totalFrames = totalFrames;
+		this.lastFrame=totalFrames-1;
+		this.totalFrames = totalFrames;
 		if (totalFrames == 1)
 			playing = false;
 		this.labels = labels;
