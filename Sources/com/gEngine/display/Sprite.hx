@@ -65,6 +65,7 @@ class Sprite implements IAnimation implements IRotation {
 
 	var transform:FastMatrix4;
 	var rotation3d:FastMatrix4;
+	public var billboard:Bool;
 
 	public var filter:Filter;
 	public var timeline(default, null):Timeline;
@@ -132,8 +133,8 @@ class Sprite implements IAnimation implements IRotation {
 		return animationData;
 	}
 
-	inline function calculateTransform() {
-		transform.setFrom(FastMatrix4.identity());
+	inline function calculateTransform(transform:FastMatrix4) {
+		this.transform.setFrom(FastMatrix4.identity());
 		this.transform._00 = cosAng * scaleX;
 		this.transform._10 = -sinAng * scaleY;
 		this.transform._30 = x + pivotX ;
@@ -141,8 +142,13 @@ class Sprite implements IAnimation implements IRotation {
 		this.transform._11 = cosAng * scaleY;
 		this.transform._31 = y + pivotY ;
 		this.transform._32 = z;
+		if(billboard){
+			var rotation=transform.inverse();
+			rotation._30=rotation._31=rotation._32=0;
+			this.transform.setFrom(this.transform.multmat(rotation));
+		}
 		if(rotation3d!=null){
-			transform.setFrom(transform.multmat(rotation3d));
+			this.transform.setFrom(this.transform.multmat(rotation3d));
 		}
 	}
 
@@ -153,7 +159,8 @@ class Sprite implements IAnimation implements IRotation {
 		if (filter != null)
 			filter.filterStart(this, paintMode, transform);
 
-		calculateTransform();
+		calculateTransform(transform);
+	
 
 		var model = transform.multmat(this.transform);
 
@@ -331,7 +338,7 @@ class Sprite implements IAnimation implements IRotation {
 	}
 
 	public function getDrawArea(area:MinMax, transform:FastMatrix4):Void {
-		calculateTransform();
+		calculateTransform(transform);
 		var model = transform.multmat(this.transform);
 		var drawArea = animationData.frames[timeline.currentFrame].drawArea;
 		if (drawArea.maxX != 16) {
