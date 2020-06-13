@@ -66,6 +66,7 @@ class Sprite implements IAnimation implements IRotation {
 	var transform:FastMatrix4;
 	var rotation3d:FastMatrix4;
 	public var billboard:Bool;
+	public var customPainter:Painter;
 
 	public var filter:Filter;
 	public var timeline(default, null):Timeline;
@@ -179,8 +180,8 @@ class Sprite implements IAnimation implements IRotation {
 		paintInfo.texture = textureId;
 		var cameraScale=paintMode.camera.scale;
 
-		if (colorTransform||paintMode.colorTransform) {
-			var painter = GEngine.i.getColorTransformPainter(blend);
+		if (colorTransform||paintMode.colorTransform||customPainter!=null) {
+			var painter:IPainter =customPainter!=null?customPainter: GEngine.i.getColorTransformPainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
 			var redMul, blueMul, greenMul, alphaMul:Float;
 			var redAdd, blueAdd, greenAdd, alphaAdd:Float;
