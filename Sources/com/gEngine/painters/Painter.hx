@@ -120,7 +120,7 @@ class Painter implements IPainter {
 
 	public function initShaders(blend:Blend):Void {
 		pipeline = new PipelineState();
-		setShaders(pipeline);
+		
 
 		var structure = new VertexStructure();
 		defineVertexStructure(structure);
@@ -128,7 +128,7 @@ class Painter implements IPainter {
 		pipeline.depthMode = CompareMode.Less;
 		pipeline.cullMode = clockWise;
 		pipeline.depthWrite = depthWrite;
-
+		setShaders(pipeline);
 		setBlends(pipeline, blend);
 		// pipeline.colorWriteMaskAlpha = false;
 		pipeline.compile();

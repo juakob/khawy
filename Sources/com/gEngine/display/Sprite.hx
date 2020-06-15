@@ -36,6 +36,7 @@ class Sprite implements IAnimation implements IRotation {
 	public var pivotY:FastFloat = 0;
 	public var offsetX:FastFloat = 0;
 	public var offsetY:FastFloat = 0;
+	public var offsetZ:FastFloat = 0;
 
 	private var animationData:AnimationData;
 	private var mTileSheetId:Int;
@@ -142,6 +143,7 @@ class Sprite implements IAnimation implements IRotation {
 		this.transform._01 = sinAng * scaleX;
 		this.transform._11 = cosAng * scaleY;
 		this.transform._31 = y + pivotY ;
+		this.transform._22 = scaleZ;
 		this.transform._32 = z;
 		if(billboard){
 			var rotation=transform.inverse();
@@ -204,7 +206,7 @@ class Sprite implements IAnimation implements IRotation {
 				vertexX = vertexs[vertexIndex++] - pivotX ;
 				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				writeColorVertex(pos.x+ offsetX*cameraScale, pos.y+ offsetY*cameraScale, pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
+				writeColorVertex(pos.x+ offsetX*cameraScale, pos.y+ offsetY*cameraScale, pos.z+ offsetZ, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
 					buffer, vertexBufferCounter);
 				vertexBufferCounter += 13;
 			}
