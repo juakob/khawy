@@ -1,5 +1,6 @@
 package com.loading.basicResources;
 
+import kha.graphics4.BlendingFactor;
 import kha.graphics4.PipelineState;
 import kha.graphics4.MipMapFilter;
 import kha.graphics4.TextureFilter;
@@ -49,6 +50,10 @@ class FontLoader extends TilesheetLoader {
 		var counter:Int = 0;
 		if(pipeline==null) {
 			pipeline = Graphics2.createTextPipeline(Graphics2.createTextVertexStructure());
+			pipeline.blendSource = BlendingFactor.BlendOne;
+			pipeline.blendDestination = BlendingFactor.BlendZero;
+			pipeline.alphaBlendSource = BlendingFactor.BlendOne;
+			pipeline.alphaBlendDestination = BlendingFactor.BlendZero;
 			pipeline.compile();
 		}
 		while (true) {
