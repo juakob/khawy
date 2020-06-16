@@ -80,10 +80,7 @@ class AtlasGenerator {
 	}
 
 	public static function createClearPipeline(): PipelineState {
-		var shaderPipeline = new PipelineState();
-		shaderPipeline.fragmentShader = Shaders.painter_image_frag;
-		shaderPipeline.vertexShader = Shaders.painter_image_vert;
-		shaderPipeline.inputLayout = [Graphics2.createImageVertexStructure()];
+		var shaderPipeline = Graphics2.createImagePipeline(Graphics2.createImageVertexStructure());
 		shaderPipeline.blendSource = BlendingFactor.BlendOne;
 		shaderPipeline.blendDestination = BlendingFactor.BlendZero;
 		shaderPipeline.alphaBlendSource = BlendingFactor.BlendOne;
