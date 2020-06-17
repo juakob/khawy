@@ -78,8 +78,11 @@ class Tilemap {
 		tileMapDisplay.scaleX = tileMapDisplay.scaleY = scale;
 		var counter:Int = 0;
 		for (tile in tiles) {
-			if (tile.gid <= 0)
+			if (tile.gid <= 0){
+				++counter;
 				continue;
+			}
+				
 			var flipped_horizontally = (tile.gid & FLIPPED_HORIZONTALLY_FLAG);
 			var flipped_vertically = (tile.gid & FLIPPED_VERTICALLY_FLAG);
 			var flipped_diagonally = (tile.gid & FLIPPED_DIAGONALLY_FLAG);
