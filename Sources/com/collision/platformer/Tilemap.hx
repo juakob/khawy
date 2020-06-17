@@ -1,5 +1,6 @@
 package com.collision.platformer;
 
+import com.gEngine.display.Sprite;
 import com.gEngine.display.IAnimation;
 import format.tmx.Data.TmxObject;
 import format.tmx.Data.TmxTileLayer;
@@ -12,6 +13,10 @@ import format.tmx.Data.TmxMap;
 import com.gEngine.display.Layer;
 
 class Tilemap {
+	static inline var FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
+	static inline var FLIPPED_VERTICALLY_FLAG = 0x40000000;
+	static inline var FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+
 	var tmxData:String;
 	var scale:Float;
 	var tileWidth:Int;
@@ -38,36 +43,48 @@ class Tilemap {
 		this.collision.add(collision);
 		return collision;
 	}
+
 	/**
 	 * [creates and adds a tile map display]
-	 * @param tileMap tile layer 
+	 * @param tileMap tile layer
 	 * @param display tile type to use when render
 	 * @return TileMapDisplay
 	 */
-	public function createDisplay(tileMap:TmxTileLayer,display:IAnimation):TileMapDisplay {
+	public function createDisplay(tileMap:TmxTileLayer, display:Sprite):TileMapDisplay {
 		var tiles:Array<TmxTile> = cast tileMap.data.tiles;
 		var tileMapDisplay:TileMapDisplay = new TileMapDisplay(display, tileMap.width, tileMap.height, tileWidth, tileHeight);
 		tileMapDisplay.scaleX = tileMapDisplay.scaleY = scale;
 		var counter:Int = 0;
 		for (tile in tiles) {
-			tileMapDisplay.setTile2(counter++, tile.gid - 1);
+			var flipped_horizontally = (tile.gid & FLIPPED_HORIZONTALLY_FLAG);
+			var flipped_vertically = (tile.gid & FLIPPED_VERTICALLY_FLAG);
+			var flipped_diagonally = (tile.gid & FLIPPED_DIAGONALLY_FLAG);
+			var id = tile.gid & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
+			tileMapDisplay.setTile2(counter++, id - 1,flipped_horizontally!=0,flipped_vertically!=0,flipped_diagonally!=0);
 		}
 		this.display.addChild(tileMapDisplay);
 		return tileMapDisplay;
 	}
+
 	/**
 	 * [creates and adds an advance tile map display, use when more complex tile needed otherwise use createDisplay]
-	 * @param tileMap tile layer 
+	 * @param tileMap tile layer
 	 * @param displayConstructor callback use to create all the tile displays
 	 * @return TileMapAdvanceDisplay
 	 */
-	public function createAdvanceDisplay(tileMap:TmxTileLayer,displayConstructor:Int->IAnimation):TileMapAdvanceDisplay {
+	public function createAdvanceDisplay(tileMap:TmxTileLayer, displayConstructor:Int->IAnimation):TileMapAdvanceDisplay {
 		var tiles:Array<TmxTile> = cast tileMap.data.tiles;
 		var tileMapDisplay:TileMapAdvanceDisplay = new TileMapAdvanceDisplay(displayConstructor, tileMap.width, tileMap.height, tileWidth, tileHeight);
 		tileMapDisplay.scaleX = tileMapDisplay.scaleY = scale;
 		var counter:Int = 0;
 		for (tile in tiles) {
-			tileMapDisplay.setTile2(counter++, tile.gid - 1);
+			if (tile.gid <= 0)
+				continue;
+			var flipped_horizontally = (tile.gid & FLIPPED_HORIZONTALLY_FLAG);
+			var flipped_vertically = (tile.gid & FLIPPED_VERTICALLY_FLAG);
+			var flipped_diagonally = (tile.gid & FLIPPED_DIAGONALLY_FLAG);
+			var id = tile.gid & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
+			tileMapDisplay.setTile2(counter++, id - 1,flipped_horizontally!=0,flipped_vertically!=0,flipped_diagonally!=0);
 		}
 		this.display.addChild(tileMapDisplay);
 		return tileMapDisplay;

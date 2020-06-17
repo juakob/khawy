@@ -12,7 +12,7 @@ interface IDraw {
 	public var z:FastFloat;
 	public var offsetX:FastFloat;
 	public var offsetY:FastFloat;
-	// public var rotation(default, set):Float;
+	public var rotation(default, set):Float;
 	public var scaleX:FastFloat;
 	public var scaleY:FastFloat;
 	public var scaleZ:FastFloat;
