@@ -135,6 +135,9 @@ class GEngine {
 
 		modelViewMatrix=FastMatrix4.orthogonalProjection(0,virtualWidth / scaleWidth / ( renderScale),
 		virtualHeight / scaleHeigth / ( renderScale),0,0,5000);
+		if(Image.renderTargetsInvertedY()){
+			modelViewMatrix.setFrom(FastMatrix4.scale(1, -1, 1).multmat(modelViewMatrix));
+		}
 		return true;
 	}
 

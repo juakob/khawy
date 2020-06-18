@@ -133,11 +133,11 @@ class Camera {
 	}
 
 	public function setProjection(mat:FastMatrix4):Void {
-		if (!kha.Image.renderTargetsInvertedY()) {
+		//if (!kha.Image.renderTargetsInvertedY()) {
 			projection = FastMatrix4.scale(1, -1, 1).multmat(mat);
-		} else {
+		/*} else {
 			projection = mat;
-		}
+		}*/
 		projectionIsOrthogonal=Math.abs(projection.determinant()) < 0.000001;
 	}
 

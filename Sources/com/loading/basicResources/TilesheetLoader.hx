@@ -132,8 +132,10 @@ class TilesheetLoader implements AtlasJoinable {
 		if (rotated) {
 			frame.vertexs.push(x);
 			frame.vertexs.push(y + height);
+
 			frame.vertexs.push(x + width);
 			frame.vertexs.push(y + height);
+
 			frame.vertexs.push(x);
 			frame.vertexs.push(y);
 
@@ -142,8 +144,10 @@ class TilesheetLoader implements AtlasJoinable {
 		} else {
 			frame.vertexs.push(x);
 			frame.vertexs.push(y);
+
 			frame.vertexs.push(x);
 			frame.vertexs.push(y + height);
+			
 			frame.vertexs.push(x + width);
 			frame.vertexs.push(y);
 
