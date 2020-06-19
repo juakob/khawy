@@ -35,7 +35,7 @@ class VertexBakeLayer extends Layer {
     }
     function countVertexLayer(layer:Layer):Int {
         var count:Int=0;
-        for(child in children){
+        for(child in layer.children){
             if(Std.is(child,Layer)){
                 count+=countVertexLayer(cast child);
             }
