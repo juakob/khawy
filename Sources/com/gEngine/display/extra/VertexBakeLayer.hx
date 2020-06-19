@@ -1,5 +1,6 @@
 package com.gEngine.display.extra;
 
+import kha.graphics4.VertexBuffer;
 import kha.graphics4.CullMode;
 import kha.graphics4.TextureFilter;
 import kha.graphics4.PipelineState;
@@ -9,7 +10,6 @@ import com.helpers.MinMax;
 import com.gEngine.painters.Painter;
 import kha.graphics4.Usage;
 import kha.graphics4.IndexBuffer;
-import kha.graphics5_.VertexBuffer;
 import com.gEngine.painters.PainterColorTransform;
 import kha.math.FastMatrix4;
 import com.gEngine.painters.IPainter;
@@ -17,8 +17,9 @@ import com.gEngine.painters.PaintInfo;
 import com.gEngine.painters.PaintMode;
 
 class VertexBakeLayer extends Layer {
-    var painter:VertexBakePainter;
+    public var painter(default,set):VertexBakePainter;
     var baked:Bool=false;
+
     public function bake() {
         baked=false;
         var vertexCount=countVertexLayer(this);
@@ -32,6 +33,14 @@ class VertexBakeLayer extends Layer {
         painter.upload();
         baked=true;
         painter.filter=TextureFilter.PointFilter;
+    }
+    function set_painter(painter:VertexBakePainter):VertexBakePainter {
+        if(this.painter!=null){
+            painter.textureID=this.painter.textureID;
+            painter.setBuffers(this.painter);
+        }
+        this.painter=painter;
+        return painter;
     }
     function countVertexLayer(layer:Layer):Int {
         var count:Int=0;
@@ -72,13 +81,17 @@ class BakePaintMode extends PaintMode {
 }
 class VertexBakePainter extends PainterColorTransform {
     var size:Int=0;
-    public function new(size:Int) {
+    public function new(size:Int=0) {
         this.size=size;
         super(true,Blend.blendDefault(),true);
         
     }
     public function upload() {
         uploadVertexBuffer(size);
+    }
+    public function setBuffers(painter:VertexBakePainter) {
+        this.vertexBuffer=painter.vertexBuffer;
+        this.indexBuffer=painter.indexBuffer;
     }
     override function  setShaders(pipeline:PipelineState) {
         super.setShaders(pipeline);
@@ -115,6 +128,7 @@ class VertexBakePainter extends PainterColorTransform {
 
     }
     override function createBuffers():Void {
+        if(size==0)return;
         vertexBuffer = new VertexBuffer(size, structure, Usage.StaticUsage);
 		// Create index buffer
 		indexBuffer = new IndexBuffer(Std.int(size * Painter.ratioIndexVertex), Usage.StaticUsage);
