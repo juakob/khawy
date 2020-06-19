@@ -185,6 +185,7 @@ class Sprite implements IAnimation implements IRotation {
 		if (colorTransform||paintMode.colorTransform||customPainter!=null) {
 			var painter:IPainter =customPainter!=null?customPainter: GEngine.i.getColorTransformPainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			painter=paintMode.currentPainter;
 			var redMul, blueMul, greenMul, alphaMul:Float;
 			var redAdd, blueAdd, greenAdd, alphaAdd:Float;
 			var buffer = painter.getVertexBuffer();
@@ -213,8 +214,9 @@ class Sprite implements IAnimation implements IRotation {
 
 			painter.setVertexDataCounter(vertexBufferCounter);
 		} else if (alpha != 1) {
-			var painter = GEngine.i.getAlphaPainter(blend);
+			var painter:IPainter = GEngine.i.getAlphaPainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			painter=paintMode.currentPainter;
 			var buffer = painter.getVertexBuffer();
 			var vertexBufferCounter = painter.getVertexDataCounter();
 			var vertexIndex:Int = 0;
@@ -233,8 +235,9 @@ class Sprite implements IAnimation implements IRotation {
 
 			painter.setVertexDataCounter(vertexBufferCounter);
 		} else {
-			var painter = GEngine.i.getSimplePainter(blend);
+			var painter:IPainter = GEngine.i.getSimplePainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			painter=paintMode.currentPainter;
 			var buffer = painter.getVertexBuffer();
 			var vertexBufferCounter = painter.getVertexDataCounter();
 			var vertexIndex:Int = 0;

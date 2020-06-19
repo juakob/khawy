@@ -56,6 +56,8 @@ class Painter implements IPainter {
 	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
 	public var paintInfo:PaintInfo;
 
+	var structure:VertexStructure;
+
 	var depthWrite:Bool;
 	var clockWise:CullMode;
 
@@ -67,6 +69,7 @@ class Painter implements IPainter {
 		this.depthWrite = depthWrite;
 		this.clockWise = clockWise;
 		initShaders(blend);
+		createBuffers();
 		buffer = downloadVertexBuffer();
 	}
 
@@ -118,11 +121,9 @@ class Painter implements IPainter {
 		return Std.int(counter / dataPerVertex);
 	}
 
-	public function initShaders(blend:Blend):Void {
+	function initShaders(blend:Blend):Void {
 		pipeline = new PipelineState();
-		
-
-		var structure = new VertexStructure();
+		structure = new VertexStructure();
 		defineVertexStructure(structure);
 		pipeline.inputLayout = [structure];
 		pipeline.depthMode = CompareMode.Less;
@@ -134,10 +135,6 @@ class Painter implements IPainter {
 		pipeline.compile();
 
 		getConstantLocations(pipeline);
-
-		vertexBuffer = new VertexBuffer(MAX_VERTEX_PER_BUFFER, structure, Usage.DynamicUsage);
-
-		createIndexBuffer();
 	}
 
 	function getConstantLocations(pipeline:PipelineState) {
@@ -145,7 +142,8 @@ class Painter implements IPainter {
 		textureConstantID = pipeline.getTextureUnit("tex");
 	}
 
-	function createIndexBuffer():Void {
+	function createBuffers():Void {
+		vertexBuffer = new VertexBuffer(MAX_VERTEX_PER_BUFFER, structure, Usage.DynamicUsage);
 		// Create index buffer
 		indexBuffer = new IndexBuffer(Std.int(MAX_VERTEX_PER_BUFFER * ratioIndexVertex), Usage.StaticUsage);
 
@@ -190,11 +188,11 @@ class Painter implements IPainter {
 		g.setTexture(textureConstantID, null);
 	}
 
-	inline function downloadVertexBuffer():Float32Array {
+	function downloadVertexBuffer():Float32Array {
 		return vertexBuffer.lock();
 	}
 
-	inline function uploadVertexBuffer(count:Int):Void {
+	function uploadVertexBuffer(count:Int):Void {
 		vertexBuffer.unlock(count);
 	}
 
