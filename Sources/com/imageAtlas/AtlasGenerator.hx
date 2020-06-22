@@ -51,8 +51,9 @@ class AtlasGenerator {
 				g.mipmapScaleQuality = ImageScaleQuality.Low;
 			}
 			g.imageScaleQuality=ImageScaleQuality.Low;
-			
-			g.drawScaledSubImage(bitmap.image,bitmap.x*bitmap.scaleX, bitmap.y*bitmap.scaleY,bitmap.width*bitmap.scaleX, bitmap.height*bitmap.scaleY,rectangle.x-1, rectangle.y-1, bitmap.width+2, bitmap.height+2);
+			//extrude image border pixel width and height
+			g.drawScaledSubImage(bitmap.image,bitmap.x*bitmap.scaleX, bitmap.y*bitmap.scaleY,bitmap.width*bitmap.scaleX, bitmap.height*bitmap.scaleY,rectangle.x-1, rectangle.y, bitmap.width+2, bitmap.height);
+			g.drawScaledSubImage(bitmap.image,bitmap.x*bitmap.scaleX, bitmap.y*bitmap.scaleY,bitmap.width*bitmap.scaleX, bitmap.height*bitmap.scaleY,rectangle.x, rectangle.y-1, bitmap.width, bitmap.height+2);
 			g.color=Color.fromFloats(1,1,1,1);
 			g.imageScaleQuality=ImageScaleQuality.High;
 			g.drawScaledSubImage(bitmap.image,bitmap.x*bitmap.scaleX, bitmap.y*bitmap.scaleY,bitmap.width*bitmap.scaleX, bitmap.height*bitmap.scaleY,rectangle.x, rectangle.y, bitmap.width, bitmap.height);
