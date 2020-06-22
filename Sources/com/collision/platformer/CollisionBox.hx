@@ -82,6 +82,9 @@ class CollisionBox extends Body implements ICollider {
 					}
 					touching |= myCollisionNeededX;
 					boxCollider.touching |= colliderNeededX;
+					if(notifyCallback!=null){
+						notifyCallback(this,collider);
+					}
 					return true;
 				} else if ((collisionAllow & myCollisionNeededY > 0) && (boxCollider.collisionAllow & colliderNeededY > 0)) {
 					y += overlapY * myPonderation;
