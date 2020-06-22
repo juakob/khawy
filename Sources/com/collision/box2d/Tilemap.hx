@@ -26,17 +26,7 @@ class Tilemap {
 					{
 						// if (!tileMap.properties.exists("collision")) {
 						TilesToPolygons.applyTo(tileMap, tileWidth * Const.invWorldScale, tileHeight * Const.invWorldScale, floor, 1);
-						//	}
-						var tiles:Array<TmxTile> = cast tileMap.data.tiles;
-						// tileMap.data.
-						var tileMapDisplay:TileMapDisplay = new TileMapDisplay(tilesImg, tileMap.width, tileMap.height, 10, 10);
 
-						displayLayer.addChild(tileMapDisplay);
-						var counter:Int = 0;
-
-						for (tile in tiles) {
-							tileMapDisplay.setTile2(counter++, tile.gid - 1);
-						}
 					}
 				default:
 			}
