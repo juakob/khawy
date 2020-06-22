@@ -118,11 +118,7 @@ class Camera {
 		orthogonal=createOrthogonalProjection();
 	}
 	public function createOrthogonalProjection():FastMatrix4 {
-		if (kha.Image.renderTargetsInvertedY()) {
-			return FastMatrix4.scale(1, -1, 1).multmat(FastMatrix4.orthogonalProjection(-width*0.5, width*0.5, height*0.5, -height*0.5, -5000, 5000));
-		} else {
 			return FastMatrix4.orthogonalProjection(-width*0.5, width*0.5, height*0.5, -height*0.5, -5000, 5000);
-		}
 	}
 	function createScreenTransform():FastMatrix4 {
 		if (kha.Image.renderTargetsInvertedY()) {
