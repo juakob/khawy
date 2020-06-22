@@ -1,10 +1,10 @@
 package com.collision.box2d;
 
+import box2D.dynamics.B2World;
 import com.gEngine.display.extra.TileMapDisplay;
 import format.tmx.Data.TmxTile;
 import com.helpers.TilesToPolygons;
 import format.tmx.Data.TmxLayer;
-import box2D.dynamics.B2World;
 import kha.Assets;
 import format.tmx.Data.TmxMap;
 import box2D.dynamics.B2BodyType;
@@ -25,7 +25,7 @@ class Tilemap {
 				case TmxLayer.LTileLayer(tileMap):
 					{
 						// if (!tileMap.properties.exists("collision")) {
-						TilesToPolygons.process(tileMap, t.tilesets, tileWidth * Const.invWorldScale, tileHeight * Const.invWorldScale, floor, 1);
+						TilesToPolygons.applyTo(tileMap, tileWidth * Const.invWorldScale, tileHeight * Const.invWorldScale, floor, 1);
 						//	}
 						var tiles:Array<TmxTile> = cast tileMap.data.tiles;
 						// tileMap.data.
