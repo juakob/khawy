@@ -1,11 +1,11 @@
 package com.gEngine.display.extra;
 
+import kha.graphics4.TextureAddressing;
 import kha.graphics4.VertexBuffer;
 import kha.graphics4.CullMode;
 import kha.graphics4.TextureFilter;
 import kha.graphics4.PipelineState;
 import kha.Color;
-import kha.graphics5_.TextureAddressing;
 import com.helpers.MinMax;
 import com.gEngine.painters.Painter;
 import kha.graphics4.Usage;

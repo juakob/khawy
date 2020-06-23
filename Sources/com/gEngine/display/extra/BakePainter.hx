@@ -1,10 +1,10 @@
 package com.gEngine.display.extra;
 
-import kha.math.FastMatrix4;
+import kha.graphics4.MipMapFilter;
 import kha.arrays.Float32Array;
+import kha.graphics4.TextureFilter;
+import kha.math.FastMatrix4;
 import com.gEngine.painters.PaintInfo;
-import kha.graphics5_.MipMapFilter;
-import kha.graphics5_.TextureFilter;
 import com.helpers.MinMax;
 import com.gEngine.painters.IPainter;
 
