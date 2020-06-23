@@ -171,6 +171,9 @@ class Input {
 	public function unlockMouse() {
 		Mouse.get().unlock();
 	}
+	public function isMouseLock():Bool {
+		return Mouse.get().isLocked();
+	}
 
 	public function update():Void {
 		mousePressed = false;
