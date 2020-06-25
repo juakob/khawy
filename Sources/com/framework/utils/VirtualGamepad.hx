@@ -79,11 +79,7 @@ class VirtualGamepad {
 		scaleY = Input.i.screenScale.y;
 		for (button in buttonsTouch) {
 			if (button.handleInput(x * scaleX, y * scaleY)) {
-				button.active = true;
-				button.touchId = id;
-				onButtonChange(button.id, 1);
-				trace("button active " + id);
-				
+				pressButton(button,id);
 			}
 		}
 		for (stick in sticksTouch) {
@@ -92,7 +88,6 @@ class VirtualGamepad {
 				onAxisChange(stick.idY, stick.axisY);
 				stick.active = true;
 				stick.touchId = id;
-				
 			}
 		}
 		if (!globalStick.active) {
@@ -102,13 +97,21 @@ class VirtualGamepad {
 			globalStick.axisX = 0;
 			globalStick.axisY = 0;
 			globalStick.touchId = id;
-			trace("globalStick active " + id);
 		}
 	}
 
 	function onTouchMove(id:Int, x:Int, y:Int) {
 		scaleX = Input.i.screenScale.x;
 		scaleY = Input.i.screenScale.y;
+		for (button in buttonsTouch) {
+			var inside=button.handleInput(x * scaleX, y * scaleY);
+			if (inside&&!button.active) {
+				pressButton(button,id);
+			}else
+			if(!inside&&button.active&&button.touchId==id){
+				releaseButton(button);
+			}
+		}
 		for (stick in sticksTouch) {
 			if (stick.touchId == id) {
 				stick.handleInput(x * scaleX, y * scaleY);
@@ -128,10 +131,7 @@ class VirtualGamepad {
 	function onTouchEnd(id:Int, x:Int, y:Int) {
 		for (button in buttonsTouch) {
 			if (button.touchId == id) {
-				button.active = false;
-				onButtonChange(button.id, 0);
-				button.touchId = -1;
-			
+				releaseButton(button);
 			}
 		}
 		for (stick in sticksTouch) {
@@ -152,6 +152,16 @@ class VirtualGamepad {
 		}
 	}
 
+	function pressButton(button:VirtualButton,touchId:Int) {
+		button.active = true;
+		button.touchId = touchId;
+		onButtonChange(button.id, 1);
+	}
+	function releaseButton(button:VirtualButton) {
+		button.active = false;
+		onButtonChange(button.id, 0);
+		button.touchId = -1;
+	}
 	function onKeyDown(key:KeyCode) {
 		if(!keyButton.exists(key))return;
 		var id = keyButton.get(key);
