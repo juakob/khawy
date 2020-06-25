@@ -50,9 +50,9 @@ class FontLoader extends TilesheetLoader {
 		var counter:Int = 0;
 		if(pipeline==null) {
 			pipeline = Graphics2.createTextPipeline(Graphics2.createTextVertexStructure());
-			pipeline.blendSource = BlendingFactor.BlendOne;
+			pipeline.blendSource = BlendingFactor.SourceAlpha;
 			pipeline.blendDestination = BlendingFactor.BlendZero;
-			pipeline.alphaBlendSource = BlendingFactor.BlendOne;
+			pipeline.alphaBlendSource = BlendingFactor.SourceAlpha;
 			pipeline.alphaBlendDestination = BlendingFactor.BlendZero;
 			pipeline.compile();
 		}
