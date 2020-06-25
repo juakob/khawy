@@ -6,8 +6,8 @@ package com.collision.platformer;
  */
 class CollisionBox extends Body implements ICollider {
 
-	public var width:Float = 0;
-	public var height:Float = 0;
+	public var width:Float = 10;
+	public var height:Float = 10;
 	
 
 	public var collisionAllow:Int = Sides.BOTTOM | Sides.LEFT | Sides.RIGHT | Sides.TOP;
