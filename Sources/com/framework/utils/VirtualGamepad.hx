@@ -1,5 +1,7 @@
 package com.framework.utils;
 
+import kha.FastFloat;
+import com.helpers.MinMax;
 import kha.input.KeyCode;
 import kha.input.Keyboard;
 import kha.input.Surface;
@@ -10,7 +12,7 @@ class VirtualGamepad {
 	private var height:Int;
 	private var scaleX:Float = 1;
 	private var scaleY:Float = 1;
-	var buttonsTouch:Array<VirtualButton>;
+	var buttonsTouch:Array<VirtualInput>;
 	var sticksTouch:Array<VirtualStick>;
 
 	public var globalStick:VirtualStick;
@@ -46,6 +48,11 @@ class VirtualGamepad {
 		button.x = x;
 		button.y = y;
 		button.radio = radio;
+		buttonsTouch.push(button);
+	}
+	public function addButtonRec(id:Int, left:FastFloat, top:FastFloat, right:FastFloat, bottom:FastFloat) {
+		var button = new VirtualRectangleButton(left,top,right,bottom);
+		button.id = id;
 		buttonsTouch.push(button);
 	}
 
@@ -152,12 +159,12 @@ class VirtualGamepad {
 		}
 	}
 
-	function pressButton(button:VirtualButton,touchId:Int) {
+	function pressButton(button:VirtualInput,touchId:Int) {
 		button.active = true;
 		button.touchId = touchId;
 		onButtonChange(button.id, 1);
 	}
-	function releaseButton(button:VirtualButton) {
+	function releaseButton(button:VirtualInput) {
 		button.active = false;
 		onButtonChange(button.id, 0);
 		button.touchId = -1;
@@ -174,8 +181,13 @@ class VirtualGamepad {
 		onButtonChange(id, 0);
 	}
 }
-
-class VirtualButton {
+interface VirtualInput {
+	var touchId:Int;
+	var id:Int;
+	var active:Bool;
+	function handleInput(x:Float, y:Float):Bool;
+}
+class VirtualButton implements VirtualInput {
 	public var touchId:Int = -1;
 	public var id:Int;
 	public var x:Float;
@@ -187,6 +199,21 @@ class VirtualButton {
 
 	public function handleInput(x:Float, y:Float):Bool {
 		return (x - this.x) * (x - this.x) + (y - this.y) * (y - this.y) < radio * radio;
+	}
+}
+
+class VirtualRectangleButton implements VirtualInput {
+	public var touchId:Int = -1;
+	public var id:Int;
+	public var area:MinMax;
+	public var active:Bool;
+
+	public function new(left:FastFloat, top:FastFloat, right:FastFloat, bottom:FastFloat) {
+		area=MinMax.from(left,top,right,bottom);
+	}
+
+	public function handleInput(x:Float, y:Float):Bool {
+		return area.inside(x,y);
 	}
 }
 
