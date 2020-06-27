@@ -7,6 +7,8 @@ class Body {
 	public var y:Float = 0;
 	public var velocityX:Float = 0;
 	public var velocityY:Float = 0;
+	public var lastVelocityX:Float=0;
+	public var lastVelocityY:Float=0;
 	public var bounce:Float=0;
 	public var accelerationX:Float = 0;
 	public var accelerationY:Float = 0;
@@ -24,6 +26,8 @@ class Body {
 		touching = Sides.NONE;
 		lastX=x;
 		lastY=y;
+		lastVelocityX=velocityX;
+		lastVelocityY=velocityY;
 		velocityX += accelerationX * dt;
 		velocityY += accelerationY * dt;
 		if (Math.abs(velocityX) > maxVelocityX) {
