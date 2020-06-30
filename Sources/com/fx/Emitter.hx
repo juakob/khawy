@@ -64,12 +64,7 @@ class Emitter extends Entity {
 				stop();
 			}
 		}
-		if (!playing) {
-			if (numAliveChildren() == 0) {
-				die();
-			}
-			return;
-		}
+
 		while (numAliveChildren() != currentCapacity()) {
 			var particle:Particle = cast(recycle(Particle));
 			particle.reset(x + xRandom - xRandom * 2 * Math.random(), y + yRandom - yRandom * 2 * Math.random(), minLife + (maxLife - minLife) * Math.random(),
