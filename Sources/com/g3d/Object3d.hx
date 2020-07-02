@@ -1,5 +1,6 @@
 package com.g3d;
 
+import com.gEngine.painters.IPainter;
 import com.gEngine.display.Blend;
 import com.g3d.Object3dBonesPainter;
 import com.gEngine.painters.PaintMode;
@@ -31,15 +32,20 @@ class Object3d implements IAnimation {
 	var parts:Array<Object3dData>;
 	var skeleton:SkeletonD;
 	var animated:Bool = false;
-
-	static var painterBones:Object3dBonesPainter;
-	static var painter:Object3dPainter;
+	public var painterBones:Object3dBonesPainter;
+	public var painter3d:Object3dPainter;
+	
+	static var painterBonesDefault:Object3dBonesPainter;
+	static var painter3dDefault:Object3dPainter;
 
 	public function new(name:String) {
-		if (painterBones == null) {
-			painterBones = new Object3dBonesPainter(Blend.blendDefault());
-			painter = new Object3dPainter(Blend.blendDefault());
+		if (painterBonesDefault == null) {
+			painterBonesDefault = new Object3dBonesPainter(Blend.blendDefault());
+			painter3dDefault = new Object3dPainter(Blend.blendDefault());
 		}
+		painterBones=painterBonesDefault;
+		painter3d=painter3dDefault;
+
 		parts = Object3dDB.i.getData(name);
 		skeleton = Object3dDB.i.getSkeleton(name);
 		animated = skeleton != null;
@@ -64,12 +70,11 @@ class Object3d implements IAnimation {
 		paintMode.render();
 		for (part in parts) {
 			if (part.skin != null) {
-				painterBones.setRenderInfo(model, cameraMatrix, projection, part.texture, part.vertexBuffer, part.indexBuffer, part.skin.getBonesTransformations
-					());
+				painterBones.setRenderInfo(model, cameraMatrix, projection, part.texture, part.vertexBuffer, part.indexBuffer, part.skin.getBonesTransformations());
 				painterBones.render();
 			} else {
-				painter.setRenderInfo(model, cameraMatrix, projection, part.texture, part.vertexBuffer, part.indexBuffer);
-				painter.render();
+				painter3d.setRenderInfo(model, cameraMatrix, projection, part.texture, part.vertexBuffer, part.indexBuffer);
+				painter3d.render();
 			}
 		}
 	}
