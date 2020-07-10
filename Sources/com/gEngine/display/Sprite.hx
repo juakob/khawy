@@ -62,7 +62,7 @@ class Sprite implements IAnimation implements IRotation {
 
 	public var smooth(get, set):Bool;
 	public var textureFilter:TextureFilter = TextureFilter.LinearFilter;
-	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
+	public var mipMapFilter:MipMapFilter = MipMapFilter.LinearMipFilter;
 
 	var transform:FastMatrix4;
 	var rotation3d:FastMatrix4;
@@ -375,8 +375,10 @@ class Sprite implements IAnimation implements IRotation {
 	public function set_smooth(value:Bool):Bool {
 		if (!value) {
 			textureFilter = PointFilter;
+			mipMapFilter = PointMipFilter;
 		} else {
 			textureFilter = LinearFilter;
+			mipMapFilter = LinearMipFilter;
 		}
 		return value;
 	}
