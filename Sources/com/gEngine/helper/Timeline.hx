@@ -88,7 +88,7 @@ class Timeline {
 		throw "label " + text + "not found";
 	}
 	public function nextFrame() {
-		if (currentFrame+1 >= lastFrame) {
+		if (currentFrame+1 > lastFrame) {
 			if (loop) {
 				return firstFrame;
 			} else {
