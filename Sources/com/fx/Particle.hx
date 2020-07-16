@@ -3,7 +3,6 @@ package com.fx;
 import com.gEngine.display.IRotation;
 import com.framework.utils.Entity;
 import com.gEngine.display.Layer;
-import com.gEngine.GEngine;
 import com.helpers.FastPoint;
 
 class Particle extends Entity {
@@ -40,7 +39,7 @@ class Particle extends Entity {
 		animation.y = y;
 		mAngularVelocity = angularVelocity;
 		animation.scaleX = animation.scaleY = mInitialScale = scale;
-		// animation.rotation = 0;
+		animation.rotation = 0;
 	}
 
 	override private function limboStart():Void {
@@ -67,9 +66,9 @@ class Particle extends Entity {
 		mY += mVelocity.y * aDt;
 		animation.x = mX;
 		animation.y = mY;
-		// animation.rotation += mAngularVelocity * aDt;
+		animation.rotation += mAngularVelocity * aDt;
 
-		// if (mAnimation.TotalFrames > 0)
+		//if (mAnimation.TotalFrames > 0)
 		{
 			// mAnimation.goToAndStop(Std.int((mAnimation.TotalFrames - 1) * (1-mLife / mTotalLife)));
 		}

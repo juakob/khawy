@@ -181,6 +181,7 @@ class Simulation {
 		initialized = true;
 		currentState.stage = GEngine.i.getStage();
 		currentState.init();
+		GEngine.i.update();
 	}
 
 	public function changeState(state:State):Void {

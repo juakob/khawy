@@ -42,7 +42,6 @@ class TilesheetLoader implements AtlasJoinable {
 	public function unload():Void {
 		Assets.images.get(imageName).unload();
 		Reflect.setField(Assets.images, imageName, null);
-		// Reflect.callMethod(Assets.images, Reflect.field(Assets.images, imageName + "Unload"), []);
 	}
 
 	public function unloadLocal():Void {}
@@ -133,8 +132,10 @@ class TilesheetLoader implements AtlasJoinable {
 		if (rotated) {
 			frame.vertexs.push(x);
 			frame.vertexs.push(y + height);
+
 			frame.vertexs.push(x + width);
 			frame.vertexs.push(y + height);
+
 			frame.vertexs.push(x);
 			frame.vertexs.push(y);
 
@@ -143,8 +144,10 @@ class TilesheetLoader implements AtlasJoinable {
 		} else {
 			frame.vertexs.push(x);
 			frame.vertexs.push(y);
+
 			frame.vertexs.push(x);
 			frame.vertexs.push(y + height);
+			
 			frame.vertexs.push(x + width);
 			frame.vertexs.push(y);
 

@@ -6,8 +6,8 @@ package com.collision.platformer;
  */
 class CollisionBox extends Body implements ICollider {
 
-	public var width:Float = 0;
-	public var height:Float = 0;
+	public var width:Float = 10;
+	public var height:Float = 10;
 	
 
 	public var collisionAllow:Int = Sides.BOTTOM | Sides.LEFT | Sides.RIGHT | Sides.TOP;
@@ -15,8 +15,9 @@ class CollisionBox extends Body implements ICollider {
 	public var parent:CollisionGroup;
 
 	public function removeFromParent() {
-		if (parent != null)
+		if (parent != null){
 			parent.remove(this);
+		}
 	}
 
 	public function new() {
@@ -72,19 +73,27 @@ class CollisionBox extends Body implements ICollider {
 					&& (boxCollider.collisionAllow & colliderNeededX > 0)) {
 					x += overlapX * myPonderation;
 					boxCollider.x -= overlapX * colliderPonderation;
-					boxCollider.velocityX=0;
-					velocityX=0;
+					
+					if(velocityX*overlapX>=0){ //dot product to se direction	
+						velocityX*=-bounce;
+					}
+					if(boxCollider.velocityX*overlapX>=0){ //dot product to se direction
+						boxCollider.velocityX*=-boxCollider.bounce;
+					}
 					touching |= myCollisionNeededX;
 					boxCollider.touching |= colliderNeededX;
+					if(notifyCallback!=null){
+						notifyCallback(this,collider);
+					}
 					return true;
 				} else if ((collisionAllow & myCollisionNeededY > 0) && (boxCollider.collisionAllow & colliderNeededY > 0)) {
-					if(velocityY*overlapY>0){ //dot product to se direction
-						y += overlapY * myPonderation;
-						velocityY=0;
-					}
-					if(boxCollider.velocityY*overlapY>0){ //dot product to se direction
+					y += overlapY * myPonderation;
 					boxCollider.y -= overlapY * colliderPonderation;
-					boxCollider.velocityY=0;
+					if(velocityY*overlapY>=0){ //dot product to se direction	
+						velocityY*=-bounce;
+					}
+					if(boxCollider.velocityY*overlapY>=0){ //dot product to se direction
+						boxCollider.velocityY*=-boxCollider.bounce;
 					}
 					
 					touching |= myCollisionNeededY;

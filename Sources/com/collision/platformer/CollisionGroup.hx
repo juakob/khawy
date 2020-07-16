@@ -19,11 +19,13 @@ class CollisionGroup implements ICollider {
 	}
 
 	public function add(aCollider:ICollider) {
+		if(aCollider.parent==this)return;
 		colliders.push(aCollider);
 		aCollider.parent = this;
 	}
 
 	public function remove(aCollider:ICollider) {
+		aCollider.parent=null;
 		colliders.remove(aCollider);
 	}
 

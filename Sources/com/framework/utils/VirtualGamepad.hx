@@ -1,5 +1,7 @@
 package com.framework.utils;
 
+import kha.FastFloat;
+import com.helpers.MinMax;
 import kha.input.KeyCode;
 import kha.input.Keyboard;
 import kha.input.Surface;
@@ -10,7 +12,7 @@ class VirtualGamepad {
 	private var height:Int;
 	private var scaleX:Float = 1;
 	private var scaleY:Float = 1;
-	var buttonsTouch:Array<VirtualButton>;
+	var buttonsTouch:Array<VirtualInput>;
 	var sticksTouch:Array<VirtualStick>;
 
 	public var globalStick:VirtualStick;
@@ -48,6 +50,11 @@ class VirtualGamepad {
 		button.radio = radio;
 		buttonsTouch.push(button);
 	}
+	public function addButtonRec(id:Int, left:FastFloat, top:FastFloat, right:FastFloat, bottom:FastFloat) {
+		var button = new VirtualRectangleButton(left,top,right,bottom);
+		button.id = id;
+		buttonsTouch.push(button);
+	}
 
 	public function addKeyButton(id:Int, key:KeyCode) {
 		keyButton.set(key, id);
@@ -79,11 +86,7 @@ class VirtualGamepad {
 		scaleY = Input.i.screenScale.y;
 		for (button in buttonsTouch) {
 			if (button.handleInput(x * scaleX, y * scaleY)) {
-				button.active = true;
-				button.touchId = id;
-				onButtonChange(button.id, 1);
-				trace("button active " + id);
-				return;
+				pressButton(button,id);
 			}
 		}
 		for (stick in sticksTouch) {
@@ -92,7 +95,6 @@ class VirtualGamepad {
 				onAxisChange(stick.idY, stick.axisY);
 				stick.active = true;
 				stick.touchId = id;
-				return;
 			}
 		}
 		if (!globalStick.active) {
@@ -102,13 +104,21 @@ class VirtualGamepad {
 			globalStick.axisX = 0;
 			globalStick.axisY = 0;
 			globalStick.touchId = id;
-			trace("globalStick active " + id);
 		}
 	}
 
 	function onTouchMove(id:Int, x:Int, y:Int) {
 		scaleX = Input.i.screenScale.x;
 		scaleY = Input.i.screenScale.y;
+		for (button in buttonsTouch) {
+			var inside=button.handleInput(x * scaleX, y * scaleY);
+			if (inside&&!button.active) {
+				pressButton(button,id);
+			}else
+			if(!inside&&button.active&&button.touchId==id){
+				releaseButton(button);
+			}
+		}
 		for (stick in sticksTouch) {
 			if (stick.touchId == id) {
 				stick.handleInput(x * scaleX, y * scaleY);
@@ -128,10 +138,7 @@ class VirtualGamepad {
 	function onTouchEnd(id:Int, x:Int, y:Int) {
 		for (button in buttonsTouch) {
 			if (button.touchId == id) {
-				button.active = false;
-				onButtonChange(button.id, 0);
-				button.touchId = -1;
-				return;
+				releaseButton(button);
 			}
 		}
 		for (stick in sticksTouch) {
@@ -140,7 +147,7 @@ class VirtualGamepad {
 				onAxisChange(stick.idY, 0);
 				stick.active = false;
 				stick.touchId = -1;
-				return;
+			
 			}
 		}
 		if (globalStick.touchId == id) {
@@ -148,10 +155,20 @@ class VirtualGamepad {
 			onAxisChange(globalStick.idY, 0);
 			globalStick.active = false;
 			globalStick.touchId = -1;
-			return;
+		
 		}
 	}
 
+	function pressButton(button:VirtualInput,touchId:Int) {
+		button.active = true;
+		button.touchId = touchId;
+		onButtonChange(button.id, 1);
+	}
+	function releaseButton(button:VirtualInput) {
+		button.active = false;
+		onButtonChange(button.id, 0);
+		button.touchId = -1;
+	}
 	function onKeyDown(key:KeyCode) {
 		if(!keyButton.exists(key))return;
 		var id = keyButton.get(key);
@@ -164,8 +181,13 @@ class VirtualGamepad {
 		onButtonChange(id, 0);
 	}
 }
-
-class VirtualButton {
+interface VirtualInput {
+	var touchId:Int;
+	var id:Int;
+	var active:Bool;
+	function handleInput(x:Float, y:Float):Bool;
+}
+class VirtualButton implements VirtualInput {
 	public var touchId:Int = -1;
 	public var id:Int;
 	public var x:Float;
@@ -177,6 +199,21 @@ class VirtualButton {
 
 	public function handleInput(x:Float, y:Float):Bool {
 		return (x - this.x) * (x - this.x) + (y - this.y) * (y - this.y) < radio * radio;
+	}
+}
+
+class VirtualRectangleButton implements VirtualInput {
+	public var touchId:Int = -1;
+	public var id:Int;
+	public var area:MinMax;
+	public var active:Bool;
+
+	public function new(left:FastFloat, top:FastFloat, right:FastFloat, bottom:FastFloat) {
+		area=MinMax.from(left,top,right,bottom);
+	}
+
+	public function handleInput(x:Float, y:Float):Bool {
+		return area.inside(x,y);
 	}
 }
 

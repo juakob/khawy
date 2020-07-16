@@ -36,6 +36,7 @@ class Sprite implements IAnimation implements IRotation {
 	public var pivotY:FastFloat = 0;
 	public var offsetX:FastFloat = 0;
 	public var offsetY:FastFloat = 0;
+	public var offsetZ:FastFloat = 0;
 
 	private var animationData:AnimationData;
 	private var mTileSheetId:Int;
@@ -61,9 +62,12 @@ class Sprite implements IAnimation implements IRotation {
 
 	public var smooth(get, set):Bool;
 	public var textureFilter:TextureFilter = TextureFilter.LinearFilter;
-	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
+	public var mipMapFilter:MipMapFilter = MipMapFilter.LinearMipFilter;
 
 	var transform:FastMatrix4;
+	var rotation3d:FastMatrix4;
+	public var billboard:Bool;
+	public var customPainter:Painter;
 
 	public var filter:Filter;
 	public var timeline(default, null):Timeline;
@@ -97,8 +101,14 @@ class Sprite implements IAnimation implements IRotation {
 		var rec = localDrawArea();
 		pivotX = rec.x + rec.width / 2;
 		pivotY = rec.y + rec.height / 2;
-		// x = aX;
-		// y = aY;
+	}
+	public function rotation3D(yaw: FastFloat, pitch: FastFloat, roll: FastFloat) {
+		var rotation=FastMatrix4.rotation(yaw,pitch,roll);
+		if(rotation3d==null){
+			rotation3d=rotation;
+		}else{
+			rotation3d.setFrom(rotation);
+		}
 	}
 
 	public function set_rotation(value:Float):FastFloat {
@@ -125,14 +135,24 @@ class Sprite implements IAnimation implements IRotation {
 		return animationData;
 	}
 
-	inline function calculateTransform() {
+	inline function calculateTransform(transform:FastMatrix4) {
+		this.transform.setFrom(FastMatrix4.identity());
 		this.transform._00 = cosAng * scaleX;
 		this.transform._10 = -sinAng * scaleY;
-		this.transform._30 = x + pivotX * scaleX;
+		this.transform._30 = x + pivotX ;
 		this.transform._01 = sinAng * scaleX;
 		this.transform._11 = cosAng * scaleY;
-		this.transform._31 = y + pivotY * scaleY;
+		this.transform._31 = y + pivotY ;
+		this.transform._22 = scaleZ;
 		this.transform._32 = z;
+		if(billboard){
+			var rotation=transform.inverse();
+			rotation._30=rotation._31=rotation._32=0;
+			this.transform.setFrom(this.transform.multmat(rotation));
+		}
+		if(rotation3d!=null){
+			this.transform.setFrom(this.transform.multmat(rotation3d));
+		}
 	}
 
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
@@ -142,7 +162,8 @@ class Sprite implements IAnimation implements IRotation {
 		if (filter != null)
 			filter.filterStart(this, paintMode, transform);
 
-		calculateTransform();
+		calculateTransform(transform);
+	
 
 		var model = transform.multmat(this.transform);
 
@@ -159,10 +180,12 @@ class Sprite implements IAnimation implements IRotation {
 		paintInfo.mipMapFilter = mipMapFilter;
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
+		var cameraScale=paintMode.camera.scale;
 
-		if (colorTransform||paintMode.colorTransform) {
-			var painter = GEngine.i.getColorTransformPainter(blend);
+		if (colorTransform||paintMode.colorTransform||customPainter!=null) {
+			var painter:IPainter =customPainter!=null?customPainter: GEngine.i.getColorTransformPainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			painter=paintMode.currentPainter;
 			var redMul, blueMul, greenMul, alphaMul:Float;
 			var redAdd, blueAdd, greenAdd, alphaAdd:Float;
 			var buffer = painter.getVertexBuffer();
@@ -181,28 +204,29 @@ class Sprite implements IAnimation implements IRotation {
 			var vertexIndex:Int = 0;
 			var uvIndex:Int = 0;
 			for (k in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
-				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				vertexX = vertexs[vertexIndex++] - pivotX ;
+				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				writeColorVertex(pos.x, pos.y, pos.z, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
+				writeColorVertex(pos.x+ offsetX*cameraScale, pos.y+ offsetY*cameraScale, pos.z+ offsetZ, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd,
 					buffer, vertexBufferCounter);
 				vertexBufferCounter += 13;
 			}
 
 			painter.setVertexDataCounter(vertexBufferCounter);
 		} else if (alpha != 1) {
-			var painter = GEngine.i.getAlphaPainter(blend);
+			var painter:IPainter = GEngine.i.getAlphaPainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			painter=paintMode.currentPainter;
 			var buffer = painter.getVertexBuffer();
 			var vertexBufferCounter = painter.getVertexDataCounter();
 			var vertexIndex:Int = 0;
 			var uvIndex:Int = 0;
 			for (i in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
-				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				vertexX = vertexs[vertexIndex++] - pivotX ;
+				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				buffer.set(vertexBufferCounter++, pos.x);
-				buffer.set(vertexBufferCounter++, pos.y);
+				buffer.set(vertexBufferCounter++, pos.x+ offsetX*cameraScale);
+				buffer.set(vertexBufferCounter++, pos.y+ offsetY*cameraScale);
 				buffer.set(vertexBufferCounter++, pos.z);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
@@ -211,18 +235,19 @@ class Sprite implements IAnimation implements IRotation {
 
 			painter.setVertexDataCounter(vertexBufferCounter);
 		} else {
-			var painter = GEngine.i.getSimplePainter(blend);
+			var painter:IPainter = GEngine.i.getSimplePainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+			painter=paintMode.currentPainter;
 			var buffer = painter.getVertexBuffer();
 			var vertexBufferCounter = painter.getVertexDataCounter();
 			var vertexIndex:Int = 0;
 			var uvIndex:Int = 0;
 			for (i in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX + offsetX;
-				vertexY = vertexs[vertexIndex++] - pivotY + offsetY;
+				vertexX = vertexs[vertexIndex++] - pivotX ;
+				vertexY = vertexs[vertexIndex++] - pivotY ;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				buffer.set(vertexBufferCounter++, pos.x);
-				buffer.set(vertexBufferCounter++, pos.y);
+				buffer.set(vertexBufferCounter++, pos.x+ offsetX*cameraScale);
+				buffer.set(vertexBufferCounter++, pos.y+ offsetY*cameraScale);
 				buffer.set(vertexBufferCounter++, pos.z);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
 				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
@@ -319,7 +344,7 @@ class Sprite implements IAnimation implements IRotation {
 	}
 
 	public function getDrawArea(area:MinMax, transform:FastMatrix4):Void {
-		calculateTransform();
+		calculateTransform(transform);
 		var model = transform.multmat(this.transform);
 		var drawArea = animationData.frames[timeline.currentFrame].drawArea;
 		if (drawArea.maxX != 16) {
@@ -350,8 +375,10 @@ class Sprite implements IAnimation implements IRotation {
 	public function set_smooth(value:Bool):Bool {
 		if (!value) {
 			textureFilter = PointFilter;
+			mipMapFilter = PointMipFilter;
 		} else {
 			textureFilter = LinearFilter;
+			mipMapFilter = LinearMipFilter;
 		}
 		return value;
 	}

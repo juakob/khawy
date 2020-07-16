@@ -26,7 +26,22 @@ class Blend {
 		blend.alphaBlendDestination = BlendingFactor.BlendOne;
 		return blend;
 	}
-
+	/**
+	 * [fast multiply with no alpha blend]
+	 * @return Blend
+	 */
+	public static function blendFastMultiply():Blend {
+		var blend:Blend = new Blend();
+		blend.blendSource = BlendingFactor.BlendZero;
+		blend.blendDestination = BlendingFactor.SourceColor;
+		blend.alphaBlendSource = BlendingFactor.BlendZero;
+		blend.alphaBlendDestination = BlendingFactor.SourceColor;
+		return blend;
+	}
+	/**
+	 * [uses alpha, consider using FastMuliply ]
+	 * @return Blend
+	 */
 	public static function blendMultiply():Blend {
 		var blend:Blend = new Blend();
 		blend.blendSource = BlendingFactor.DestinationColor;

@@ -38,7 +38,20 @@ class CollisionCircle extends Body implements ICollider {
 	public var userData:Dynamic;
 	public var parent:CollisionGroup;
     public function removeFromParent():Void{
-        parent.remove(this);
+        if(parent!=null){
+            parent.remove(this);
+        }
     }
+    #if DEBUGDRAW
+	public function debugDraw(canvas:kha.Canvas):Void{
+        var g2=canvas.g2;
+        var iterations=Std.int(radio);
+        var angle=Math.PI*2/iterations;
         
+        for(i in 0...iterations){
+            g2.drawLine(x+Math.cos(angle*i)*radio,y+Math.sin(angle*i)*radio,
+                        x+Math.cos(angle*(i+1))*radio,y+Math.sin(angle*(i+1))*radio);
+        }
+    }
+	#end
 }

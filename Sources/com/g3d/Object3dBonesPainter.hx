@@ -60,11 +60,7 @@ class Object3dBonesPainter implements IPainter {
 		pipeline.inputLayout = [structure];
 		pipeline.depthWrite = true;
 		pipeline.depthMode = CompareMode.Less;
-		if (kha.Image.renderTargetsInvertedY()) {
-			pipeline.cullMode = CullMode.CounterClockwise;
-		} else {
-			pipeline.cullMode = CullMode.Clockwise;
-		}
+		pipeline.cullMode = CullMode.Clockwise;
 
 		pipeline.compile();
 		getConstantLocation(pipeline);

@@ -10,7 +10,7 @@ import box2D.dynamics.B2Body;
 import format.tmx.Data.TmxTile;
 
 class TilesToPolygons {
-	public static function process(tilemap:TmxTileLayer, tilesets:Array<TmxTileset>, tileWidth:Float, tileHeight:Float, body:B2Body, collisionStart:Int = 1):Void {
+	public static function applyTo(tilemap:TmxTileLayer, tileWidth:Float, tileHeight:Float, body:B2Body, collisionStart:Int = 1):Void {
 		var tiles:Array<TmxTile> = tilemap.data.tiles;
 		var widthInTiles = tilemap.width;
 		var heightInTiles = tilemap.height;

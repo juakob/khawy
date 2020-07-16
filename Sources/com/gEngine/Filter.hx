@@ -15,28 +15,21 @@ import kha.FastFloat;
 
 class Filter {
 	private var renderPass:Array<RenderPass>;
-	var red:FastFloat = 0;
-	var green:FastFloat = 0;
-	var blue:FastFloat = 0;
-	var alpha:FastFloat = 0;
+	public var red:FastFloat = 0;
+	public var green:FastFloat = 0;
+	public var blue:FastFloat = 0;
+	public var alpha:FastFloat = 0;
 	var cropScreen:Bool;
 	var drawArea:MinMax;
 	var finishTarget:Int;
 	var workTargetId:Int;
 	var scaleRenderArea:MinMax = new MinMax();
 
-	public function new(filters:Array<IPainter> = null, r:FastFloat = 0, g:FastFloat = 0, b:FastFloat = 0, a:FastFloat = 0, cropScreen:Bool = true) {
-		red = r;
-		green = g;
-		blue = b;
-		alpha = a;
+	public function new(filters:Array<IPainter> = null, cropScreen:Bool = true) {
 		this.cropScreen = cropScreen;
 		renderPass = new Array();
 		drawArea = new MinMax();
-		if (!this.cropScreen) {
-			drawArea.min.setTo(0, 0);
-			drawArea.max.setTo(GEngine.i.width, GEngine.i.height);
-		}
+		
 
 		if (filters != null) {
 			setPasses(filters);
@@ -76,19 +69,28 @@ class Filter {
 	}
 
 	public function filterStart(display:IDraw, paintMode:PaintMode, transform:FastMatrix4):Void {
+		if (!this.cropScreen) {
+			drawArea.min.setTo(0, 0);
+			drawArea.max.setTo(paintMode.camera.width,paintMode.camera.height);
+		}
 		if (renderPass.length == 0) {
 			return;
 		}
 		paintMode.render();
 		finishTarget = GEngine.i.currentCanvasId();
-		workTargetId = GEngine.i.getRenderTarget(paintMode.targetWidth, paintMode.targetHeight);
+		var finshTargetImage:Image=cast GEngine.i.currentCanvas();
+		workTargetId = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 		GEngine.i.endCanvas();
 		GEngine.i.setCanvas(workTargetId);
 		var g4 = GEngine.i.currentCanvas().g4;
 		// g4.scissor(0, 0, paintMode.targetWidth,paintMode.targetHeight);
 		// g4.begin();
+		
+		var currentWorkingTarget:Image=cast GEngine.i.currentCanvas();
+		currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
 		GEngine.i.beginCanvas();
-		g4.clear(Color.fromFloats(red, green, blue, alpha), 1);
+		
+		g4.clear(Color.fromFloats(red, green, blue, alpha));
 		if (cropScreen) {
 			drawArea.reset();
 			display.getDrawArea(drawArea, transform);
@@ -127,12 +129,12 @@ class Filter {
 			}
 			for (i in 0...length) {
 				var sourceImg = workTargetId;
-				workTargetId = GEngine.i.getRenderTarget(paintMode.targetWidth, paintMode.targetHeight);
+				workTargetId = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 
 				GEngine.i.setCanvas(workTargetId);
 				GEngine.i.beginCanvas();
 				var filter:IPainter = filters[i];
-				filter.setProjection(paintMode.orthogonal);
+				filter.setProjection(paintMode.camera.screenTransform);
 				filter.adjustRenderArea(drawArea);
 				renderBuffer(sourceImg, filter, drawArea.min.x, drawArea.min.y, drawArea.width(), drawArea.height(), 1 / resolution, true, resolution * filter
 					.resolution);
@@ -145,7 +147,7 @@ class Filter {
 				GEngine.i.setCanvas(finishTarget);
 				GEngine.i.beginCanvas();
 				var filter:IPainter = filters[filters.length - 1];
-				filter.setProjection(paintMode.orthogonal);
+				filter.setProjection(paintMode.camera.screenTransform);
 				filter.adjustRenderArea(drawArea);
 				var scale = 1 / resolution;
 				renderBuffer(workTargetId, filter, drawArea.min.x, drawArea.min.y, drawArea.width(), drawArea.height(), scale, false);
@@ -160,7 +162,6 @@ class Filter {
 
 	public function renderBuffer(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool, outScale:Float = 1) {
 		painter.textureID = source;
-		// painter.setProjection(getMatrix());
 		var tex = GEngine.i.getTexture(source);
 		var texWidth = tex.realWidth * sourceScale;
 		var texHeight = tex.realHeight * sourceScale;

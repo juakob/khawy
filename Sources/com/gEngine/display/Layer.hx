@@ -52,6 +52,13 @@ class Layer implements IDraw implements IContainer {
 		this.mulA = a;
 		colorTransform=true;
 	}
+	public function setBlendFilter(blend:Blend,r:Float,g:Float,b:Float,a:Float=1) {
+		filter=new Filter([new Painter(true,blend)],false);
+		filter.red=r;
+		filter.green=g;
+		filter.blue=b;
+		filter.alpha=a;
+	}
 
 	public function new() {
 		children = new Array();
@@ -71,7 +78,7 @@ class Layer implements IDraw implements IContainer {
 		}else{
 			model.setFrom(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).multmat(model));
 		}
-		model.setFrom(FastMatrix4.translation(x+pivotX, y+pivotY, z).multmat(model));
+		model.setFrom(FastMatrix4.translation(x+pivotX+offsetX, y+pivotY+offsetY, z).multmat(model));
 		this.transform.setFrom(transform.multmat(model));
 		this.transform._30 *= paralaxX;
 		this.transform._31 *= paralaxY;
@@ -87,10 +94,10 @@ class Layer implements IDraw implements IContainer {
 		var oldMulB=paintMode.mulB;
 		var oldMulA=paintMode.mulA;
 
-		paintMode.mulR = mulR;
-		paintMode.mulG = mulG;
-		paintMode.mulB = mulB;
-		paintMode.mulA = mulA;
+		paintMode.mulR *= mulR;
+		paintMode.mulG *= mulG;
+		paintMode.mulB *= mulB;
+		paintMode.mulA *= mulA;
 		paintMode.colorTransform=true;
 
 		if (drawArea != null) {
@@ -155,6 +162,7 @@ class Layer implements IDraw implements IContainer {
 	}
 
 	public function addChild(child:IDraw):Void {
+		if(child.parent==this)return;
 		child.parent = this;
 		children.push(cast child);
 	}
@@ -174,6 +182,7 @@ class Layer implements IDraw implements IContainer {
 
 	public function remove(child:IDraw):Void {
 		var counter:Int = 0;
+		child.parent=null;
 		for (childIter in children) {
 			if (childIter == child) {
 				children.splice(counter, 1);
@@ -213,8 +222,8 @@ class Layer implements IDraw implements IContainer {
 		}
 	}
 
-	public var offsetX:FastFloat;
-	public var offsetY:FastFloat;
+	public var offsetX:FastFloat=0;
+	public var offsetY:FastFloat=0;
 	public var rotation(default, set):Float;
 
 	public function set_rotation(value:Float):FastFloat {

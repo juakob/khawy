@@ -13,8 +13,9 @@ class Text extends Layer {
 	private var mLetters:Array<Sprite>;
 
 	public var mType:String;
-	public var text(default, set):String;
+	public var text(default, set):String="";
 	public var fontSize:Int = 0;
+	public var smooth(default,set):Bool;
 
 
 	var sourceFontSize:Int = 0;
@@ -47,7 +48,7 @@ class Text extends Layer {
 		var fontSize = Math.round((this.fontSize / sourceFontSize) * sourceFontSize);
 		while (i < text.length) {
 			if (text.charAt(i) == "\n") {
-				i += 2;
+				i += 1;
 				ypos += fontSize * 0.8;
 				xpos = 0;
 				bakedQuadCache.xadvance = 0;
@@ -58,6 +59,8 @@ class Text extends Layer {
 			if (q != null) {
 				if (mLetters.length <= counter) {
 					displayLetter = new Sprite(mType);
+					displayLetter.smooth=smooth;
+					displayLetter.colorMultiplication(color.R,color.G,color.B,color.A);
 					addChild(displayLetter);
 					mLetters.push(displayLetter);
 				} else {
@@ -80,12 +83,21 @@ class Text extends Layer {
 		for (k in counter...mLetters.length) {
 			mLetters[k].removeFromParent();
 		}
-		color = color;
 		return aText;
+	}
+	public function set_smooth(value:Bool):Bool {
+		for(sprite in mLetters){
+			sprite.smooth=value;
+		}
+		smooth=value;
+		return smooth;
 	}
 
 	public function getLetter(aId:Int):Sprite {
 		return mLetters[aId];
+	}
+	public inline function letterCount():Int {
+		return mLetters.length;
 	}
 	public function width():Float {
 		var min:Float=Math.POSITIVE_INFINITY;
@@ -115,8 +127,8 @@ class Text extends Layer {
 	}
 
 	public function set_color(color:Color):Color {
-		for (child in children) {
-			(cast child).colorMultiplication(color.R, color.G, color.B, color.A);
+		for (child in mLetters) {
+			child.colorMultiplication(color.R, color.G, color.B, color.A);
 		}
 		this.color = color;
 		return color;

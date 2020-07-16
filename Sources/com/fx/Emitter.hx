@@ -65,9 +65,6 @@ class Emitter extends Entity {
 			}
 		}
 		if (!playing) {
-			if (numAliveChildren() == 0) {
-				die();
-			}
 			return;
 		}
 		while (numAliveChildren() != currentCapacity()) {
