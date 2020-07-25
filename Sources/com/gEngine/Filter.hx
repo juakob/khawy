@@ -87,14 +87,17 @@ class Filter {
 		// g4.begin();
 		
 		var currentWorkingTarget:Image=cast GEngine.i.currentCanvas();
-		currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
+		//currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
 		GEngine.i.beginCanvas();
 		
 		g4.clear(Color.fromFloats(red, green, blue, alpha));
 		if (cropScreen) {
 			drawArea.reset();
 			display.getDrawArea(drawArea, transform);
-
+			if(Image.renderTargetsInvertedY()){
+				drawArea.scale(1,-1);
+			}
+			drawArea.offset(paintMode.camera.width*0.5,paintMode.camera.height*0.5);
 			if (paintMode.hasRenderArea()) {
 				drawArea.intersection(paintMode.getRenderArea());
 				//	drawArea.scale(1/GEngine.i.scaleWidth,1/GEngine.i.scaleHeigth);
