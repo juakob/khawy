@@ -15,8 +15,7 @@ class ShRenderCache extends Painter {
 	}
 
 	override function setParameter(g:Graphics):Void {
-		g.setMatrix(mvpID, GEngine.i.getMatrix());
-		g.setTexture(textureConstantID, GEngine.i.textures[texture.textureID]);
+		super.setParameter(g);
 		texture.referenceUseFinish();
 	}
 }
