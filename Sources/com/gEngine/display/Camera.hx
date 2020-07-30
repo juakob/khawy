@@ -161,6 +161,8 @@ class Camera {
 		g.clear(clearColor, 1);
 
 		paintMode.camera=this;
+		paintMode.resetRenderArea();
+		paintMode.adjustRenderArea(drawArea);
 
 		if (onPreRender != null)
 			onPreRender(this, view);
