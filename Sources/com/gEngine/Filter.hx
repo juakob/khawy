@@ -96,6 +96,11 @@ class Filter {
 			display.getDrawArea(drawArea, transform);
 			if(Image.renderTargetsInvertedY()){
 				drawArea.scale(1,-1);
+				if(drawArea.min.y>drawArea.max.y){
+					var temp=drawArea.min.y;
+					drawArea.min.y=drawArea.max.y;
+					drawArea.max.y=temp;
+				}
 			}
 			drawArea.offset(paintMode.camera.width*0.5,paintMode.camera.height*0.5);
 			if (paintMode.hasRenderArea()) {
