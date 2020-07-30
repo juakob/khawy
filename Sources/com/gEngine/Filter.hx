@@ -166,9 +166,9 @@ class Filter {
 	public function renderBuffer(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool, outScale:Float = 1) {
 		painter.textureID = source;
 		var tex = GEngine.i.getTexture(source);
-		var texWidth = tex.realWidth * sourceScale;
-		var texHeight = tex.realHeight * sourceScale;
-		outScale *= GEngine.i.oversample;
+		var texWidth = tex.realWidth * sourceScale*1/GEngine.i.oversample;
+		var texHeight = tex.realHeight * sourceScale*1/GEngine.i.oversample;
+		
 
 		writeVertex(painter, x, y, 0, texWidth, texHeight, outScale);
 
