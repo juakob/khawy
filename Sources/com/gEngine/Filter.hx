@@ -185,7 +185,7 @@ class Filter {
 		painter.write(x * resolution);
 		painter.write(y * resolution);
 		painter.write(z);
-		painter.write(x * resolution / sWidth);
-		painter.write(y * resolution / sHeight);
+		painter.write(x  / sWidth);
+		painter.write(y  / sHeight);
 	}
 }
