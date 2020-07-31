@@ -83,11 +83,9 @@ class Filter {
 		GEngine.i.endCanvas();
 		GEngine.i.setCanvas(workTargetId);
 		var g4 = GEngine.i.currentCanvas().g4;
-		// g4.scissor(0, 0, paintMode.targetWidth,paintMode.targetHeight);
-		// g4.begin();
 		
 		var currentWorkingTarget:Image=cast GEngine.i.currentCanvas();
-		//currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
+		currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
 		GEngine.i.beginCanvas();
 		
 		g4.clear(Color.fromFloats(red, green, blue, alpha));
