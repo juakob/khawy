@@ -88,6 +88,10 @@ class Camera {
 
 		
 		setDrawArea(0, 0, width, height);
+		finalX = 0;
+		finalY = 0;
+		this.width = width;
+		this.height = height;
 		renderTarget = GEngine.i.getRenderTarget(width, height);
 		setOrthogonalProjection();
 		projection=orthogonal;
@@ -109,8 +113,13 @@ class Camera {
 
 	public function setArea(x:Int, y:Int, width:Int, height:Int) {
 		setDrawArea(x, y, width, height);
+		finalX = x;
+		finalY = y;
+		this.width = width;
+		this.height = height;
 		GEngine.i.releaseRenderTarget(renderTarget);
 		setOrthogonalProjection();
+		screenTransform = createScreenTransform();
 		renderTarget = GEngine.i.getRenderTarget(width, height);
 	}
 
@@ -137,12 +146,8 @@ class Camera {
 		projectionIsOrthogonal=Math.abs(projection.determinant()) < 0.000001;
 	}
 
-	inline function setDrawArea(x:Int, y:Int, width:Int, height:Int) {
+	public function setDrawArea(x:Int, y:Int, width:Int, height:Int) {
 		drawArea = MinMax.from(0, 0, width, height);
-		finalX = x;
-		finalY = y;
-		this.width = width;
-		this.height = height;
 	}
 
 	public function set_angle(value:Float):Float {
@@ -176,7 +181,7 @@ class Camera {
 		painter.filter=textureFilter;
 		painter.setProjection(GEngine.i.getMatrix());
 		if (postProcess != null) {}
-		GEngine.i.renderBufferFull(renderTarget, painter, finalX, finalY, width, height, 1, false, 1);
+		GEngine.i.renderBufferFull(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1);
 		GEngine.i.endCanvas();
 	}
 
