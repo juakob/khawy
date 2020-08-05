@@ -10,25 +10,22 @@ class Profiler {
 
 	public inline static function startMeasure(name:String) {
 		#if profile
-		if (enable) {
-			var index = functionsNames.indexOf(name);
-			if (index < 0) {
-				index = functionsNames.push(name) - 1;
-				functionsTimes.push(new Array());
-			}
-			functionsTimes[index].push(Scheduler.realTime());
+		var index = functionsNames.indexOf(name);
+		if (index < 0) {
+			index = functionsNames.push(name) - 1;
+			functionsTimes.push(new Array());
 		}
+		functionsTimes[index].push(Scheduler.realTime());
 		#end
 	}
 
 	public inline static function endMeasure(name:String) {
 		#if profile
-		if (enable) {
-			var index = functionsNames.indexOf(name);
-			if (index > 0) {
-				var endIndex = functionsTimes[index].length - 1;
-				functionsTimes[index][endIndex] = Scheduler.realTime() - functionsTimes[index][endIndex];
-			}
+		var time=Scheduler.realTime();
+		var index = functionsNames.indexOf(name);
+		if (index > 0) {
+			var endIndex = functionsTimes[index].length - 1;
+			functionsTimes[index][endIndex] = time - functionsTimes[index][endIndex];
 		}
 		#end
 	}
