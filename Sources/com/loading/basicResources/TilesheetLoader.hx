@@ -147,7 +147,7 @@ class TilesheetLoader implements AtlasJoinable {
 
 			frame.vertexs.push(x);
 			frame.vertexs.push(y + height);
-			
+
 			frame.vertexs.push(x + width);
 			frame.vertexs.push(y);
 

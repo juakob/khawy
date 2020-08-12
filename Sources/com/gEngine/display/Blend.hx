@@ -26,6 +26,7 @@ class Blend {
 		blend.alphaBlendDestination = BlendingFactor.BlendOne;
 		return blend;
 	}
+
 	/**
 	 * [fast multiply with no alpha blend]
 	 * @return Blend
@@ -38,6 +39,7 @@ class Blend {
 		blend.alphaBlendDestination = BlendingFactor.SourceColor;
 		return blend;
 	}
+
 	/**
 	 * [uses alpha, consider using FastMuliply ]
 	 * @return Blend

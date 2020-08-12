@@ -68,7 +68,7 @@ class Particle extends Entity {
 		animation.y = mY;
 		animation.rotation += mAngularVelocity * aDt;
 
-		//if (mAnimation.TotalFrames > 0)
+		// if (mAnimation.TotalFrames > 0)
 		{
 			// mAnimation.goToAndStop(Std.int((mAnimation.TotalFrames - 1) * (1-mLife / mTotalLife)));
 		}

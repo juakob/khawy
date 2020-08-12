@@ -28,10 +28,9 @@ class Input {
 	private var keysReleased:Array<Int>;
 	private var touchPos:Array<Int>;
 	private var touchActive:Array<Int>;
-	
-	public var mouseDeltaX:Float=0;
-	public var mouseDeltaY:Float=0;
 
+	public var mouseDeltaX:Float = 0;
+	public var mouseDeltaY:Float = 0;
 	public var activeTouchSpots(default, null):Int;
 
 	var joysticks:Array<JoystickProxy>;
@@ -94,8 +93,8 @@ class Input {
 	function onTouchMove(id:Int, x:Int, y:Int) {
 		touchPos[id * 2] = x;
 		touchPos[id * 2 + 1] = y;
-		if(id==0){
-			mousePosition.setTo(x,y);
+		if (id == 0) {
+			mousePosition.setTo(x, y);
 		}
 	}
 
@@ -104,9 +103,9 @@ class Input {
 		touchPos[id * 2] = x;
 		touchPos[id * 2 + 1] = y;
 		--activeTouchSpots;
-		if(id==0){
-			mousePosition.setTo(x,y);
-			mouseIsDown=false;
+		if (id == 0) {
+			mousePosition.setTo(x, y);
+			mouseIsDown = false;
 			mouseReleased = true;
 		}
 	}
@@ -116,10 +115,10 @@ class Input {
 		touchActive.push(id);
 		touchPos[id * 2] = x;
 		touchPos[id * 2 + 1] = y;
-		if(id==0){
-			mousePosition.setTo(x,y);
-			mouseIsDown=true;
-			mousePressed=true;
+		if (id == 0) {
+			mousePosition.setTo(x, y);
+			mouseIsDown = true;
+			mousePressed = true;
 		}
 	}
 
@@ -128,8 +127,8 @@ class Input {
 		touchPos[1] = y;
 		mousePosition.x = x;
 		mousePosition.y = y;
-		mouseDeltaX=moveX;
-		mouseDeltaY=moveY;
+		mouseDeltaX = moveX;
+		mouseDeltaY = moveY;
 	}
 
 	function onMouseUp(button:Int, x:Int, y:Int):Void {
@@ -165,12 +164,15 @@ class Input {
 		}
 		keysReleased.push(cast key);
 	}
+
 	public function lockMouse() {
 		Mouse.get().lock();
 	}
+
 	public function unlockMouse() {
 		Mouse.get().unlock();
 	}
+
 	public function isMouseLock():Bool {
 		return Mouse.get().isLocked();
 	}
@@ -185,8 +187,8 @@ class Input {
 		for (joystick in joysticks) {
 			joystick.update();
 		}
-		mouseDeltaX=0;
-		mouseDeltaY=0;
+		mouseDeltaX = 0;
+		mouseDeltaY = 0;
 	}
 
 	public function clearInput() {

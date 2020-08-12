@@ -26,7 +26,6 @@ class Tilemap {
 					{
 						// if (!tileMap.properties.exists("collision")) {
 						TilesToPolygons.applyTo(tileMap, tileWidth * Const.invWorldScale, tileHeight * Const.invWorldScale, floor, 1);
-
 					}
 				default:
 			}

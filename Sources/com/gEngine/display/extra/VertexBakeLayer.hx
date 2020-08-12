@@ -17,88 +17,98 @@ import com.gEngine.painters.PaintInfo;
 import com.gEngine.painters.PaintMode;
 
 class VertexBakeLayer extends Layer {
-    public var painter(default,set):VertexBakePainter;
-    var baked:Bool=false;
+	public var painter(default, set):VertexBakePainter;
 
-    public function bake() {
-        baked=false;
-        var vertexCount=countVertexLayer(this);
-        painter=new VertexBakePainter(vertexCount);
-        
-        var bakePainter=new BakePainter(painter.getVertexBuffer());
-        var paintMode=new BakePaintMode(bakePainter);
-        paintMode.camera=new Camera(1,1);
-        render(paintMode,FastMatrix4.identity());
-        painter.textureID=paintMode.textureId;
-        painter.upload();
-        baked=true;
-        painter.filter=TextureFilter.PointFilter;
-    }
-    function set_painter(painter:VertexBakePainter):VertexBakePainter {
-        if(this.painter!=null){
-            painter.textureID=this.painter.textureID;
-            painter.setBuffers(this.painter);
-        }
-        this.painter=painter;
-        return painter;
-    }
-    function countVertexLayer(layer:Layer):Int {
-        var count:Int=0;
-        for(child in layer.children){
-            if(Std.is(child,Layer)){
-                count+=countVertexLayer(cast child);
-            }
-            count+=4;
-        }
-        return count;
-    }
-    override function update(passedTime:Float) {
-    }
-    override function render(paintMode:PaintMode, transform:FastMatrix4) {
-        if(baked){
-            paintMode.render();
-            this.transform.setFrom(paintMode.camera.projection.multmat(transform));
-            painter.setProjection(this.transform);
-            painter.render();
-        }else{
-            super.render(paintMode,transform);
-        }
-    }
+	var baked:Bool = false;
+
+	public function bake() {
+		baked = false;
+		var vertexCount = countVertexLayer(this);
+		painter = new VertexBakePainter(vertexCount);
+
+		var bakePainter = new BakePainter(painter.getVertexBuffer());
+		var paintMode = new BakePaintMode(bakePainter);
+		paintMode.camera = new Camera(1, 1);
+		render(paintMode, FastMatrix4.identity());
+		painter.textureID = paintMode.textureId;
+		painter.upload();
+		baked = true;
+		painter.filter = TextureFilter.PointFilter;
+	}
+
+	function set_painter(painter:VertexBakePainter):VertexBakePainter {
+		if (this.painter != null) {
+			painter.textureID = this.painter.textureID;
+			painter.setBuffers(this.painter);
+		}
+		this.painter = painter;
+		return painter;
+	}
+
+	function countVertexLayer(layer:Layer):Int {
+		var count:Int = 0;
+		for (child in layer.children) {
+			if (Std.is(child, Layer)) {
+				count += countVertexLayer(cast child);
+			}
+			count += 4;
+		}
+		return count;
+	}
+
+	override function update(passedTime:Float) {}
+
+	override function render(paintMode:PaintMode, transform:FastMatrix4) {
+		if (baked) {
+			paintMode.render();
+			this.transform.setFrom(paintMode.camera.projection.multmat(transform));
+			painter.setProjection(this.transform);
+			painter.render();
+		} else {
+			super.render(paintMode, transform);
+		}
+	}
 }
+
 class BakePaintMode extends PaintMode {
-    public var textureId:Int=-1;
-    public function new(painter:IPainter) {
-        super();
-        currentPainter=painter;
-    }
-    override function changePainter(painter:IPainter, paintInfo:PaintInfo) {
-        
-    }
-    override function canBatch(info:PaintInfo, size:Int, painter:IPainter):Bool {
-        textureId= info.texture;
-        return true;
-    }
+	public var textureId:Int = -1;
+
+	public function new(painter:IPainter) {
+		super();
+		currentPainter = painter;
+	}
+
+	override function changePainter(painter:IPainter, paintInfo:PaintInfo) {}
+
+	override function canBatch(info:PaintInfo, size:Int, painter:IPainter):Bool {
+		textureId = info.texture;
+		return true;
+	}
 }
+
 class VertexBakePainter extends PainterColorTransform {
-    var size:Int=0;
-    public function new(size:Int=0) {
-        this.size=size;
-        super(true,Blend.blendDefault(),true);
-        
-    }
-    public function upload() {
-        uploadVertexBuffer(size);
-    }
-    public function setBuffers(painter:VertexBakePainter) {
-        this.vertexBuffer=painter.vertexBuffer;
-        this.indexBuffer=painter.indexBuffer;
-    }
-    override function  setShaders(pipeline:PipelineState) {
-        super.setShaders(pipeline);
-        pipeline.cullMode=CullMode.Clockwise;
-    }
-    override function render(clear:Bool = false, cropArea:MinMax = null) {
-       
+	var size:Int = 0;
+
+	public function new(size:Int = 0) {
+		this.size = size;
+		super(true, Blend.blendDefault(), true);
+	}
+
+	public function upload() {
+		uploadVertexBuffer(size);
+	}
+
+	public function setBuffers(painter:VertexBakePainter) {
+		this.vertexBuffer = painter.vertexBuffer;
+		this.indexBuffer = painter.indexBuffer;
+	}
+
+	override function setShaders(pipeline:PipelineState) {
+		super.setShaders(pipeline);
+		pipeline.cullMode = CullMode.Clockwise;
+	}
+
+	override function render(clear:Bool = false, cropArea:MinMax = null) {
 		var canvas = GEngine.i.currentCanvas();
 		canvasWidth = canvas.width;
 		canvasHeight = canvas.height;
@@ -125,11 +135,12 @@ class VertexBakePainter extends PainterColorTransform {
 		#if debugInfo
 		++ GEngine.drawCount;
 		#end
+	}
 
-    }
-    override function createBuffers():Void {
-        if(size==0)return;
-        vertexBuffer = new VertexBuffer(size, structure, Usage.StaticUsage);
+	override function createBuffers():Void {
+		if (size == 0)
+			return;
+		vertexBuffer = new VertexBuffer(size, structure, Usage.StaticUsage);
 		// Create index buffer
 		indexBuffer = new IndexBuffer(Std.int(size * Painter.ratioIndexVertex), Usage.StaticUsage);
 

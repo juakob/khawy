@@ -148,60 +148,60 @@ class CollisionTileMap implements ICollider {
 		edges[tileX + tileY * widthIntTiles] = edgeType;
 	}
 
-	public function raycast(start:FastVector2,dir:FastVector2,length:Float):Int {
+	public function raycast(start:FastVector2, dir:FastVector2, length:Float):Int {
+		var currentX:Float = Math.floor(start.x / tileWidth);
+		var currentY:Float = Math.floor(start.y / tileHeight);
 
-		var currentX:Float = Math.floor(start.x/tileWidth);
-		var currentY:Float = Math.floor(start.y/tileHeight);
+		var endX = Math.floor((start.x + dir.x * length) / tileWidth);
+		var endY = Math.floor((start.y + dir.y * length) / tileHeight);
 
-		var endX = Math.floor((start.x+dir.x*length)/tileWidth);
-		var endY = Math.floor((start.y+dir.y*length)/tileHeight);
+		var stepX:Float = dir.x >= 0 ? 1 : -1;
+		var stepY:Float = dir.y >= 0 ? 1 : -1;
 
-		var stepX:Float=dir.x>=0?1:-1;
-		var stepY:Float=dir.y>=0?1:-1;
+		var nextTileEdgeX = (currentX + stepX) * tileWidth;
+		var nextTileEdgeY = (currentY + stepY) * tileHeight;
 
-		var nextTileEdgeX=(currentX+stepX)*tileWidth;
-		var nextTileEdgeY=(currentY+stepY)*tileHeight;
+		var tMaxX:Float = (dir.x != 0) ? (nextTileEdgeX - start.x) / dir.x : Math.POSITIVE_INFINITY;
+		var tMaxY:Float = (dir.y != 0) ? (nextTileEdgeY - start.y) / dir.y : Math.POSITIVE_INFINITY;
 
-		var tMaxX:Float=(dir.x!=0)?(nextTileEdgeX-start.x)/dir.x:Math.POSITIVE_INFINITY;
-		var tMaxY:Float=(dir.y!=0)?(nextTileEdgeY-start.y)/dir.y:Math.POSITIVE_INFINITY;
+		var tDeltaX = (dir.x != 0) ? tileWidth / dir.x * stepX : Math.POSITIVE_INFINITY;
+		var tDeltaY = (dir.y != 0) ? tileHeight / dir.y * stepY : Math.POSITIVE_INFINITY;
 
-		var tDeltaX=(dir.x!=0)?tileWidth/dir.x*stepX:Math.POSITIVE_INFINITY;
-		var tDeltaY=(dir.y!=0)?tileHeight/dir.y*stepY:Math.POSITIVE_INFINITY;
-
-		var diff=new FastVector2();
-		var neg_ray:Bool=false;
-		if(currentX!=endX&&dir.x<0){
+		var diff = new FastVector2();
+		var neg_ray:Bool = false;
+		if (currentX != endX && dir.x < 0) {
 			diff.x--;
-			neg_ray=true;
+			neg_ray = true;
 		}
-		if(currentY!=endY&&dir.y<0){
+		if (currentY != endY && dir.y < 0) {
 			diff.y--;
-			neg_ray=true;
+			neg_ray = true;
 		}
-		if(neg_ray){
-			currentX+=diff.x;
-			currentY+=diff.y;
-
+		if (neg_ray) {
+			currentX += diff.x;
+			currentY += diff.y;
 		}
 
-		while ( endX!=currentX || endY!=currentY){
-			if(tMaxX<tMaxY){
-				tMaxX=tMaxX+tDeltaX;
-				currentX=currentX+stepX;
-				if(currentX<0||currentX>widthIntTiles)break;
-			}else{
-				tMaxY=tMaxY+tDeltaY;
-				currentY=currentY+stepY;
-				if(currentY<0||currentY>heightInTiles)break;
+		while (endX != currentX || endY != currentY) {
+			if (tMaxX < tMaxY) {
+				tMaxX = tMaxX + tDeltaX;
+				currentX = currentX + stepX;
+				if (currentX < 0 || currentX > widthIntTiles)
+					break;
+			} else {
+				tMaxY = tMaxY + tDeltaY;
+				currentY = currentY + stepY;
+				if (currentY < 0 || currentY > heightInTiles)
+					break;
 			}
-			if(tiles[Std.int(currentX+currentY*widthIntTiles)]>0){
-				return(Std.int(currentX+currentY*widthIntTiles));
+			if (tiles[Std.int(currentX + currentY * widthIntTiles)] > 0) {
+				return (Std.int(currentX + currentY * widthIntTiles));
 			}
 		}
 		return -1;
-
 	}
+
 	#if DEBUGDRAW
-	public function debugDraw(canvas:kha.Canvas):Void{}
+	public function debugDraw(canvas:kha.Canvas):Void {}
 	#end
 }

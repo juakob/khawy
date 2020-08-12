@@ -57,7 +57,6 @@ class Painter implements IPainter {
 	public var paintInfo:PaintInfo;
 
 	var structure:VertexStructure;
-
 	var depthWrite:Bool;
 	var clockWise:CullMode;
 
@@ -197,9 +196,9 @@ class Painter implements IPainter {
 	}
 
 	public function destroy():Void {
-			vertexBuffer.delete();
-			indexBuffer.delete();
-			pipeline.delete();
+		vertexBuffer.delete();
+		indexBuffer.delete();
+		pipeline.delete();
 	}
 
 	public function adjustRenderArea(area:MinMax):Void {}

@@ -45,7 +45,8 @@ class Entity {
 
 	public function render():Void {
 		for (child in children) {
-			if(!child.limbo) child.render();
+			if (!child.limbo)
+				child.render();
 		}
 	}
 

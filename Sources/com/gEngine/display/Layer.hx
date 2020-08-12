@@ -37,9 +37,10 @@ class Layer implements IDraw implements IContainer {
 	private var sinAng:FastFloat;
 	var scaleArea:MinMax = new MinMax();
 	var transform:FastMatrix4;
-	public var billboard:Bool=false;
 
-	var colorTransform:Bool=false;
+	public var billboard:Bool = false;
+
+	var colorTransform:Bool = false;
 	var mulR:Float = 1;
 	var mulG:Float = 1;
 	var mulB:Float = 1;
@@ -50,14 +51,15 @@ class Layer implements IDraw implements IContainer {
 		this.mulB = b;
 		this.mulG = g;
 		this.mulA = a;
-		colorTransform=true;
+		colorTransform = true;
 	}
-	public function setBlendFilter(blend:Blend,r:Float,g:Float,b:Float,a:Float=1) {
-		filter=new Filter([new Painter(true,blend)],false);
-		filter.red=r;
-		filter.green=g;
-		filter.blue=b;
-		filter.alpha=a;
+
+	public function setBlendFilter(blend:Blend, r:Float, g:Float, b:Float, a:Float = 1) {
+		filter = new Filter([new Painter(true, blend)], false);
+		filter.red = r;
+		filter.green = g;
+		filter.blue = b;
+		filter.alpha = a;
 	}
 
 	public function new() {
@@ -71,14 +73,14 @@ class Layer implements IDraw implements IContainer {
 	inline function calculateTransform(transform:FastMatrix4) {
 		var model = FastMatrix4.translation(-pivotX, -pivotY, 0);
 		model.setFrom((FastMatrix4.scale(scaleX, scaleY, 1)).multmat(model));
-		if(billboard){
-			var rotation=transform.inverse();
-			rotation._30=rotation._31=rotation._32=0;
+		if (billboard) {
+			var rotation = transform.inverse();
+			rotation._30 = rotation._31 = rotation._32 = 0;
 			model.setFrom(rotation.multmat(model));
-		}else{
+		} else {
 			model.setFrom(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).multmat(model));
 		}
-		model.setFrom(FastMatrix4.translation(x+pivotX+offsetX, y+pivotY+offsetY, z).multmat(model));
+		model.setFrom(FastMatrix4.translation(x + pivotX + offsetX, y + pivotY + offsetY, z).multmat(model));
 		this.transform.setFrom(transform.multmat(model));
 		this.transform._30 *= paralaxX;
 		this.transform._31 *= paralaxY;
@@ -89,16 +91,16 @@ class Layer implements IDraw implements IContainer {
 		if (!visible) {
 			return;
 		}
-		var oldMulR=paintMode.mulR;
-		var oldMulG=paintMode.mulG;
-		var oldMulB=paintMode.mulB;
-		var oldMulA=paintMode.mulA;
+		var oldMulR = paintMode.mulR;
+		var oldMulG = paintMode.mulG;
+		var oldMulB = paintMode.mulB;
+		var oldMulA = paintMode.mulA;
 
 		paintMode.mulR *= mulR;
 		paintMode.mulG *= mulG;
 		paintMode.mulB *= mulB;
 		paintMode.mulA *= mulA;
-		paintMode.colorTransform=true;
+		paintMode.colorTransform = true;
 
 		if (drawArea != null) {
 			paintMode.render();
@@ -162,7 +164,8 @@ class Layer implements IDraw implements IContainer {
 	}
 
 	public function addChild(child:IDraw):Void {
-		if(child.parent==this)return;
+		if (child.parent == this)
+			return;
 		child.parent = this;
 		children.push(cast child);
 	}
@@ -182,7 +185,7 @@ class Layer implements IDraw implements IContainer {
 
 	public function remove(child:IDraw):Void {
 		var counter:Int = 0;
-		child.parent=null;
+		child.parent = null;
 		for (childIter in children) {
 			if (childIter == child) {
 				children.splice(counter, 1);
@@ -222,8 +225,8 @@ class Layer implements IDraw implements IContainer {
 		}
 	}
 
-	public var offsetX:FastFloat=0;
-	public var offsetY:FastFloat=0;
+	public var offsetX:FastFloat = 0;
+	public var offsetY:FastFloat = 0;
 	public var rotation(default, set):Float;
 
 	public function set_rotation(value:Float):FastFloat {

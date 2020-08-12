@@ -21,7 +21,7 @@ class Profiler {
 
 	public inline static function endMeasure(name:String) {
 		#if profile
-		var time=Scheduler.realTime();
+		var time = Scheduler.realTime();
 		var index = functionsNames.indexOf(name);
 		if (index > 0) {
 			var endIndex = functionsTimes[index].length - 1;

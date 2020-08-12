@@ -16,11 +16,12 @@ class Timeline {
 	var firstFrame:Int = 0;
 	var lastFrame:Int = 0;
 	private var labels:Array<Label>;
+
 	public var currentTime:Float = 0;
 
 	public function new(frameRate:Float, totalFrames:Int, ?labels:Array<Label>) {
 		this.frameRate = frameRate;
-		this.lastFrame=totalFrames-1;
+		this.lastFrame = totalFrames - 1;
 		this.totalFrames = totalFrames;
 		if (totalFrames == 1)
 			playing = false;
@@ -87,16 +88,18 @@ class Timeline {
 		}
 		throw "label " + text + "not found";
 	}
+
 	public function nextFrame() {
-		if (currentFrame+1 > lastFrame) {
+		if (currentFrame + 1 > lastFrame) {
 			if (loop) {
 				return firstFrame;
 			} else {
 				return lastFrame;
 			}
 		}
-		return currentFrame+1;
+		return currentFrame + 1;
 	}
+
 	public function currentLabel():String {
 		var frame:Int;
 

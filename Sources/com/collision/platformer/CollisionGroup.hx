@@ -19,13 +19,14 @@ class CollisionGroup implements ICollider {
 	}
 
 	public function add(aCollider:ICollider) {
-		if(aCollider.parent==this)return;
+		if (aCollider.parent == this)
+			return;
 		colliders.push(aCollider);
 		aCollider.parent = this;
 	}
 
 	public function remove(aCollider:ICollider) {
-		aCollider.parent=null;
+		aCollider.parent = null;
 		colliders.remove(aCollider);
 	}
 
@@ -67,9 +68,10 @@ class CollisionGroup implements ICollider {
 	public function collisionType():CollisionType {
 		return CollisionType.Group;
 	}
+
 	#if DEBUGDRAW
-	public function debugDraw(canvas:kha.Canvas):Void{
-		for(col in colliders){
+	public function debugDraw(canvas:kha.Canvas):Void {
+		for (col in colliders) {
 			col.debugDraw(canvas);
 		}
 	}

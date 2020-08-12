@@ -5,17 +5,14 @@ package com.collision.platformer;
  * @author Joaquin
  */
 class CollisionBox extends Body implements ICollider {
-
 	public var width:Float = 10;
 	public var height:Float = 10;
-	
-
 	public var collisionAllow:Int = Sides.BOTTOM | Sides.LEFT | Sides.RIGHT | Sides.TOP;
 	public var userData:Dynamic;
 	public var parent:CollisionGroup;
 
 	public function removeFromParent() {
-		if (parent != null){
+		if (parent != null) {
 			parent.remove(this);
 		}
 	}
@@ -48,9 +45,9 @@ class CollisionBox extends Body implements ICollider {
 				colliderPonderation = 0;
 			}
 			if (overlapVsBox(boxCollider)) {
-				var overlapX:Float = width * 0.5 + boxCollider.width * 0.5 - Math.abs((x + width * 0.5) - (boxCollider.x + boxCollider.width * 0.5));
-				var overlapY:Float = height * 0.5 + boxCollider.height * 0.5 - Math.abs((y + height * 0.5) - (boxCollider.y + boxCollider.height * 0.5));
-				var overlapXSmaller:Bool=overlapX<overlapY;
+				var overlapX:Float = width * 0.5 + boxCollider.width * 0.5 - Math.abs((x + width * 0.5) -(boxCollider.x + boxCollider.width * 0.5));
+				var overlapY:Float = height * 0.5 + boxCollider.height * 0.5 - Math.abs((y + height * 0.5) -(boxCollider.y + boxCollider.height * 0.5));
+				var overlapXSmaller:Bool = overlapX < overlapY;
 				var myCollisionNeededX:Int = Sides.LEFT;
 				var colliderNeededX:Int = Sides.RIGHT;
 				var myCollisionNeededY:Int = Sides.TOP;
@@ -60,46 +57,43 @@ class CollisionBox extends Body implements ICollider {
 					myCollisionNeededX = Sides.RIGHT;
 					colliderNeededX = Sides.LEFT;
 					overlapX *= -1;
-				} 
-				
+				}
+
 				if ((y + height * 0.5) < (boxCollider.y + boxCollider.height * 0.5)) {
 					myCollisionNeededY = Sides.BOTTOM;
 					colliderNeededY = Sides.TOP;
 					overlapY *= -1;
-					
 				}
-				if (overlapXSmaller
-					&& (collisionAllow & myCollisionNeededX > 0)
-					&& (boxCollider.collisionAllow & colliderNeededX > 0)) {
+				if (overlapXSmaller && (collisionAllow & myCollisionNeededX > 0) && (boxCollider.collisionAllow & colliderNeededX > 0)) {
 					x += overlapX * myPonderation;
 					boxCollider.x -= overlapX * colliderPonderation;
-					
-					if(velocityX*overlapX>=0){ //dot product to se direction	
-						velocityX*=-bounce;
+
+					if (velocityX * overlapX >= 0) { // dot product to se direction
+						velocityX *= -bounce;
 					}
-					if(boxCollider.velocityX*overlapX>=0){ //dot product to se direction
-						boxCollider.velocityX*=-boxCollider.bounce;
+					if (boxCollider.velocityX * overlapX >= 0) { // dot product to se direction
+						boxCollider.velocityX *= -boxCollider.bounce;
 					}
 					touching |= myCollisionNeededX;
 					boxCollider.touching |= colliderNeededX;
-					if(notifyCallback!=null){
-						notifyCallback(this,collider);
+					if (notifyCallback != null) {
+						notifyCallback(this, collider);
 					}
 					return true;
 				} else if ((collisionAllow & myCollisionNeededY > 0) && (boxCollider.collisionAllow & colliderNeededY > 0)) {
 					y += overlapY * myPonderation;
 					boxCollider.y -= overlapY * colliderPonderation;
-					if(velocityY*overlapY>=0){ //dot product to se direction	
-						velocityY*=-bounce;
+					if (velocityY * overlapY >= 0) { // dot product to se direction
+						velocityY *= -bounce;
 					}
-					if(boxCollider.velocityY*overlapY>=0){ //dot product to se direction
-						boxCollider.velocityY*=-boxCollider.bounce;
+					if (boxCollider.velocityY * overlapY >= 0) { // dot product to se direction
+						boxCollider.velocityY *= -boxCollider.bounce;
 					}
-					
+
 					touching |= myCollisionNeededY;
 					boxCollider.touching |= colliderNeededY;
-					if(notifyCallback!=null){
-						notifyCallback(this,collider);
+					if (notifyCallback != null) {
+						notifyCallback(this, collider);
 					}
 					return true;
 				}
@@ -148,13 +142,14 @@ class CollisionBox extends Body implements ICollider {
 	function overlapVsBox(box:CollisionBox):Bool {
 		return (box.x < x + width && box.x + box.width > x && box.y < y + height && box.y + box.height > y);
 	}
+
 	#if DEBUGDRAW
-	public function debugDraw(canvas:kha.Canvas):Void{
-		var g2=canvas.g2;
-		g2.drawLine(x,y,x+width,y);
-		g2.drawLine(x+width,y,x+width,y+height);
-		g2.drawLine(x+width,y+height,x,y+height);
-		g2.drawLine(x,y+height,x,y);
+	public function debugDraw(canvas:kha.Canvas):Void {
+		var g2 = canvas.g2;
+		g2.drawLine(x, y, x + width, y);
+		g2.drawLine(x + width, y, x + width, y + height);
+		g2.drawLine(x + width, y + height, x, y + height);
+		g2.drawLine(x, y + height, x, y);
 	}
 	#end
 }

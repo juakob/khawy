@@ -18,7 +18,7 @@ class Object3d implements IAnimation {
 	public var z:FastFloat = 0;
 	public var offsetX:FastFloat = 1;
 	public var offsetY:FastFloat = 1;
-	public var rotation(default, set):Float=0;
+	public var rotation(default, set):Float = 0;
 	public var scaleX:FastFloat = 1;
 	public var scaleY:FastFloat = 1;
 	public var scaleZ:FastFloat = 1;
@@ -32,9 +32,10 @@ class Object3d implements IAnimation {
 	var parts:Array<Object3dData>;
 	var skeleton:SkeletonD;
 	var animated:Bool = false;
+
 	public var painterBones:Object3dBonesPainter;
 	public var painter3d:Object3dPainter;
-	
+
 	static var painterBonesDefault:Object3dBonesPainter;
 	static var painter3dDefault:Object3dPainter;
 
@@ -43,8 +44,8 @@ class Object3d implements IAnimation {
 			painterBonesDefault = new Object3dBonesPainter(Blend.blendDefault());
 			painter3dDefault = new Object3dPainter(Blend.blendDefault());
 		}
-		painterBones=painterBonesDefault;
-		painter3d=painter3dDefault;
+		painterBones = painterBonesDefault;
+		painter3d = painter3dDefault;
 
 		parts = Object3dDB.i.getData(name);
 		skeleton = Object3dDB.i.getSkeleton(name);
@@ -70,7 +71,8 @@ class Object3d implements IAnimation {
 		paintMode.render();
 		for (part in parts) {
 			if (part.skin != null) {
-				painterBones.setRenderInfo(model, cameraMatrix, projection, part.texture, part.vertexBuffer, part.indexBuffer, part.skin.getBonesTransformations());
+				painterBones.setRenderInfo(model, cameraMatrix, projection, part.texture, part.vertexBuffer, part.indexBuffer, part.skin.getBonesTransformations
+					());
 				painterBones.render();
 			} else {
 				painter3d.setRenderInfo(model, cameraMatrix, projection, part.texture, part.vertexBuffer, part.indexBuffer);

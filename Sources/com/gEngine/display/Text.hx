@@ -13,10 +13,9 @@ class Text extends Layer {
 	private var mLetters:Array<Sprite>;
 
 	public var mType:String;
-	public var text(default, set):String="";
+	public var text(default, set):String = "";
 	public var fontSize:Int = 0;
-	public var smooth(default,set):Bool;
-
+	public var smooth(default, set):Bool;
 
 	var sourceFontSize:Int = 0;
 
@@ -35,7 +34,8 @@ class Text extends Layer {
 	}
 
 	public function set_text(aText:String):String {
-		if(text==aText)return text;
+		if (text == aText)
+			return text;
 		text = aText;
 		var counter:Int = 0;
 		var displayLetter:Sprite;
@@ -59,8 +59,8 @@ class Text extends Layer {
 			if (q != null) {
 				if (mLetters.length <= counter) {
 					displayLetter = new Sprite(mType);
-					displayLetter.smooth=smooth;
-					displayLetter.colorMultiplication(color.R,color.G,color.B,color.A);
+					displayLetter.smooth = smooth;
+					displayLetter.colorMultiplication(color.R, color.G, color.B, color.A);
 					addChild(displayLetter);
 					mLetters.push(displayLetter);
 				} else {
@@ -85,32 +85,34 @@ class Text extends Layer {
 		}
 		return aText;
 	}
+
 	public function set_smooth(value:Bool):Bool {
-		for(sprite in mLetters){
-			sprite.smooth=value;
+		for (sprite in mLetters) {
+			sprite.smooth = value;
 		}
-		smooth=value;
+		smooth = value;
 		return smooth;
 	}
 
 	public function getLetter(aId:Int):Sprite {
 		return mLetters[aId];
 	}
+
 	public inline function letterCount():Int {
 		return mLetters.length;
 	}
+
 	public function width():Float {
-		var min:Float=Math.POSITIVE_INFINITY;
-		var max:Float=Math.NEGATIVE_INFINITY;
-		for(letter in mLetters){
-			if(letter.x<min){
-				min=letter.x;
-			}else 
-			if(letter.x+letter.width()>max){
-				max=letter.x+letter.width();
+		var min:Float = Math.POSITIVE_INFINITY;
+		var max:Float = Math.NEGATIVE_INFINITY;
+		for (letter in mLetters) {
+			if (letter.x < min) {
+				min = letter.x;
+			} else if (letter.x + letter.width() > max) {
+				max = letter.x + letter.width();
 			}
 		}
-		return max-min;
+		return max - min;
 	}
 
 	private static function findIndex(charCode:Int):Int {

@@ -50,8 +50,9 @@ class VirtualGamepad {
 		button.radio = radio;
 		buttonsTouch.push(button);
 	}
+
 	public function addButtonRec(id:Int, left:FastFloat, top:FastFloat, right:FastFloat, bottom:FastFloat) {
-		var button = new VirtualRectangleButton(left,top,right,bottom);
+		var button = new VirtualRectangleButton(left, top, right, bottom);
 		button.id = id;
 		buttonsTouch.push(button);
 	}
@@ -86,7 +87,7 @@ class VirtualGamepad {
 		scaleY = Input.i.screenScale.y;
 		for (button in buttonsTouch) {
 			if (button.handleInput(x * scaleX, y * scaleY)) {
-				pressButton(button,id);
+				pressButton(button, id);
 			}
 		}
 		for (stick in sticksTouch) {
@@ -111,11 +112,10 @@ class VirtualGamepad {
 		scaleX = Input.i.screenScale.x;
 		scaleY = Input.i.screenScale.y;
 		for (button in buttonsTouch) {
-			var inside=button.handleInput(x * scaleX, y * scaleY);
-			if (inside&&!button.active) {
-				pressButton(button,id);
-			}else
-			if(!inside&&button.active&&button.touchId==id){
+			var inside = button.handleInput(x * scaleX, y * scaleY);
+			if (inside && !button.active) {
+				pressButton(button, id);
+			} else if (!inside && button.active && button.touchId == id) {
 				releaseButton(button);
 			}
 		}
@@ -147,7 +147,6 @@ class VirtualGamepad {
 				onAxisChange(stick.idY, 0);
 				stick.active = false;
 				stick.touchId = -1;
-			
 			}
 		}
 		if (globalStick.touchId == id) {
@@ -155,38 +154,43 @@ class VirtualGamepad {
 			onAxisChange(globalStick.idY, 0);
 			globalStick.active = false;
 			globalStick.touchId = -1;
-		
 		}
 	}
 
-	function pressButton(button:VirtualInput,touchId:Int) {
+	function pressButton(button:VirtualInput, touchId:Int) {
 		button.active = true;
 		button.touchId = touchId;
 		onButtonChange(button.id, 1);
 	}
+
 	function releaseButton(button:VirtualInput) {
 		button.active = false;
 		onButtonChange(button.id, 0);
 		button.touchId = -1;
 	}
+
 	function onKeyDown(key:KeyCode) {
-		if(!keyButton.exists(key))return;
+		if (!keyButton.exists(key))
+			return;
 		var id = keyButton.get(key);
 		onButtonChange(id, 1);
 	}
 
 	function onKeyUp(key:KeyCode) {
-		if(!keyButton.exists(key))return;
+		if (!keyButton.exists(key))
+			return;
 		var id = keyButton.get(key);
 		onButtonChange(id, 0);
 	}
 }
+
 interface VirtualInput {
 	var touchId:Int;
 	var id:Int;
 	var active:Bool;
 	function handleInput(x:Float, y:Float):Bool;
 }
+
 class VirtualButton implements VirtualInput {
 	public var touchId:Int = -1;
 	public var id:Int;
@@ -209,11 +213,11 @@ class VirtualRectangleButton implements VirtualInput {
 	public var active:Bool;
 
 	public function new(left:FastFloat, top:FastFloat, right:FastFloat, bottom:FastFloat) {
-		area=MinMax.from(left,top,right,bottom);
+		area = MinMax.from(left, top, right, bottom);
 	}
 
 	public function handleInput(x:Float, y:Float):Bool {
-		return area.inside(x,y);
+		return area.inside(x, y);
 	}
 }
 

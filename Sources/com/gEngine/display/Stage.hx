@@ -75,7 +75,7 @@ class Stage {
 	}
 
 	public function addCamera(camera:Camera):Int {
-		camera.world=world;
+		camera.world = world;
 		camera.clearColor = color;
 		return cameras.push(camera);
 	}

@@ -108,7 +108,7 @@ class Object3dPainter implements IPainter {
 		if (cropArea != null)
 			g4.disableScissor();
 		#if debugInfo
-		++GEngine.drawCount;
+		++ GEngine.drawCount;
 		#end
 	}
 

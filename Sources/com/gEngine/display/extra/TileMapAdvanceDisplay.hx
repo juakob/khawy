@@ -42,21 +42,21 @@ class TileMapAdvanceDisplay extends Layer {
 		setTile2(indexX + widthInTiles * indexY, value);
 	}
 
-	public function setTile2(index:Int, value:Int,flipX:Bool=false,flipY:Bool=false,rotate:Bool=false) {
+	public function setTile2(index:Int, value:Int, flipX:Bool = false, flipY:Bool = false, rotate:Bool = false) {
 		if (tiles[index].display == null) {
 			var display = displayConstructor(value);
 			addChild(display);
 			display.x = Std.int(index % widthInTiles) * tileWidth;
 			display.y = Std.int(index / widthInTiles) * tileHeight;
-			if(rotate){
-				display.rotation= Math.PI * 0.5;
-				display.scaleX = flipY ? -1:1;
-				display.scaleY = flipX ? 1:-1;
-			}else{
-				display.scaleX = flipX ? -1:1;
-				display.scaleY = flipY ? -1:1;
+			if (rotate) {
+				display.rotation = Math.PI * 0.5;
+				display.scaleX = flipY ? -1 : 1;
+				display.scaleY = flipX ? 1 : -1;
+			} else {
+				display.scaleX = flipX ? -1 : 1;
+				display.scaleY = flipY ? -1 : 1;
 			}
-			
+
 			tiles[index].display = display;
 		}
 		tiles[index].id = value;

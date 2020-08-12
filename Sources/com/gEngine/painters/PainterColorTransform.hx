@@ -7,8 +7,8 @@ import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
 
 class PainterColorTransform extends Painter {
-	public function new(autoDestroy:Bool = true, blend:Blend,depthWrite:Bool=false) {
-		super(autoDestroy, blend,depthWrite);
+	public function new(autoDestroy:Bool = true, blend:Blend, depthWrite:Bool = false) {
+		super(autoDestroy, blend, depthWrite);
 		dataPerVertex = 13;
 	}
 

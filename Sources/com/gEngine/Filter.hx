@@ -15,10 +15,12 @@ import kha.FastFloat;
 
 class Filter {
 	private var renderPass:Array<RenderPass>;
+
 	public var red:FastFloat = 0;
 	public var green:FastFloat = 0;
 	public var blue:FastFloat = 0;
 	public var alpha:FastFloat = 0;
+
 	var cropScreen:Bool;
 	var drawArea:MinMax;
 	var finishTarget:Int;
@@ -29,7 +31,6 @@ class Filter {
 		this.cropScreen = cropScreen;
 		renderPass = new Array();
 		drawArea = new MinMax();
-		
 
 		if (filters != null) {
 			setPasses(filters);
@@ -71,36 +72,36 @@ class Filter {
 	public function filterStart(display:IDraw, paintMode:PaintMode, transform:FastMatrix4):Void {
 		if (!this.cropScreen) {
 			drawArea.min.setTo(0, 0);
-			drawArea.max.setTo(paintMode.camera.width,paintMode.camera.height);
+			drawArea.max.setTo(paintMode.camera.width, paintMode.camera.height);
 		}
 		if (renderPass.length == 0) {
 			return;
 		}
 		paintMode.render();
 		finishTarget = GEngine.i.currentCanvasId();
-		var finshTargetImage:Image=cast GEngine.i.currentCanvas();
+		var finshTargetImage:Image = cast GEngine.i.currentCanvas();
 		workTargetId = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 		GEngine.i.endCanvas();
 		GEngine.i.setCanvas(workTargetId);
 		var g4 = GEngine.i.currentCanvas().g4;
-		
-		var currentWorkingTarget:Image=cast GEngine.i.currentCanvas();
+
+		var currentWorkingTarget:Image = cast GEngine.i.currentCanvas();
 		currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
 		GEngine.i.beginCanvas();
-		
+
 		g4.clear(Color.fromFloats(red, green, blue, alpha));
 		if (cropScreen) {
 			drawArea.reset();
 			display.getDrawArea(drawArea, transform);
-			if(Image.renderTargetsInvertedY()){
-				drawArea.scale(1,-1);
-				if(drawArea.min.y>drawArea.max.y){
-					var temp=drawArea.min.y;
-					drawArea.min.y=drawArea.max.y;
-					drawArea.max.y=temp;
+			if (Image.renderTargetsInvertedY()) {
+				drawArea.scale(1, -1);
+				if (drawArea.min.y > drawArea.max.y) {
+					var temp = drawArea.min.y;
+					drawArea.min.y = drawArea.max.y;
+					drawArea.max.y = temp;
 				}
 			}
-			drawArea.offset(paintMode.camera.width*0.5,paintMode.camera.height*0.5);
+			drawArea.offset(paintMode.camera.width * 0.5, paintMode.camera.height * 0.5);
 			if (paintMode.hasRenderArea()) {
 				drawArea.intersection(paintMode.getRenderArea());
 				//	drawArea.scale(1/GEngine.i.scaleWidth,1/GEngine.i.scaleHeigth);
@@ -169,9 +170,8 @@ class Filter {
 	public function renderBuffer(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool, outScale:Float = 1) {
 		painter.textureID = source;
 		var tex = GEngine.i.getTexture(source);
-		var texWidth = tex.realWidth * sourceScale*1/GEngine.i.oversample;
-		var texHeight = tex.realHeight * sourceScale*1/GEngine.i.oversample;
-		
+		var texWidth = tex.realWidth * sourceScale * 1 / GEngine.i.oversample;
+		var texHeight = tex.realHeight * sourceScale * 1 / GEngine.i.oversample;
 
 		writeVertex(painter, x, y, 0, texWidth, texHeight, outScale);
 
@@ -188,7 +188,7 @@ class Filter {
 		painter.write(x * resolution);
 		painter.write(y * resolution);
 		painter.write(z);
-		painter.write(x  / sWidth);
-		painter.write(y  / sHeight);
+		painter.write(x / sWidth);
+		painter.write(y / sHeight);
 	}
 }

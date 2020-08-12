@@ -77,7 +77,7 @@ class State extends Entity {
 			resources.unload();
 		}
 
-		while(subStates.length>0){
+		while (subStates.length > 0) {
 			removeSubState(subStates[0]);
 		}
 		stage.destroy();
@@ -88,9 +88,9 @@ class State extends Entity {
 	}
 
 	override function update(dt:Float) {
-		var dt=TimeManager.delta * timeScale;
+		var dt = TimeManager.delta * timeScale;
 		super.update(dt);
-		for(state in subStates){
+		for (state in subStates) {
 			state.update(dt);
 		}
 	}

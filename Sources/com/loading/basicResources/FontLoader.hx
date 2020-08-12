@@ -36,8 +36,11 @@ class FontLoader extends TilesheetLoader {
 		fromKhaFont();
 		callback();
 	}
+
 	var tex:Image;
+
 	static var pipeline:PipelineState;
+
 	private function fromKhaFont() {
 		var font:Font = Reflect.field(kha.Assets.fonts, imageName);
 		var kravurImage = font._get(size);
@@ -48,7 +51,7 @@ class FontLoader extends TilesheetLoader {
 		bitmaps = new Array();
 		var bakedQuadCache = new kha.Kravur.AlignedQuad();
 		var counter:Int = 0;
-		if(pipeline==null) {
+		if (pipeline == null) {
 			pipeline = Graphics2.createTextPipeline(Graphics2.createTextVertexStructure());
 			pipeline.blendSource = BlendingFactor.SourceAlpha;
 			pipeline.blendDestination = BlendingFactor.BlendZero;
@@ -86,6 +89,7 @@ class FontLoader extends TilesheetLoader {
 		animation.labels = labels;
 		SpriteSheetDB.i.add(animation);
 	}
+
 	override function update(atlasId:Int) {
 		super.update(atlasId);
 	}

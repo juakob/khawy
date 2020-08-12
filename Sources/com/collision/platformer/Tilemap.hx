@@ -62,7 +62,7 @@ class Tilemap {
 			var flipped_vertically = (tile.gid & FLIPPED_VERTICALLY_FLAG);
 			var flipped_diagonally = (tile.gid & FLIPPED_DIAGONALLY_FLAG);
 			var id = tile.gid & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
-			tileMapDisplay.setTile2(counter++, idToFrame(id),flipped_horizontally!=0,flipped_vertically!=0,flipped_diagonally!=0);
+			tileMapDisplay.setTile2(counter++, idToFrame(id), flipped_horizontally != 0, flipped_vertically != 0, flipped_diagonally != 0);
 		}
 		this.display.addChild(tileMapDisplay);
 		return tileMapDisplay;
@@ -80,31 +80,33 @@ class Tilemap {
 		tileMapDisplay.scaleX = tileMapDisplay.scaleY = scale;
 		var counter:Int = 0;
 		for (tile in tiles) {
-			if (tile.gid <= 0){
+			if (tile.gid <= 0) {
 				++counter;
 				continue;
 			}
-				
+
 			var flipped_horizontally = (tile.gid & FLIPPED_HORIZONTALLY_FLAG);
 			var flipped_vertically = (tile.gid & FLIPPED_VERTICALLY_FLAG);
 			var flipped_diagonally = (tile.gid & FLIPPED_DIAGONALLY_FLAG);
 			var id = tile.gid & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
-			tileMapDisplay.setTile2(counter++,idToFrame(id),flipped_horizontally!=0,flipped_vertically!=0,flipped_diagonally!=0);
+			tileMapDisplay.setTile2(counter++, idToFrame(id), flipped_horizontally != 0, flipped_vertically != 0, flipped_diagonally != 0);
 		}
 		this.display.addChild(tileMapDisplay);
 		return tileMapDisplay;
 	}
+
 	function idToFrame(id:Int):Int {
-		var length=tileIdStart.length;
-		for(i in 0...length){
-			if(i==length-1||tileIdStart[(i+1)]>id){
-				return id-tileIdStart[i];
+		var length = tileIdStart.length;
+		for (i in 0...length) {
+			if (i == length - 1 || tileIdStart[(i + 1)] > id) {
+				return id - tileIdStart[i];
 			}
 		}
 		throw "tile id can't be map to tilset";
 	}
+
 	public function init(processTileMap:Tilemap->TmxTileLayer->Void = null, processObject:Tilemap->TmxObject->Void = null):CollisionTileMap {
-		tileIdStart=new Array();
+		tileIdStart = new Array();
 		var r:format.tmx.Reader = new format.tmx.Reader();
 		var t:TmxMap = r.read(Xml.parse(Assets.blobs.get(tmxData).toString()));
 		tileWidth = t.tileWidth;
@@ -112,7 +114,7 @@ class Tilemap {
 		widthIntTiles = t.width;
 		heightInTiles = t.height;
 		var collision:CollisionTileMap = null;
-		for(tilset in t.tilesets){
+		for (tilset in t.tilesets) {
 			tileIdStart.push(tilset.firstGID);
 		}
 		for (layer in t.layers) {
