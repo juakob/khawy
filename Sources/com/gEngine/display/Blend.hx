@@ -78,15 +78,6 @@ class Blend {
 		return blend;
 	}
 
-	public static function blendEnd():Blend {
-		var blend:Blend = new Blend();
-		blend.blendSource = BlendingFactor.BlendOne;
-		blend.blendDestination = BlendingFactor.InverseSourceAlpha;
-		blend.alphaBlendSource = BlendingFactor.BlendOne;
-		blend.alphaBlendDestination = BlendingFactor.InverseSourceAlpha;
-		return blend;
-	}
-
 	public static function blendNone():Blend {
 		var blend:Blend = new Blend();
 		blend.blendSource = BlendingFactor.BlendOne;
