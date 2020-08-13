@@ -167,13 +167,13 @@ class Camera {
 		world.render(paintMode, view);
 		paintMode.render();
 		GEngine.i.endCanvas();
-		GEngine.i.changeToBuffer();
+		GEngine.i.setFrameBufferAsCanvas();
 		GEngine.i.beginCanvas();
 		var painter = postProcess != null ? postProcess : GEngine.i.getSimplePainter(blend);
 		painter.filter = textureFilter;
 		painter.setProjection(GEngine.i.getMatrix());
 		if (postProcess != null) {}
-		GEngine.i.renderBufferFull(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1);
+		GEngine.i.renderToFrameBuffer(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1);
 		GEngine.i.endCanvas();
 	}
 
