@@ -105,11 +105,12 @@ class GEngine {
 	}
 
 	function calculateModelViewMatrix(targetWidth:Int, targetHeight:Int):Void {
-		if (this.width == targetWidth && this.height == targetHeight) return;
+		if (this.width == targetWidth && this.height == targetHeight)
+			return;
 		this.width = Std.int(targetWidth * oversample);
 		this.height = Std.int(targetHeight * oversample);
 
-		modelViewMatrix = FastMatrix4.orthogonalProjection(0, virtualWidth, virtualHeight , 0, 0, 5000);
+		modelViewMatrix = FastMatrix4.orthogonalProjection(0, virtualWidth, virtualHeight, 0, 0, 5000);
 		if (Image.renderTargetsInvertedY()) {
 			modelViewMatrix.setFrom(FastMatrix4.scale(1, -1, 1).multmat(modelViewMatrix));
 		}
@@ -139,7 +140,8 @@ class GEngine {
 	#end
 
 	public function resizeInput(availWidth:Int, availHeight:Int) {
-		if (availWidth == 0 || availWidth == 0) return;
+		if (availWidth == 0 || availWidth == 0)
+			return;
 		Input.i.screenScale.setTo(virtualWidth / availWidth, virtualHeight / availHeight);
 	}
 
@@ -156,7 +158,7 @@ class GEngine {
 
 	private var frameBuffer:Framebuffer;
 
-	static inline var frameBufferID:Int=-1;
+	static inline var frameBufferID:Int = -1;
 
 	private var renderCustomBuffer:Bool;
 	private var customBuffer:Image;
@@ -195,14 +197,20 @@ class GEngine {
 	}
 
 	function createPainters() {
-		var blends:Array<Blend>=[Blend.blendDefault(),Blend.blendMultipass(),Blend.blendAdd(),Blend.blendMultiply(),Blend.blendScreen()];
-		simplePainters=new Array();
-		alphaPainters=new Array();
-		colorPainters=new Array();
-		for(blend in blends){
-			simplePainters.push(new Painter(false,blend));
-			alphaPainters.push(new PainterAlpha(false,blend));
-			colorPainters.push(new PainterColorTransform(false,blend));
+		var blends:Array<Blend> = [
+			Blend.blendDefault(),
+			Blend.blendMultipass(),
+			Blend.blendAdd(),
+			Blend.blendMultiply(),
+			Blend.blendScreen()
+		];
+		simplePainters = new Array();
+		alphaPainters = new Array();
+		colorPainters = new Array();
+		for (blend in blends) {
+			simplePainters.push(new Painter(false, blend));
+			alphaPainters.push(new PainterAlpha(false, blend));
+			colorPainters.push(new PainterColorTransform(false, blend));
 		}
 	}
 
@@ -260,8 +268,8 @@ class GEngine {
 
 		writeVertexFull(painter, x * scaleWidth, (y + height) * scaleHeigth, 0, 0, height * oversample / (text.realHeight), outScale);
 
-		writeVertexFull(painter, (x + width) * scaleWidth, (y + height) * scaleHeigth, 0, width * oversample / (text.realWidth), height * oversample / (text
-			.realHeight), outScale);
+		writeVertexFull(painter, (x + width) * scaleWidth, (y + height) * scaleHeigth, 0, width * oversample / (text.realWidth),
+			height * oversample / (text.realHeight), outScale);
 
 		painter.render(clear);
 	}
@@ -288,7 +296,7 @@ class GEngine {
 
 		calculateFPS();
 		this.frameBuffer = frameBuffer;
-		var g:Graphics=frameBuffer.g4;
+		var g:Graphics = frameBuffer.g4;
 		g.begin();
 		if (clear)
 			g.clear(clearColor, 1);
