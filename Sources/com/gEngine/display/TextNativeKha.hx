@@ -8,7 +8,7 @@ import kha.FastFloat;
 import kha.math.FastMatrix3;
 import kha.Font;
 
-class TextDisplay implements IDraw {
+class TextNativeKha implements IDraw {
 	public var x:FastFloat;
 	public var y:FastFloat;
 	public var z:FastFloat = 0;
