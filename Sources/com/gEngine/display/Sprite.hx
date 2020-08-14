@@ -125,14 +125,14 @@ class Sprite implements IAnimation implements IRotation {
 		timeline.update(dt);
 	}
 
-	public function makeUnique() {
+	function makeAnimationDataUnique() {
 		animationData = animationData.clone();
 		dataUnique = true;
 	}
 
 	public function getAnimationData():AnimationData {
 		if (!dataUnique)
-			makeUnique();
+			makeAnimationDataUnique();
 		return animationData;
 	}
 
@@ -164,26 +164,87 @@ class Sprite implements IAnimation implements IRotation {
 			filter.filterStart(this, paintMode, transform);
 
 		calculateTransform(transform);
-
 		var model = transform.multmat(this.transform);
 
-		// var model=paintMode.projection.multmat(a);
-		// var model=paintMode.projection;
-		var vertexX:FastFloat;
-		var vertexY:FastFloat;
-
-		var frame = animationData.frames[timeline.currentFrame];
-		var vertexs:Array<FastFloat> = frame.vertexs;
-
-		var uvs = frame.UVs;
 		paintInfo.blend = blend;
 		paintInfo.mipMapFilter = mipMapFilter;
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
-		var cameraScale = paintMode.camera.scale;
-
+		
 		if (colorTransform || paintMode.colorTransform || customPainter != null) {
-			var painter:IPainter = customPainter != null ? customPainter : GEngine.i.getColorTransformPainter(blend);
+			renderWithColorTransform(paintMode,model);
+		} else if (alpha != 1) {
+			renderWithAlpha(paintMode,model);
+		} else {
+			renderWithSimplePainter(paintMode,model);
+		}
+
+		if (filter != null)
+			filter.filterEnd(paintMode);
+	}
+	inline function renderWithSimplePainter(paintMode:PaintMode,model:FastMatrix4) {
+		var vertexX:FastFloat;
+		var vertexY:FastFloat;
+		var frame = animationData.frames[timeline.currentFrame];
+		var vertexs:Array<FastFloat> = frame.vertexs;
+		var cameraScale = paintMode.camera.scale;
+		var uvs = frame.UVs;
+		var painter:IPainter = GEngine.i.getSimplePainter(blend);
+		checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+		painter = paintMode.currentPainter;
+		var buffer = painter.getVertexBuffer();
+		var vertexBufferCounter = painter.getVertexDataCounter();
+		var vertexIndex:Int = 0;
+		var uvIndex:Int = 0;
+		for (i in 0...4) {
+			vertexX = vertexs[vertexIndex++] - pivotX;
+			vertexY = vertexs[vertexIndex++] - pivotY;
+			var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
+			buffer.set(vertexBufferCounter++, pos.x + offsetX * cameraScale);
+			buffer.set(vertexBufferCounter++, pos.y + offsetY * cameraScale);
+			buffer.set(vertexBufferCounter++, pos.z);
+			buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+			buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+		}
+
+		painter.setVertexDataCounter(vertexBufferCounter);
+	}
+	inline function renderWithAlpha(paintMode:PaintMode,model:FastMatrix4) {
+		var vertexX:FastFloat;
+		var vertexY:FastFloat;
+		var frame = animationData.frames[timeline.currentFrame];
+		var vertexs:Array<FastFloat> = frame.vertexs;
+		var cameraScale = paintMode.camera.scale;
+		var uvs = frame.UVs;
+		var painter:IPainter = GEngine.i.getAlphaPainter(blend);
+		checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
+		painter = paintMode.currentPainter;
+		var buffer = painter.getVertexBuffer();
+		var vertexBufferCounter = painter.getVertexDataCounter();
+		var vertexIndex:Int = 0;
+		var uvIndex:Int = 0;
+		for (i in 0...4) {
+			vertexX = vertexs[vertexIndex++] - pivotX;
+			vertexY = vertexs[vertexIndex++] - pivotY;
+			var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
+			buffer.set(vertexBufferCounter++, pos.x + offsetX * cameraScale);
+			buffer.set(vertexBufferCounter++, pos.y + offsetY * cameraScale);
+			buffer.set(vertexBufferCounter++, pos.z);
+			buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+			buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
+			buffer.set(vertexBufferCounter++, alpha);
+		}
+
+			painter.setVertexDataCounter(vertexBufferCounter);
+	}
+	inline function renderWithColorTransform(paintMode:PaintMode,model:FastMatrix4) {
+		var vertexX:FastFloat;
+		var vertexY:FastFloat;
+		var frame = animationData.frames[timeline.currentFrame];
+		var vertexs:Array<FastFloat> = frame.vertexs;
+		var cameraScale = paintMode.camera.scale;
+		var uvs = frame.UVs;
+		var painter:IPainter = customPainter != null ? customPainter : GEngine.i.getColorTransformPainter(blend);
 			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
 			painter = paintMode.currentPainter;
 			var redMul, blueMul, greenMul, alphaMul:Float;
@@ -212,51 +273,6 @@ class Sprite implements IAnimation implements IRotation {
 			}
 
 			painter.setVertexDataCounter(vertexBufferCounter);
-		} else if (alpha != 1) {
-			var painter:IPainter = GEngine.i.getAlphaPainter(blend);
-			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
-			painter = paintMode.currentPainter;
-			var buffer = painter.getVertexBuffer();
-			var vertexBufferCounter = painter.getVertexDataCounter();
-			var vertexIndex:Int = 0;
-			var uvIndex:Int = 0;
-			for (i in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX;
-				vertexY = vertexs[vertexIndex++] - pivotY;
-				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				buffer.set(vertexBufferCounter++, pos.x + offsetX * cameraScale);
-				buffer.set(vertexBufferCounter++, pos.y + offsetY * cameraScale);
-				buffer.set(vertexBufferCounter++, pos.z);
-				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-				buffer.set(vertexBufferCounter++, alpha);
-			}
-
-			painter.setVertexDataCounter(vertexBufferCounter);
-		} else {
-			var painter:IPainter = GEngine.i.getSimplePainter(blend);
-			checkBatch(paintMode, paintInfo, Std.int(frame.vertexs.length / 2), painter);
-			painter = paintMode.currentPainter;
-			var buffer = painter.getVertexBuffer();
-			var vertexBufferCounter = painter.getVertexDataCounter();
-			var vertexIndex:Int = 0;
-			var uvIndex:Int = 0;
-			for (i in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX;
-				vertexY = vertexs[vertexIndex++] - pivotY;
-				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
-				buffer.set(vertexBufferCounter++, pos.x + offsetX * cameraScale);
-				buffer.set(vertexBufferCounter++, pos.y + offsetY * cameraScale);
-				buffer.set(vertexBufferCounter++, pos.z);
-				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-				buffer.set(vertexBufferCounter++, uvs[uvIndex++]);
-			}
-
-			painter.setVertexDataCounter(vertexBufferCounter);
-		}
-
-		if (filter != null)
-			filter.filterEnd(paintMode);
 	}
 
 	static function checkBatch(paintMode:PaintMode, paintInfo:PaintInfo, count:Int, painter:IPainter) {
