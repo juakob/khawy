@@ -1,4 +1,4 @@
-package com.gEngine.helper;
+package com.gEngine.helpers;
 
 class Screen {
 	public static inline function getWidth():Int {

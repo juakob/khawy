@@ -9,7 +9,7 @@ import com.helpers.MinMax;
 import kha.FastFloat;
 import kha.math.FastMatrix3;
 import kha.math.FastMatrix4;
-import com.gEngine.helper.Timeline;
+import com.gEngine.helpers.Timeline;
 import com.gEngine.display.IAnimation;
 
 class Object3d implements IAnimation {

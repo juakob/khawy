@@ -1,6 +1,6 @@
 package com.gEngine.display;
 
-import com.gEngine.helper.Timeline;
+import com.gEngine.helpers.Timeline;
 import kha.math.FastVector4;
 import kha.math.FastMatrix4;
 import com.gEngine.AnimationData;

@@ -8,10 +8,10 @@ import com.framework.utils.Input;
 import com.gEngine.display.Blend;
 import com.gEngine.display.IDraw;
 import com.gEngine.display.Stage;
-import com.gEngine.helper.RectangleDisplay;
+import com.gEngine.helpers.RectangleDisplay;
 import com.gEngine.painters.IPainter;
 import com.gEngine.painters.Painter;
-import com.helpers.RenderTargetPool;
+import com.gEngine.helpers.RenderTargetPool;
 import kha.Assets;
 import kha.Canvas;
 import kha.Color;
@@ -82,8 +82,8 @@ class GEngine {
 		createPainters();
 
 		// createBuffer(Screen.getWidth(), Screen.getHeight());
-		trace(com.gEngine.helper.Screen.getWidth() + "x" + com.gEngine.helper.Screen.getHeight());
-		calculateModelViewMatrix(com.gEngine.helper.Screen.getWidth(), com.gEngine.helper.Screen.getHeight());
+		trace(com.gEngine.helpers.Screen.getWidth() + "x" + com.gEngine.helpers.Screen.getHeight());
+		calculateModelViewMatrix(com.gEngine.helpers.Screen.getWidth(), com.gEngine.helpers.Screen.getHeight());
 
 		var recTexture = Image.createRenderTarget(1, 1);
 		recTexture.g2.begin(true, Color.White);

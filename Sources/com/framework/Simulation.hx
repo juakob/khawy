@@ -3,7 +3,7 @@ package com.framework;
 import com.loading.ResourceHandler;
 import com.framework.utils.Input;
 import com.gEngine.GEngine;
-import com.gEngine.helper.Screen;
+import com.gEngine.helpers.Screen;
 import com.loading.Resources;
 import com.soundLib.SoundManager.SM;
 import kha.Color;

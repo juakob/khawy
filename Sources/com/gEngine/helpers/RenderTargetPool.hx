@@ -1,4 +1,4 @@
-package com.helpers;
+package com.gEngine.helpers;
 
 @:allow(com.gEngine.GEngine)
 class RenderTargetPool {
