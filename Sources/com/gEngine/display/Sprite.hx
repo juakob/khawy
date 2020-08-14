@@ -182,9 +182,8 @@ class Sprite implements IAnimation implements IRotation {
 		if (filter != null)
 			filter.filterEnd(paintMode);
 	}
+
 	inline function renderWithSimplePainter(paintMode:PaintMode,model:FastMatrix4) {
-		var vertexX:FastFloat;
-		var vertexY:FastFloat;
 		var frame = animationData.frames[timeline.currentFrame];
 		var vertexs:Array<FastFloat> = frame.vertexs;
 		var cameraScale = paintMode.camera.scale;
@@ -197,8 +196,8 @@ class Sprite implements IAnimation implements IRotation {
 		var vertexIndex:Int = 0;
 		var uvIndex:Int = 0;
 		for (i in 0...4) {
-			vertexX = vertexs[vertexIndex++] - pivotX;
-			vertexY = vertexs[vertexIndex++] - pivotY;
+			var vertexX = vertexs[vertexIndex++] - pivotX;
+			var vertexY = vertexs[vertexIndex++] - pivotY;
 			var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
 			buffer.set(vertexBufferCounter++, pos.x + offsetX * cameraScale);
 			buffer.set(vertexBufferCounter++, pos.y + offsetY * cameraScale);
@@ -209,9 +208,8 @@ class Sprite implements IAnimation implements IRotation {
 
 		painter.setVertexDataCounter(vertexBufferCounter);
 	}
+	
 	inline function renderWithAlpha(paintMode:PaintMode,model:FastMatrix4) {
-		var vertexX:FastFloat;
-		var vertexY:FastFloat;
 		var frame = animationData.frames[timeline.currentFrame];
 		var vertexs:Array<FastFloat> = frame.vertexs;
 		var cameraScale = paintMode.camera.scale;
@@ -224,8 +222,8 @@ class Sprite implements IAnimation implements IRotation {
 		var vertexIndex:Int = 0;
 		var uvIndex:Int = 0;
 		for (i in 0...4) {
-			vertexX = vertexs[vertexIndex++] - pivotX;
-			vertexY = vertexs[vertexIndex++] - pivotY;
+			var vertexX = vertexs[vertexIndex++] - pivotX;
+			var vertexY = vertexs[vertexIndex++] - pivotY;
 			var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
 			buffer.set(vertexBufferCounter++, pos.x + offsetX * cameraScale);
 			buffer.set(vertexBufferCounter++, pos.y + offsetY * cameraScale);
@@ -238,8 +236,6 @@ class Sprite implements IAnimation implements IRotation {
 			painter.setVertexDataCounter(vertexBufferCounter);
 	}
 	inline function renderWithColorTransform(paintMode:PaintMode,model:FastMatrix4) {
-		var vertexX:FastFloat;
-		var vertexY:FastFloat;
 		var frame = animationData.frames[timeline.currentFrame];
 		var vertexs:Array<FastFloat> = frame.vertexs;
 		var cameraScale = paintMode.camera.scale;
@@ -264,8 +260,8 @@ class Sprite implements IAnimation implements IRotation {
 			var vertexIndex:Int = 0;
 			var uvIndex:Int = 0;
 			for (k in 0...4) {
-				vertexX = vertexs[vertexIndex++] - pivotX;
-				vertexY = vertexs[vertexIndex++] - pivotY;
+				var vertexX = vertexs[vertexIndex++] - pivotX;
+				var vertexY = vertexs[vertexIndex++] - pivotY;
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
 				writeColorVertex(pos.x + offsetX * cameraScale, pos.y + offsetY * cameraScale, pos.z + offsetZ, uvs[uvIndex++], uvs[uvIndex++], redMul,
 					greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd, buffer, vertexBufferCounter);
