@@ -86,10 +86,12 @@ class Filter {
 		var g4 = GEngine.i.currentCanvas().g4;
 
 		var currentWorkingTarget:Image = cast GEngine.i.currentCanvas();
-		currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
+		
 		GEngine.i.beginCanvas();
-
+		currentWorkingTarget.setDepthStencilFrom(finshTargetImage);
 		g4.clear(Color.fromFloats(red, green, blue, alpha));
+
+		
 		if (cropScreen) {
 			drawArea.reset();
 			display.getDrawArea(drawArea, transform);
@@ -114,7 +116,7 @@ class Filter {
 			GEngine.i.releaseRenderTarget(workTargetId);
 			GEngine.i.setCanvas(finishTarget);
 			GEngine.i.beginCanvas();
-		}
+		}	
 	}
 
 	public function filterEnd(paintMode:PaintMode):Void {
