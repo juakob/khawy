@@ -2948,8 +2948,6 @@ private class Sweep
     Sweep.removeDegenerateEdges(tess);
     if (!Sweep.initPriorityQ(tess)) return false; /* if error */
     Sweep.initEdgeDict(tess);
-
-    var pq = tess.pq;
     
     while ((v = tess.pq.extractMin()) != null) {
       while (true) {
@@ -3883,7 +3881,7 @@ class Tesselator
     }
 //		if (rc == 0) longjmp(tess->env,1);  /* could've used a label */
 
-    mesh.check();
+    //mesh.check();
 
     if (resultType == ResultType.BOUNDARY_CONTOURS) {
       this.outputContours_(mesh, vertexDim);     /* output contours */

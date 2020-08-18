@@ -29,6 +29,7 @@
  */
 package format.swf;
 
+import extraSwf.swfDecoder.RawShape;
 import format.swf.Data;
 import format.swf.Constants;
 
@@ -328,7 +329,7 @@ class Reader {
 		return {
 			fillStyles: fillStyles,
 			lineStyles: lineStyles,
-			shapeRecords: readShapeRecords(ver)
+			shapeRecords: new RawShape()
 		};
 	}
 
@@ -1342,10 +1343,10 @@ class Reader {
 			//	var data = i.read(dataSize);
 			//	var mask = i.read(len - dataSize - 6);
 			//	TBitsJPEG(cid, JDJPEG3(data, mask));
-			case TagId.PlaceObject2:
-				TPlaceObject2(readPlaceObject(false));
-			case TagId.PlaceObject3:
-				TPlaceObject3(readPlaceObject(true));
+			//case TagId.PlaceObject2:
+			//	TPlaceObject2(readPlaceObject(false));
+			//case TagId.PlaceObject3:
+			//	TPlaceObject3(readPlaceObject(true));
 			case TagId.RemoveObject2:
 				TRemoveObject2(i.readUInt16());
 			case TagId.DefineSprite:

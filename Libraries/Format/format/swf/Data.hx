@@ -29,6 +29,9 @@
  */
 package format.swf;
 
+import extraSwf.swfDecoder.PlaceDisplay;
+import extraSwf.swfDecoder.RawShape;
+
 typedef Fixed = #if haxe3 Int #else haxe.Int32 #end;
 typedef Fixed8 = Int;
 
@@ -47,8 +50,8 @@ enum SWFTag {
 	TBackgroundColor( color : Int );
 	TDoActions( data : haxe.io.Bytes );
 	TClip( id : Int, frames : Int, tags : Array<SWFTag> );
-	TPlaceObject2( po : PlaceObject );
-	TPlaceObject3( po : PlaceObject );
+	TPlaceObject2( po : PlaceDisplay );
+	TPlaceObject3( po : PlaceDisplay );
 	TRemoveObject2( depth : Int );
 	TFrameLabel( label : String, anchor : Bool );
 	TExport( el : Array<{ cid : Int, name : String }> );
@@ -203,7 +206,7 @@ typedef ShapeWithoutStyleData = {
 typedef ShapeWithStyleData = {
 	var fillStyles : Array<FillStyle>;
 	var lineStyles : Array<LineStyle>;
-	var shapeRecords : Array<ShapeRecord>;
+	var shapeRecords : RawShape;
 }
 
 enum ShapeRecord {
