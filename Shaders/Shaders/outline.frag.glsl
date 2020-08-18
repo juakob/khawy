@@ -24,7 +24,7 @@ void kore() {
 	float alpha6=abs(alpha2_-base.a);
 	
 	
-	float alpha=clamp(alpha1+alpha2+alpha3+alpha4+alpha5+alpha6,0,1);
+	float alpha=clamp((alpha1+alpha2+alpha3+alpha4+alpha5+alpha6)*(1-base.a),0,1);
 	//float inverse=1-alpha;
     	// calculate resulting color
 		FragColor = vec4( base.rgb+color*alpha, base.a+alpha);
