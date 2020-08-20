@@ -26,7 +26,9 @@ class AtlasGenerator {
 		var realHeight:Int = atlasImage.realWidth;
 		var atlasMap = new ImageTree(width, height, separation);
 
-		var g:Graphics = atlasImage.g2;
+		var g:SingleImagePainter = new SingleImagePainter(atlasImage.g4);
+		g.setProjection(width,height);
+		//Color.fromFloats(1, 1, 1, 1);
 		g.begin(true, Color.fromFloats(0, 0, 0, 0));
 		for (bitmap in bitmaps) {
 			var rectangle:Rectangle = atlasMap.insertImage(bitmap);
@@ -41,27 +43,25 @@ class AtlasGenerator {
 				g.begin(false);
 			}
 			if (bitmap.specialPipeline != null) {
-				g.pipeline = bitmap.specialPipeline;
+				g.setPipeline(bitmap.specialPipeline);
 			} else {
-				g.pipeline = clearPipeline;
+				g.setPipeline(clearPipeline);
 			}
 
-			g.imageScaleQuality = ImageScaleQuality.High;
-			if (bitmap.hasMipMap) {
-				g.mipmapScaleQuality = ImageScaleQuality.High;
-			} else {
-				g.mipmapScaleQuality = ImageScaleQuality.Low;
-			}
-			g.imageScaleQuality = ImageScaleQuality.Low;
+			
+			g.setBilinearMipmapFilter(bitmap.hasMipMap);
+			
+			g.setBilinearFilter(false);
 			// extrude image border pixel width and height
 			g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
 				rectangle.x - 1, rectangle.y, bitmap.width + 2, bitmap.height);
 			g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
 				rectangle.x, rectangle.y - 1, bitmap.width, bitmap.height + 2);
-			g.color = Color.fromFloats(1, 1, 1, 1);
-			g.imageScaleQuality = ImageScaleQuality.High;
+			
+			g.setBilinearFilter(true);
 			g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
 				rectangle.x, rectangle.y, bitmap.width, bitmap.height);
+
 			rectangle.x += bitmap.extrude;
 			rectangle.y += bitmap.extrude;
 			//
