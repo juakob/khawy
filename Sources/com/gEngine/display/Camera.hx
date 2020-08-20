@@ -75,7 +75,6 @@ class Camera {
 		at = new FastVector3(0, 0, 0);
 		up = new FastVector3(0, 1, 0);
 		view = FastMatrix4.identity();
-		updateView();
 		targetPos = new FastPoint(width * 0.5, height * 0.5);
 
 		setDrawArea(0, 0, width, height);
@@ -89,6 +88,7 @@ class Camera {
 		projectionIsOrthogonal = true;
 		screenTransform = createScreenTransform();
 		perlin = new Perlin(1);
+		update(0);
 	}
 
 	public function updateView() {
