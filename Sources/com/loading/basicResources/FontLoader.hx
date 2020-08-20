@@ -20,8 +20,8 @@ import haxe.xml.Access;
 class FontLoader extends TilesheetLoader {
 	var size:Int;
 
-	public function new(imageName:String, size:Int) {
-		super(imageName, 0, 0, 0);
+	public function new(fontName:String, size:Int) {
+		super(fontName, 0, 0, 0);
 		this.size = size;
 	}
 
