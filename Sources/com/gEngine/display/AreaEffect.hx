@@ -1,5 +1,9 @@
 package com.gEngine.display;
 
+import kha.Image;
+import kha.math.FastVector4;
+import kha.math.FastVector3;
+import kha.math.FastVector2;
 import kha.math.FastMatrix4;
 import com.gEngine.painters.PaintMode;
 import kha.FastFloat;
@@ -38,6 +42,16 @@ class AreaEffect implements IDraw {
 	private var screenScaleX:Float = 1;
 	private var screenScaleY:Float = 1;
 
+	public var x:FastFloat = 0;
+	public var y:FastFloat = 0;
+	public var z:FastFloat = 0;
+	public var width:Float = 1280;
+	public var height:Float = 720;
+	/**
+	 * overscale to avoid discontinue borders
+	 */
+	public var sourceOverscale:Float=0;
+
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
 		if (!visible) {
 			return;
@@ -46,28 +60,27 @@ class AreaEffect implements IDraw {
 		paintMode.render();
 		var painter = snapShotShader;
 
-		var lastTarger:Int = paintMode.buffer;
+		var lastTarger:Int = GEngine.i.currentCanvasId();
 
 		GEngine.i.endCanvas();
-		var renderTarget:Int = GEngine.i.getRenderTarget(paintMode.targetWidth, paintMode.targetHeight);
+		var renderTarget:Int = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 		GEngine.i.setCanvas(renderTarget);
 		GEngine.i.beginCanvas();
 
 		painter.start();
-
-		// GEngine.i.renderBuffer2(paintMode.buffer, painter, x, y, width, height, 1, true,transform,paintMode.projection);
+		painter.setProjection(paintMode.camera.projection);
+		renderBuffer(paintMode.camera.renderTarget, painter, x-10, y-10, width+20, height+20, true,transform,1,1);
 
 		painter.finish();
 
 		if (!swapBuffer) {
 			painter = printShader;
-			// painter.setProjection(paintMode.projection);
 			GEngine.i.endCanvas();
 			GEngine.i.setCanvas(lastTarger);
 			GEngine.i.beginCanvas();
 			painter.start();
-
-			// GEngine.i.renderBuffer2(renderTarget, painter, x, y, width, height, 1, false,transform,paintMode.projection);
+			painter.setProjection(paintMode.camera.projection);
+			renderBuffer(renderTarget, painter, x,y, width, height, false,transform, 1,1);
 
 			painter.finish();
 		} else {
@@ -108,9 +121,34 @@ class AreaEffect implements IDraw {
 		throw "not implemented copy code from basicsprite";
 	}
 
-	public var x:FastFloat = 0;
-	public var y:FastFloat = 0;
-	public var z:FastFloat = 0;
-	public var width:Float = 1280;
-	public var height:Float = 720;
+	function renderBuffer(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, clear:Bool, transform:FastMatrix4,sourceScale:Float,outScale:Float) {
+		painter.textureID = source;
+
+		var p1=transform.multvec(new FastVector4(x,y,z));
+		var p2=transform.multvec(new FastVector4(x+width,y,z));
+		var p3=transform.multvec(new FastVector4(x,y+height,z));
+		var p4=transform.multvec(new FastVector4(x+width,y+height,z));
+		var tex = GEngine.i.getTexture(source);
+		var texWidth = tex.realWidth * sourceScale * 1 / GEngine.i.oversample;
+		var texHeight = tex.realHeight * sourceScale * 1 / GEngine.i.oversample;
+
+		writeVertex(painter, p1, texWidth, texHeight, outScale);
+
+		writeVertex(painter, p2, texWidth, texHeight, outScale);
+
+		writeVertex(painter, p3, texWidth, texHeight, outScale);
+
+		writeVertex(painter, p4, texWidth, texHeight, outScale);
+
+		painter.render(clear);
+	}
+
+	static  function writeVertex(painter:IPainter, pos:FastVector4, sWidth:Float, sHeight:Float, resolution:Float) {
+		painter.write(pos.x * resolution);
+		painter.write(pos.y * resolution);
+		painter.write(pos.z);
+		painter.write((pos.x / sWidth)+0.5);
+		var invert=Image.renderTargetsInvertedY()?-1:1;
+		painter.write((pos.y / sHeight)*invert+0.5);
+	}
 }
