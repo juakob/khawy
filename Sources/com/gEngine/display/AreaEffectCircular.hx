@@ -43,7 +43,7 @@ class AreaEffectCircular implements IDraw {
 		var insideRadio:Float = radio;
 		var centerX:Float = x;
 		var centerY:Float = y;
-		var projection = paintMode.projection;
+		var projection = paintMode.camera.projection;
 		var tp = projection.multmat(transform);
 
 		var invert:Int = kha.Image.renderTargetsInvertedY() ? 1 : -1;
@@ -136,9 +136,9 @@ class AreaEffectCircular implements IDraw {
 
 		snapShotShader.setProjection(FastMatrix4.identity());
 		printShader.setProjection(FastMatrix4.identity());
-		var finalTarget:Int = paintMode.buffer;
+		var finalTarget:Int = paintMode.camera.renderTarget;
 		var finalTexture = GEngine.i.getTexture(finalTarget);
-		var tempTexture:Int = GEngine.i.getRenderTarget(paintMode.targetWidth, paintMode.targetHeight);
+		var tempTexture:Int = GEngine.i.getRenderTarget(paintMode.camera.width, paintMode.camera.height);
 		var texture = GEngine.i.getTexture(tempTexture);
 		var realWidthRatio:Float = finalTexture.width / finalTexture.realWidth;
 		var realHeightRatio:Float = finalTexture.height / finalTexture.realHeight;
@@ -147,7 +147,7 @@ class AreaEffectCircular implements IDraw {
 		var zoomTemp:Float = zoom;
 		var strokeTemp:Float = stroke;
 		var radioTemp:Float = radio;
-		snapShotShader.textureID = paintMode.buffer;
+		snapShotShader.textureID = paintMode.camera.renderTarget;
 		zoom = 1;
 		stroke += 6;
 		radio -= 5;
