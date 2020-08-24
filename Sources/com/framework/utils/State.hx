@@ -40,7 +40,6 @@ class State extends Entity {
 		stage.removeSubStage(state.stage);
 		state.parentState = null;
 		state.die();
-		state.destroy();
 	}
 
 	public function initSubState(state:State) {
