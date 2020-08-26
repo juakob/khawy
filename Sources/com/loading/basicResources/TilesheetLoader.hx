@@ -84,6 +84,7 @@ class TilesheetLoader implements AtlasJoinable {
 
 	public function update(atlasId:Int):Void {
 		animation.texturesID = atlasId;
+		animation.hasMipMap = true;
 		for (i in 0...bitmaps.length) {
 			var frame:Frame = animation.frames[i];
 			var bitmap = bitmaps[i];

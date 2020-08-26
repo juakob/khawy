@@ -167,7 +167,11 @@ class Sprite implements IAnimation implements IRotation {
 		var model = transform.multmat(this.transform);
 
 		paintInfo.blend = blend;
-		paintInfo.mipMapFilter = mipMapFilter;
+		if(animationData.hasMipMap){
+			paintInfo.mipMapFilter = mipMapFilter;
+		}else{
+			paintInfo.mipMapFilter = NoMipFilter;
+		}
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
 		

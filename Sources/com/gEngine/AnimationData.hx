@@ -5,12 +5,14 @@ class AnimationData {
 	public var texturesID:Int = -1;
 	public var frames:Array<Frame>;
 	public var labels:Array<Label>;
+	public var hasMipMap:Bool = false;
 
 	public function new() {}
 
 	public function clone() {
 		var cl = new AnimationData();
 		cl.name = name;
+		cl.hasMipMap = hasMipMap;
 		cl.texturesID = texturesID;
 		cl.frames = new Array();
 		for (frame in frames) {
