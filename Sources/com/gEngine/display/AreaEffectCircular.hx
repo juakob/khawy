@@ -20,6 +20,14 @@ class AreaEffectCircular implements DisplayObject {
 	public var offsetX:FastFloat;
 	public var offsetY:FastFloat;
 
+	public var radio:Float = 100;
+	public var stroke:Float = 50;
+	public var numSegments:Int = 20;
+	public var zoom:Float = .85;
+	public var width:Float = 10;
+	public var height:Float = 10;
+	public var resolution:Float = 1;
+
 	@:access(com.gEngine.GEngine.painter)
 	public function new(?aSnapShotShader:IPainter, ?aPrintShader:IPainter) {
 		if (aSnapShotShader == null) {
@@ -189,12 +197,4 @@ class AreaEffectCircular implements DisplayObject {
 	public function getFinalTransformation():FastMatrix3 {
 		throw "not implemented copy code from basicsprite";
 	}
-
-	public var radio:Float = 100;
-	public var stroke:Float = 50;
-	public var numSegments:Int = 20;
-	public var zoom:Float = .85;
-	public var width:Float = 10;
-	public var height:Float = 10;
-	public var resolution:Float = 1;
 }
