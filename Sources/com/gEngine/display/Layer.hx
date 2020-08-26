@@ -7,14 +7,14 @@ import com.gEngine.Filter;
 import com.gEngine.painters.IPainter;
 import com.gEngine.painters.PaintMode;
 import com.gEngine.painters.Painter;
-import com.gEngine.display.IDraw;
+import com.gEngine.display.DisplayObject;
 import com.gEngine.display.IContainer;
 import com.helpers.MinMax;
 import kha.FastFloat;
 import kha.math.FastMatrix3;
 
-class Layer implements IDraw implements IContainer {
-	private var children:Array<IDraw>;
+class Layer implements DisplayObject implements IContainer {
+	private var children:Array<DisplayObject>;
 	private var texture:Int;
 
 	public var x:FastFloat = 0;
@@ -163,14 +163,14 @@ class Layer implements IDraw implements IContainer {
 		}
 	}
 
-	public function addChild(child:IDraw):Void {
+	public function addChild(child:DisplayObject):Void {
 		if (child.parent == this)
 			return;
 		child.parent = this;
 		children.push(cast child);
 	}
 
-	public function addChildOrder(child:IDraw, functionOrder:IDraw->IDraw->Int) {
+	public function addChildOrder(child:DisplayObject, functionOrder:DisplayObject->DisplayObject->Int) {
 		child.parent = this;
 		var counter:Int = 0;
 		for (childIter in children) {
@@ -183,7 +183,7 @@ class Layer implements IDraw implements IContainer {
 		children.push(cast child);
 	}
 
-	public function remove(child:IDraw):Void {
+	public function remove(child:DisplayObject):Void {
 		var counter:Int = 0;
 		child.parent = null;
 		for (childIter in children) {
@@ -205,7 +205,7 @@ class Layer implements IDraw implements IContainer {
 		}
 	}
 
-	public function sort(functionSort:IDraw->IDraw->Int):Void {
+	public function sort(functionSort:DisplayObject->DisplayObject->Int):Void {
 		haxe.ds.ArraySort.sort(children, functionSort);
 	}
 
@@ -238,7 +238,7 @@ class Layer implements IDraw implements IContainer {
 		return rotation;
 	}
 
-	public static function sortYCompare(a:IDraw, b:IDraw):Int {
+	public static function sortYCompare(a:DisplayObject, b:DisplayObject):Int {
 		if (a.y < b.y) {
 			return -1;
 		}
@@ -248,7 +248,7 @@ class Layer implements IDraw implements IContainer {
 		return 0;
 	}
 
-	public static function sortZCompare(a:IDraw, b:IDraw):Int {
+	public static function sortZCompare(a:DisplayObject, b:DisplayObject):Int {
 		if (a.z < b.z) {
 			return -1;
 		}

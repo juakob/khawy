@@ -62,7 +62,7 @@ class Stage {
 		subStages.remove(stage);
 	}
 
-	public function addChild(child:IDraw):Void {
+	public function addChild(child:DisplayObject):Void {
 		world.addChild(child);
 	}
 

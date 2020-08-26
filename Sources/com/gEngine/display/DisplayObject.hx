@@ -6,7 +6,7 @@ import kha.FastFloat;
 import kha.math.FastMatrix3;
 import kha.math.FastMatrix4;
 
-interface IDraw {
+interface DisplayObject {
 	public var x:FastFloat;
 	public var y:FastFloat;
 	public var z:FastFloat;

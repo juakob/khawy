@@ -2,7 +2,7 @@ package com.gEngine;
 
 import kha.Image;
 import kha.math.FastMatrix4;
-import com.gEngine.display.IDraw;
+import com.gEngine.display.DisplayObject;
 import com.gEngine.display.Layer;
 import com.gEngine.painters.IPainter;
 import com.gEngine.painters.PaintMode;
@@ -69,7 +69,7 @@ class Filter {
 		}
 	}
 
-	public function filterStart(display:IDraw, paintMode:PaintMode, transform:FastMatrix4):Void {
+	public function filterStart(display:DisplayObject, paintMode:PaintMode, transform:FastMatrix4):Void {
 		if (!this.cropScreen) {
 			drawArea.min.setTo(0, 0);
 			drawArea.max.setTo(paintMode.camera.width, paintMode.camera.height);

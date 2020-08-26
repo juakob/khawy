@@ -6,7 +6,7 @@ import com.gEngine.painters.PainterAlpha;
 import kha.graphics4.Graphics;
 import com.framework.utils.Input;
 import com.gEngine.display.Blend;
-import com.gEngine.display.IDraw;
+import com.gEngine.display.DisplayObject;
 import com.gEngine.display.Stage;
 import com.gEngine.helpers.RectangleDisplay;
 import com.gEngine.painters.IPainter;
@@ -340,7 +340,7 @@ class GEngine {
 		#end
 	}
 
-	public function addChild(draw:IDraw):Void {
+	public function addChild(draw:DisplayObject):Void {
 		stage.addChild(draw);
 	}
 

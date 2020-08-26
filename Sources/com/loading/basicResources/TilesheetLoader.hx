@@ -78,7 +78,6 @@ class TilesheetLoader implements AtlasJoinable {
 		SpriteSheetDB.i.add(animation);
 	}
 
-	/* INTERFACE com.loading.AtlasJoinable */
 	public function getBitmaps():Array<Bitmap> {
 		return bitmaps;
 	}

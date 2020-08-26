@@ -5,14 +5,14 @@ import com.gEngine.painters.PaintMode;
 import kha.math.FastMatrix4;
 import kha.FastFloat;
 import com.gEngine.painters.IPainter;
-import com.gEngine.display.IDraw;
+import com.gEngine.display.DisplayObject;
 import com.helpers.MinMax;
 import com.helpers.FastPoint;
 import kha.math.FastMatrix3;
 import kha.math.FastVector2;
 
 @:keep
-class AreaEffectCircular implements IDraw {
+class AreaEffectCircular implements DisplayObject {
 	private var snapShotShader:IPainter;
 	private var printShader:IPainter;
 
@@ -47,6 +47,9 @@ class AreaEffectCircular implements IDraw {
 		var tp = projection.multmat(transform);
 
 		var invert:Int = kha.Image.renderTargetsInvertedY() ? 1 : -1;
+
+		public var parent:IContainer;
+		public var visible:Bool = true;
 
 		for (i in 0...numSegments) {
 			leftDirection.x = Math.sin(currentAngle);
@@ -122,10 +125,6 @@ class AreaEffectCircular implements IDraw {
 		value.mergeVec4(transform.multvec(new FastVector4(cornerX + diameter, cornerY, z)));
 		value.mergeVec4(transform.multvec(new FastVector4(cornerX + diameter, cornerY + diameter, z)));
 	}
-
-	/* INTERFACE com.gEngine.display.IDraw */
-	public var parent:IContainer;
-	public var visible:Bool = true;
 
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
 		if (!visible) {
