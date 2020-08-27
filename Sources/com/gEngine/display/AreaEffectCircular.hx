@@ -27,6 +27,8 @@ class AreaEffectCircular implements DisplayObject {
 	public var width:Float = 10;
 	public var height:Float = 10;
 	public var resolution:Float = 1;
+	public var parent:IContainer;
+	public var visible:Bool = true;
 
 	@:access(com.gEngine.GEngine.painter)
 	public function new(?aSnapShotShader:IPainter, ?aPrintShader:IPainter) {
@@ -56,8 +58,7 @@ class AreaEffectCircular implements DisplayObject {
 
 		var invert:Int = kha.Image.renderTargetsInvertedY() ? 1 : -1;
 
-		public var parent:IContainer;
-		public var visible:Bool = true;
+		
 
 		for (i in 0...numSegments) {
 			leftDirection.x = Math.sin(currentAngle);
