@@ -37,7 +37,7 @@ class Filter {
 		}
 	}
 
-	public function setPasses(filters:Array<IPainter>) {
+	function setPasses(filters:Array<IPainter>) {
 		var passFilters:Array<IPainter> = new Array();
 		renderPass = new Array();
 		for (filter in filters) {
