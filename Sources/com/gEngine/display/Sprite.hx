@@ -167,7 +167,11 @@ class Sprite implements IAnimation implements IRotation {
 		var model = transform.multmat(this.transform);
 
 		paintInfo.blend = blend;
-		paintInfo.mipMapFilter = mipMapFilter;
+		if(animationData.hasMipMap){
+			paintInfo.mipMapFilter = mipMapFilter;
+		}else{
+			paintInfo.mipMapFilter = NoMipFilter;
+		}
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
 		
@@ -361,10 +365,10 @@ class Sprite implements IAnimation implements IRotation {
 		if (drawArea.maxX != 16) {
 			drawArea.minX = drawArea.minX;
 		}
-		area.mergeVec4(model.multvec(new FastVector4(drawArea.minX - pivotX + offsetX, drawArea.minY - pivotY + offsetY, 0)));
-		area.mergeVec4(model.multvec(new FastVector4(drawArea.maxX - pivotX + offsetX, drawArea.minY - pivotY + offsetY, 0)));
-		area.mergeVec4(model.multvec(new FastVector4(drawArea.minX - pivotX + offsetX, drawArea.maxY - pivotY + offsetY, 0)));
-		area.mergeVec4(model.multvec(new FastVector4(drawArea.maxX - pivotX + offsetX, drawArea.maxY - pivotY + offsetY, 0)));
+		area.mergeVec4(model.multvec(new FastVector4(drawArea.minX - pivotX , drawArea.minY - pivotY , 0)).add(new FastVector4(offsetX,offsetY)));
+		area.mergeVec4(model.multvec(new FastVector4(drawArea.maxX - pivotX , drawArea.minY - pivotY , 0)).add(new FastVector4(offsetX,offsetY)));
+		area.mergeVec4(model.multvec(new FastVector4(drawArea.minX - pivotX , drawArea.maxY - pivotY , 0)).add(new FastVector4(offsetX,offsetY)));
+		area.mergeVec4(model.multvec(new FastVector4(drawArea.maxX - pivotX , drawArea.maxY - pivotY , 0)).add(new FastVector4(offsetX,offsetY)));
 	}
 
 	public function localDrawArea():DrawArea {

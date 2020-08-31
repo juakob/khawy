@@ -1,5 +1,6 @@
 package com.loading.basicResources;
 
+import com.gEngine.GEngine;
 import kha.graphics4.BlendingFactor;
 import kha.graphics4.PipelineState;
 import kha.graphics4.MipMapFilter;
@@ -69,7 +70,7 @@ class FontLoader extends TilesheetLoader {
 				var width:Int = Std.int((q.s1 - q.s0) * tex.realWidth);
 				var height:Int = Std.int((q.t1 - q.t0) * tex.realHeight);
 
-				frames.push(TilesheetLoader.createFrame(Std.int(q.x0), Std.int(q.y0), width, height, false));
+				frames.push(TilesheetLoader.createFrame(Std.int(q.x0), Std.int(q.y0), width, height, false,x,y, tex.realWidth, tex.realHeight));
 				// var rect = FlxRect.get(Std.parseFloat(texture.att.x), Std.parseFloat(texture.att.y), Std.parseFloat(texture.att.width), Std.parseFloat(texture.att.height));
 				var bitmap:Bitmap = new Bitmap();
 				bitmap.x = x;
@@ -87,12 +88,11 @@ class FontLoader extends TilesheetLoader {
 		animation.frames = frames;
 		animation.name = imageName;
 		animation.labels = labels;
+		//animation.texturesID = GEngine.i.addTexture(tex); //TODO make it work without adding it to an atlas
 		SpriteSheetDB.i.add(animation);
 	}
 
-	override function update(atlasId:Int) {
-		super.update(atlasId);
-	}
+
 
 	override function unload() {}
 

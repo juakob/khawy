@@ -59,7 +59,7 @@ class TilesheetLoader implements AtlasJoinable {
 		for (counter in 0...spritesCount) {
 			var x = (counter % widthInFrames) * (tileWidth + spacing * 2);
 			var y = Std.int(counter / widthInFrames) * (tileHeight + spacing * 2);
-			frames.push(createFrame(0, 0, tileWidth, tileHeight, false));
+			frames.push(createFrame(0, 0, tileWidth, tileHeight, false,x,y, image.realWidth, image.realHeight));
 
 			var bitmap:Bitmap = new Bitmap();
 			bitmap.x = x;
@@ -78,13 +78,13 @@ class TilesheetLoader implements AtlasJoinable {
 		SpriteSheetDB.i.add(animation);
 	}
 
-	/* INTERFACE com.loading.AtlasJoinable */
 	public function getBitmaps():Array<Bitmap> {
 		return bitmaps;
 	}
 
 	public function update(atlasId:Int):Void {
 		animation.texturesID = atlasId;
+		animation.hasMipMap = true;
 		for (i in 0...bitmaps.length) {
 			var frame:Frame = animation.frames[i];
 			var bitmap = bitmaps[i];
@@ -109,7 +109,7 @@ class TilesheetLoader implements AtlasJoinable {
 		}
 	}
 
-	public static function createFrame(x:Int, y:Int, width:Int, height:Int, rotated:Bool):Frame {
+	public static function createFrame(x:Int, y:Int, width:Int, height:Int, rotated:Bool, textureOriginX, textureOriginY, textureW:Int,textureH:Int):Frame {
 		if (rotated) {
 			var temp = width;
 			width = height;
@@ -120,14 +120,14 @@ class TilesheetLoader implements AtlasJoinable {
 		frame.UVs = new Array();
 		frame.drawArea = new DrawArea(x, y, x + width, y + height);
 
-		frame.UVs.push(0);
-		frame.UVs.push(0);
-		frame.UVs.push(0);
-		frame.UVs.push(1);
-		frame.UVs.push(1);
-		frame.UVs.push(0);
-		frame.UVs.push(1);
-		frame.UVs.push(1);
+		frame.UVs.push(textureOriginX/textureW);
+		frame.UVs.push(textureOriginY/textureH);
+		frame.UVs.push(textureOriginX/textureW);
+		frame.UVs.push((textureOriginY+height)/textureH);
+		frame.UVs.push((textureOriginX+width)/textureW);
+		frame.UVs.push(textureOriginY/textureH);
+		frame.UVs.push((textureOriginX+width)/textureW);
+		frame.UVs.push((textureOriginY+height)/textureH);
 
 		if (rotated) {
 			frame.vertexs.push(x);

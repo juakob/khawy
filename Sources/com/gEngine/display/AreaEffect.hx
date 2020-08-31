@@ -8,26 +8,12 @@ import kha.math.FastMatrix4;
 import com.gEngine.painters.PaintMode;
 import kha.FastFloat;
 import com.gEngine.painters.IPainter;
-import com.gEngine.display.IDraw;
+import com.gEngine.display.DisplayObject;
 import com.helpers.MinMax;
 import kha.math.FastMatrix3;
 
-class AreaEffect implements IDraw {
-	@:access(com.gEngine.GEngine.painter)
-	public function new(snapShotShader:IPainter, printShader:IPainter, swapBuffer:Bool = false) {
-		if (snapShotShader == null) {
-			this.snapShotShader = GEngine.i.painter;
-		} else {
-			this.snapShotShader = snapShotShader;
-		}
-		if (printShader == null && !this.swapBuffer) {
-			this.printShader = GEngine.i.painter;
-		} else {
-			this.printShader = printShader;
-		}
-	}
+class AreaEffect implements DisplayObject {
 
-	/* INTERFACE com.gEngine.display.IDraw */
 	private var snapShotShader:IPainter;
 	private var printShader:IPainter;
 	private var swapBuffer:Bool;
@@ -51,6 +37,20 @@ class AreaEffect implements IDraw {
 	 * overscale to avoid discontinue borders
 	 */
 	public var sourceOverscale:Float=0;
+	@:access(com.gEngine.GEngine.painter)
+	public function new(snapShotShader:IPainter, printShader:IPainter, swapBuffer:Bool = false) {
+		if (snapShotShader == null) {
+			this.snapShotShader = GEngine.i.painter;
+		} else {
+			this.snapShotShader = snapShotShader;
+		}
+		if (printShader == null && !this.swapBuffer) {
+			this.printShader = GEngine.i.painter;
+		} else {
+			this.printShader = printShader;
+		}
+	}
+	
 
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
 		if (!visible) {
