@@ -89,6 +89,7 @@ class State extends Entity {
 	override function update(dt:Float) {
 		var dt = TimeManager.delta * timeScale;
 		super.update(dt);
+		if(dead) return;
 		for (state in subStates) {
 			state.update(dt);
 		}
