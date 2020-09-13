@@ -89,7 +89,7 @@ class Timeline {
 		throw "label " + text + "not found";
 	}
 
-	public function nextFrame() {
+	public function nextFrame():Int {
 		if (currentFrame + 1 > lastFrame) {
 			if (loop) {
 				return firstFrame;

@@ -6,8 +6,8 @@ class TimeManager {
 	public static var realDelta(default, null):Float;
 	public static var multiplier:Float = 1;
 
-	public static function setDelta(delta:Float, realTime:Float):Void {
-		time = realTime;
+	public static function setDelta(delta:Float):Void {
+		time += delta;
 		realDelta = delta;
 		if (delta > 1 / 20)
 			delta = 1 / 20;

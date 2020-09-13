@@ -206,14 +206,14 @@ class Camera {
 	public inline function screenToWorld(targetX:Float, targetY:Float, targetZ:Float = 0):FastVector2 {
 		var homogeneousTargetX = (targetX / width) * 2 - 1;
 		var homogeneousTargetY = Image.renderTargetsInvertedY() ? (targetY / height) * 2 - 1 : 1 - (targetY / height) * 2;
-		var transform:FastMatrix4;
+		var transform:FastMatrix4=FastMatrix4.identity();
 		if (projectionIsOrthogonal) {
 			homogeneousTargetX = targetX - width * 0.5;
 			homogeneousTargetY = targetY - height * 0.5;
-			transform = view.inverse();
+			transform.setFrom(view.inverse());
 			// transform.setFrom(transform.multmat(FastMatrix4.scale(scale,scale,1)));
 		} else {
-			transform = (projection.multmat(view)).inverse();
+			transform.setFrom((projection.multmat(view)).inverse());
 		}
 		var farRaw:FastVector4 = transform.multvec(new FastVector4(homogeneousTargetX, homogeneousTargetY, -1, 1));
 		var nearRaw:FastVector4 = transform.multvec(new FastVector4(homogeneousTargetX, homogeneousTargetY, 1, 1));
@@ -253,6 +253,8 @@ class Camera {
 				shakeY = maxShakeY - perlin.OctavePerlin(-time, -time, -time, 8, s, shakeInterval) * maxShakeY * 2;
 				// this.rotation=shakeRotation-2*shakeRotation*perlin.OctavePerlin(time,time,time, 8, s, shakeInterval);
 			}
+			this.x+=shakeX;
+			this.y+=shakeY; 
 			eye.setFrom((new FastVector3(this.x, this.y, this.z)).sub(offsetEye));
 			at.setFrom(new FastVector3(this.x, this.y, 0));
 		}
@@ -264,10 +266,9 @@ class Camera {
 			this.x = targetPos.x + (deltaX / length) * maxSeparationFromTarget;
 			this.y = targetPos.y + (deltaY / length) * maxSeparationFromTarget;
 		}*/
-		/*
+		
 
-			this.x+=shakeX;
-			this.y+=shakeY; */
+			
 
 		updateView();
 	}

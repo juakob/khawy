@@ -98,12 +98,12 @@ class Simulation {
 			this.changeState(Type.createInstance(initialState, []));
 		}
 		#end
-		Input.i.screenScale.setTo(virtualWidth / System.windowWidth(0), virtualHeight / System.windowHeight(0));
+		
 		var time = Scheduler.time();
 		mFrameByFrameTime = time - mLastFrameTime;
 		mLastFrameTime = time;
 		if (!isPause) {
-			TimeManager.setDelta(mFrameByFrameTime, Scheduler.realTime());
+			TimeManager.setDelta(mFrameByFrameTime);
 			update(mFrameByFrameTime);
 		}
 		if (requestChangeState) {
@@ -116,7 +116,7 @@ class Simulation {
 
 	function onRender(framebuffers:Array<Framebuffer>) {
 		var framebuffer = framebuffers[0];
-
+		Input.i.screenScale.setTo(virtualWidth / framebuffer.width, virtualHeight / framebuffer.height);
 		if (!initialized)
 			return;
 		currentState.render();
