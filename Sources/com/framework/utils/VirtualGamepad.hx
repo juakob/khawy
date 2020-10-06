@@ -91,7 +91,7 @@ class VirtualGamepad {
 			}
 		}
 		for (stick in sticksTouch) {
-			if (stick.handleInput(x * scaleX, y * scaleY)) {
+			if (!stick.active&&stick.handleInput(x * scaleX, y * scaleY)) {
 				onAxisChange(stick.idX, stick.axisX);
 				onAxisChange(stick.idY, stick.axisY);
 				stick.active = true;
@@ -236,7 +236,7 @@ class VirtualStick {
 
 	public function handleInput(x:Float, y:Float):Bool {
 		var sqrDistance = (x - this.x) * (x - this.x) + (y - this.y) * (y - this.y);
-		if (sqrDistance < radio * radio) {
+		if (active||sqrDistance < radio * radio) {
 			var length = Math.sqrt(sqrDistance);
 			axisX = ((x - this.x) / length);
 			axisY = ((y - this.y) / length);
