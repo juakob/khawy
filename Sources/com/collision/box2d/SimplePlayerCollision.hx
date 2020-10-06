@@ -23,6 +23,11 @@ class SimplePlayerCollision {
 	public var y(get, set):Float;
 
 	public function new(x:Float, y:Float, width:Float, height:Float, world:B2World) {
+		createBody(width, height, world);
+		body.setPosition(new B2Vec2(x * Const.invWorldScale, y * Const.invWorldScale));
+		body.setFixedRotation(true);
+	}
+	function createBody(width:Float, height:Float, world:B2World) {
 		var bodyDef = new B2BodyDef();
 		bodyDef.type = B2BodyType.DYNAMIC_BODY;
 		body = world.createBody(bodyDef);
@@ -33,10 +38,7 @@ class SimplePlayerCollision {
 		fixture.shape = box;
 		fixture.density = 1;
 		shape = body.createFixture(fixture);
-		body.setPosition(new B2Vec2(x * Const.invWorldScale, y * Const.invWorldScale));
-		body.setFixedRotation(true);
 	}
-
 	public function set_velocityX(velX:Float):Float {
 		moving = true;
 		body.setAwake(true);
@@ -60,7 +62,9 @@ class SimplePlayerCollision {
 	}
 
 	public function set_x(x:Float):Float {
-		body.getPosition().x = x * Const.invWorldScale;
+		var pos=body.getPosition();
+		pos.x= x * Const.invWorldScale;
+		body.setPosition(pos);
 		return x;
 	}
 
@@ -69,7 +73,9 @@ class SimplePlayerCollision {
 	}
 
 	public function set_y(y:Float):Float {
-		body.getPosition().y = y * Const.invWorldScale;
+		var pos=body.getPosition();
+		pos.y = y * Const.invWorldScale;
+		body.setPosition(pos);
 		return y;
 	}
 
