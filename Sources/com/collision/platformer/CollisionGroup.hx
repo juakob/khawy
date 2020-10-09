@@ -29,6 +29,11 @@ class CollisionGroup implements ICollider {
 		aCollider.parent = null;
 		colliders.remove(aCollider);
 	}
+	public function clear() {
+		while(colliders.length>0){
+			colliders.pop().parent=null;
+		}
+	}
 
 	/* INTERFACE ICollider */
 	public function collide(aCollider:ICollider, ?NotifyCallback:ICollider->ICollider->Void):Bool {
