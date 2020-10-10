@@ -21,7 +21,8 @@ class FontKhaLoader implements Resource {
 	}
 
 	public function unload():Void {
-		Reflect.callMethod(Assets.fonts, Reflect.field(Assets.fonts, name + "Unload"), []);
+		Assets.fonts.get(name).unload();
+		Reflect.setField(Assets.fonts, name, null);
 	}
 
 	public function unloadLocal():Void {}
