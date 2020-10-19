@@ -33,6 +33,7 @@ class Simulation {
 	public static var i:Simulation;
 
 	public var manualLoad(get, set):Bool;
+	public var noUnload(default, default):Bool;
 
 	var mManualLoad:Bool;
 	var iterationRest:Float = 0;
@@ -152,12 +153,17 @@ class Simulation {
 	private function loadState(state:State):Void {
 		initialized = false;
 		if (currentState != null) {
-			SM.reset();
 			Input.i.clearInput();
 			currentState.destroy();
-			resources.unload();
-			unloadResourceHandlers();
 			GEngine.i.unload();
+			if(!noUnload){
+				SM.reset();
+				resources.unload();
+				unloadResourceHandlers();
+				
+			}else{
+				resources=new Resources();
+			}
 		}
 		currentState = state;
 		currentState.load(resources);
