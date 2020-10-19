@@ -95,7 +95,7 @@ class Tilemap {
 		return tileMapDisplay;
 	}
 
-	function idToFrame(id:Int):Int {
+	public function idToFrame(id:Int):Int {
 		var length = tileIdStart.length;
 		for (i in 0...length) {
 			if (i == length - 1 || tileIdStart[(i + 1)] > id) {

@@ -64,7 +64,6 @@ class TileMapAdvanceDisplay extends Layer {
 	}
 
 	override function render(paintMode:PaintMode, transform:FastMatrix4) {
-		super.render(paintMode, transform);
 		var min:FastVector2 = paintMode.camera.screenToWorld(0, 0);
 		var max:FastVector2 = new FastVector2(min.x, min.y);
 		mergeMinMax(paintMode.camera.screenToWorld(paintMode.camera.width, 0), min, max);
@@ -82,10 +81,10 @@ class TileMapAdvanceDisplay extends Layer {
 			endInTilesX = widthInTiles;
 		if (endInTilesY > heightInTiles)
 			endInTilesY = heightInTiles;
-		var y = endInTilesY - 1;
-		while (startInTilesY <= y) {
-			for (x in startInTilesX...endInTilesX) {
-				var index = x + widthInTiles * y;
+		var tileY = endInTilesY - 1;
+		while (startInTilesY <= tileY) {
+			for (tileX in startInTilesX...endInTilesX) {
+				var index = tileX + widthInTiles * tileY;
 				if (index >= 0 && index < tiles.length) {
 					var frame = tiles[index].id;
 					if (frame >= 0) {
@@ -93,7 +92,7 @@ class TileMapAdvanceDisplay extends Layer {
 					}
 				}
 			}
-			--y;
+			--tileY;
 		}
 	}
 
