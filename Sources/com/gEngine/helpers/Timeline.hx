@@ -199,4 +199,12 @@ class Timeline {
 	public inline function isComplete():Bool {
 		return !playing && !loop;
 	}
+
+	public function goRandomFrame(stop:Bool=true) {
+		if(stop){
+			gotoAndStop(Std.int(totalFrames*Math.random()));
+		}else{
+			gotoAndPlay(Std.int(totalFrames*Math.random()));
+		}
+	}
 }
