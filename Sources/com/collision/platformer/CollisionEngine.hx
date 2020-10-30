@@ -51,7 +51,7 @@ class CollisionEngine {
 		for (i in 1...(iterations + 1)) {
 			A.x = LERP.f(A.lastX, AendX, i / iterations);
 			A.y = LERP.f(A.lastY, AendY, i / iterations);
-			returnValue = returnValue || A.collide(B, aCallBack);
+			returnValue = A.collide(B, aCallBack)||returnValue;
 		}
 
 		return returnValue;
