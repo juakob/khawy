@@ -45,17 +45,18 @@ class CollisionEngine {
 		colliders.push(A);
 		colliders.push(B);
 		#end
+		var returnValue:Bool=false;
 		var AendX:Float = A.x;
 		var AendY:Float = A.y;
 		for (i in 1...(iterations + 1)) {
-			A.x = LERP.f(A.lastX, AendX, i / iterations);
-			A.y = LERP.f(A.lastY, AendY, i / iterations);
-			if (A.collide(B, aCallBack)) {
-				return true;
-			}
+			//avoid interpolation if they are the same value, it can add a rounding error
+			if(A.x!=A.lastX) A.x = LERP.f(A.lastX, AendX, i / iterations);
+			if(A.y!=A.lastY) A.y = LERP.f(A.lastY, AendY, i / iterations);
+			returnValue = A.collide(B, aCallBack)||returnValue;
+			if(A.y==A.lastY&&A.x==A.lastX)break;
 		}
 
-		return false;
+		return returnValue;
 	}
 
 	public static function overlap(A:ICollider, B:ICollider, aCallBack:ICollider->ICollider->Void = null):Bool {

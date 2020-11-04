@@ -88,8 +88,8 @@ class GEngine {
 		var recTexture = Image.createRenderTarget(1, 1);
 		recTexture.g2.begin(true, Color.White);
 		recTexture.g2.end();
-		textures.push(recTexture);
-		RectangleDisplay.init(1);
+		var id=textures.push(recTexture)-1;
+		RectangleDisplay.init(id);
 	}
 
 	public function getSimplePainter(blend:BlendMode) {
