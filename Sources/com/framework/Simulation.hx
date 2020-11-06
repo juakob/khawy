@@ -1,5 +1,9 @@
 package com.framework;
 
+import haxe.io.BytesBuffer;
+import haxe.io.Bytes;
+import com.framework.utils.SaveFile;
+import com.framework.utils.Random;
 import com.loading.ResourceHandler;
 import com.framework.utils.Input;
 import com.gEngine.GEngine;
@@ -39,7 +43,7 @@ class Simulation {
 	var iterationRest:Float = 0;
 
 	public function new(initialState:Class<State>, virtualWidth:Int, virtualHeight:Int, oversample:Float = 1, antiAlias:Int = 0) {
-		startingSeed = Math.random() * 3000;
+		startingSeed = 50;
 		com.framework.utils.Random.init(Std.int(startingSeed));
 		this.initialState = initialState;
 		resourcesHandlers = new Array();
@@ -92,17 +96,50 @@ class Simulation {
 	private var mFrameByFrameTime:Float = 0;
 	private var mLastFrameTime:Float = 0;
 	private var mLastRealFrameTime:Float = 0;
+	#if INPUT_REC
+	var frameByFrame:Bool=false;
+	function playRecord() {
+		this.changeState(Type.createInstance(initialState, []));
+		TimeManager.reset();
+		Random.init(50);
+		Input.i.playRecord();
+		TimeManager.fixedTime=true;
+	}
+	#end
 
 	private function onEnterFrame():Void {
-		#if debug
-		if (Input.i.isKeyCodePressed(kha.input.KeyCode.F2) && Input.i.isKeyCodeDown(kha.input.KeyCode.Shift)) {
-			this.changeState(Type.createInstance(initialState, []));
-		}
-		#end
-		
 		var time = Scheduler.time();
 		mFrameByFrameTime = time - mLastFrameTime;
 		mLastFrameTime = time;
+		#if INPUT_REC
+		if (Input.i.isKeyCodePressed(kha.input.KeyCode.F2) && Input.i.isKeyCodeDown(kha.input.KeyCode.Shift)) {
+			playRecord();
+			SaveFile.saveBytes(Input.i.serializeInputRecord().getBytes(),"savePlay","replay");
+		}
+		if(Input.i.isKeyCodePressed(kha.input.KeyCode.F3)&& Input.i.isKeyCodeDown(kha.input.KeyCode.Shift)){
+			TimeManager.fixedTime=true;
+			Input.i.startRecord();
+		}
+		if(Input.i.isKeyCodePressed(kha.input.KeyCode.F4)&& Input.i.isKeyCodeDown(kha.input.KeyCode.Shift)){
+			SaveFile.openFile(function(stream:StreamReader) {
+				Input.i.loadRecord(stream);
+				playRecord();
+			});
+		}
+		if(Input.i.isKeyCodePressed(kha.input.KeyCode.F1)){
+			frameByFrame=!frameByFrame;
+			TimeManager.fixedTime=!frameByFrame;
+		}
+		if(frameByFrame){
+			if(Input.i.isKeyCodePressed(kha.input.KeyCode.F2)){
+				mFrameByFrameTime=1/60;
+			}else{
+				mFrameByFrameTime=0;
+			}
+		}
+		#end
+		
+		
 		if (!isPause) {
 			TimeManager.setDelta(mFrameByFrameTime);
 			update(mFrameByFrameTime);
@@ -143,6 +180,9 @@ class Simulation {
 			return;
 		var fullIterations = Math.floor(TimeManager.multiplier + iterationRest);
 		for (i in 0...fullIterations) {
+			#if INPUT_REC
+			Input.i.updatePlayeback();
+			#end
 			currentState.update(dt);
 			GEngine.i.update();
 			Input.i.update();

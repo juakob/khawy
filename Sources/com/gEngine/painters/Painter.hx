@@ -34,7 +34,7 @@ class Painter implements IPainter {
 	public var blue:FastFloat = 0.;
 	public var alpha:FastFloat = 0.;
 
-	inline static var MAX_VERTEX_PER_BUFFER:Int = 4000;
+	var MAX_VERTEX_PER_BUFFER:Int = 4000;
 
 	var dataPerVertex:Int = 5;
 	var mvpID:ConstantLocation;
