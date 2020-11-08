@@ -1,6 +1,8 @@
 package com.framework.utils;
 
+#if INPUT_REC
 import com.framework.utils.SaveFile.StreamReader;
+#end
 import haxe.io.BytesBuffer;
 import com.g3d.OgexData.Key;
 import kha.input.Gamepad;
@@ -10,6 +12,7 @@ import kha.input.Keyboard;
 import kha.input.Mouse;
 import kha.input.Surface;
 
+#if INPUT_REC
 enum InputRecordType {
 	KeyDown(key:KeyCode);
 	KeyUp(key:KeyCode);
@@ -74,7 +77,7 @@ class InputRecord {
 		return record;
 	}
 }
-
+#end
 
 class Input {
 	public static var i(default, null):Input = null;

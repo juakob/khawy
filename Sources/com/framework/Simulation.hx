@@ -2,7 +2,9 @@ package com.framework;
 
 import haxe.io.BytesBuffer;
 import haxe.io.Bytes;
+#if INPUT_REC
 import com.framework.utils.SaveFile;
+#end
 import com.framework.utils.Random;
 import com.loading.ResourceHandler;
 import com.framework.utils.Input;

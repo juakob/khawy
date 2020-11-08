@@ -1,11 +1,12 @@
 package com.framework.utils;
+#if js
  import js.lib.DataView;
 import js.lib.ArrayBuffer;
 import js.html.FileReader;
 import js.html.Attr;
 import js.html.InputElement;
 import haxe.io.Bytes;
-#if js
+
     import js.Browser;
     import js.html.Blob;
     import js.html.URL;
@@ -63,7 +64,9 @@ class SaveFile {
        
 }
 class StreamReader {
+  #if js
   var data:DataView;
+  #end
   var offset:Int;
   
   public function new(data:DataView) {
