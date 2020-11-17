@@ -27,9 +27,11 @@ class PainterGarbage {
 	}
 
 	public function clear() {
-		for (painter in painters) {
+		/*for (painter in painters) {
 			painter.destroy();
 		}
 		painters.splice(0, painters.length);
+		*/
+		
 	}
 }
