@@ -6,6 +6,7 @@ class Resources {
 	var resources:Array<Resource>;
 	var loadedCount:Int;
 	var onFinish:Void->Void;
+	var loadingFile:Bool;
 
 	public function new() {
 		resources = new Array();
@@ -13,6 +14,9 @@ class Resources {
 
 	public function add(resource:Resource) {
 		resources.push(resource);
+	}
+	public function percentage():Float {
+		return loadedCount/resources.length;
 	}
 
 	public function load(onFinish:Void->Void) {
@@ -22,9 +26,12 @@ class Resources {
 			onFinish();
 			return;
 		}
-		for (resource in resources) {
+		loadingFile=true;
+		resources[0].loadLocal(onLoad);
+		
+		/*for (resource in resources) {
 			resource.load(onLoad);
-		}
+		}*/
 	}
 
 	public function loadLocal(onFinish:Void->Void) {
@@ -34,13 +41,21 @@ class Resources {
 			onFinish();
 			return;
 		}
-		for (resource in resources) {
-			resource.loadLocal(onLoad);
+		//for (resource in resources) {
+		loadingFile=true;
+		resources[0].loadLocal(onLoad);
+		
+		//}
+	}
+	public function update() {
+		if (!loadingFile&&loadedCount < resources.length) {
+			resources[loadedCount].load(onLoad);
 		}
 	}
 
 	function onLoad() {
 		++loadedCount;
+		loadingFile=false;
 		if (loadedCount == resources.length) {
 			onFinish();
 		}

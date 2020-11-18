@@ -157,9 +157,7 @@ class Simulation {
 	function onRender(framebuffers:Array<Framebuffer>) {
 		var framebuffer = framebuffers[0];
 		Input.i.screenScale.setTo(virtualWidth / framebuffer.width, virtualHeight / framebuffer.height);
-		if (!initialized)
-			return;
-		currentState.render();
+		if (initialized) currentState.render();
 		GEngine.i.draw(framebuffer);
 		currentState.draw(framebuffer);
 		if (isPause) {
@@ -178,8 +176,14 @@ class Simulation {
 	}
 
 	private function update(dt:Float):Void {
-		if (!initialized)
+		if (!initialized){
+			if(currentState!=null){
+				currentState.loading(resources.percentage());
+			}	
+			resources.update();
 			return;
+		}
+			
 		var fullIterations = Math.floor(TimeManager.multiplier + iterationRest);
 		for (i in 0...fullIterations) {
 			#if INPUT_REC
@@ -208,6 +212,7 @@ class Simulation {
 			}
 		}
 		currentState = state;
+		currentState.stage = GEngine.i.getStage();
 		currentState.load(resources);
 		if (manualLoad) {
 			resources.loadLocal(finishUpload);
@@ -228,7 +233,6 @@ class Simulation {
 
 	private function finishUpload():Void {
 		initialized = true;
-		currentState.stage = GEngine.i.getStage();
 		currentState.init();
 		GEngine.i.update();
 	}
