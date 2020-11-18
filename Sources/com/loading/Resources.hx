@@ -49,6 +49,7 @@ class Resources {
 	}
 	public function update() {
 		if (!loadingFile&&loadedCount < resources.length) {
+			loadingFile=true;
 			resources[loadedCount].load(onLoad);
 		}
 	}
