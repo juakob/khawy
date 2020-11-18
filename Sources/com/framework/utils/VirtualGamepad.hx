@@ -23,7 +23,7 @@ class VirtualGamepad {
 
 	public function new() {
 		Surface.get().notify(onTouchStart, onTouchEnd, onTouchMove);
-		Keyboard.get().notify(onKeyDown, onKeyUp);
+		Input.i.subscribeKeyboard(onKeyDown, onKeyUp);
 		buttonsTouch = new Array();
 		sticksTouch = new Array();
 		globalStick = new VirtualStick();
@@ -32,7 +32,7 @@ class VirtualGamepad {
 
 	public function destroy() {
 		Surface.get().remove(onTouchStart, onTouchEnd, onTouchMove);
-		Keyboard.get().remove(onKeyDown, onKeyUp, null);
+		Input.i.unsubscribeKeyboard(onKeyDown, onKeyUp);
 		onAxisChange = null;
 		onButtonChange = null;
 	}

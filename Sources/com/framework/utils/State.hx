@@ -100,4 +100,7 @@ class State extends Entity {
 		stage.timeScale = scale;
 		return scale;
 	}
+	public function loading(percentage:Float) {
+		
+	}
 }
