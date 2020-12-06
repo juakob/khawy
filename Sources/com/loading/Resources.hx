@@ -27,7 +27,7 @@ class Resources {
 			return;
 		}
 		loadingFile=true;
-		resources[0].loadLocal(onLoad);
+		resources[0].load(onLoad);
 		
 		/*for (resource in resources) {
 			resource.load(onLoad);
@@ -49,6 +49,7 @@ class Resources {
 	}
 	public function update() {
 		if (!loadingFile&&loadedCount < resources.length) {
+			loadingFile=true;
 			resources[loadedCount].load(onLoad);
 		}
 	}

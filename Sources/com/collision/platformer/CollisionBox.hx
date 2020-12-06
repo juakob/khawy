@@ -58,20 +58,43 @@ class CollisionBox extends Body implements ICollider {
 					colliderNeededX = Sides.LEFT;
 					overlapX *= -1;
 				}
-
 				if ((y + height * 0.5) < (boxCollider.y + boxCollider.height * 0.5)) {
 					myCollisionNeededY = Sides.BOTTOM;
 					colliderNeededY = Sides.TOP;
 					overlapY *= -1;
 				}
+
+				if(collisionAllow!=Sides.ALL||boxCollider.collisionAllow!=Sides.ALL){					
+					
+					var currentX=x;
+					var currentY=y;
+					x=lastX;
+					y=lastY;
+					var colliderX=boxCollider.x;
+					var colliderY=boxCollider.y;
+					boxCollider.x=boxCollider.lastX;
+					boxCollider.y=boxCollider.lastY;
+
+					var colliding=overlapVsBox(boxCollider);
+
+					x=currentX;
+					y=currentY;
+					boxCollider.x=colliderX;
+					boxCollider.y=colliderY;
+
+					if(colliding){
+						return false;
+					}
+
+				}
 				if (overlapXSmaller && (collisionAllow & myCollisionNeededX > 0) && (boxCollider.collisionAllow & colliderNeededX > 0)) {
 					x += overlapX * myPonderation;
 					boxCollider.x -= overlapX * colliderPonderation;
 
-					if (velocityX * overlapX >= 0) { // dot product to se direction
+					if (velocityX * overlapX >= 0) { // dot product to see direction
 						velocityX *= -bounce;
 					}
-					if (boxCollider.velocityX * overlapX >= 0) { // dot product to se direction
+					if (boxCollider.velocityX * overlapX >= 0) { // dot product to see direction
 						boxCollider.velocityX *= -boxCollider.bounce;
 					}
 					touching |= myCollisionNeededX;

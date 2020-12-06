@@ -1,5 +1,6 @@
 package com.gEngine.display;
 
+import com.helpers.SIMDOperations;
 import com.gEngine.helpers.Timeline;
 import kha.math.FastVector4;
 import kha.math.FastMatrix4;
@@ -165,6 +166,9 @@ class Sprite implements IAnimation implements IRotation {
 
 		calculateTransform(transform);
 		var model = transform.multmat(this.transform);
+		#if cpp
+		SIMDOperations.setMatrix(model);
+		#end
 
 		paintInfo.blend = blend;
 		if(animationData.hasMipMap){
@@ -202,7 +206,11 @@ class Sprite implements IAnimation implements IRotation {
 		for (i in 0...4) {
 			var vertexX = vertexs[vertexIndex++] - pivotX;
 			var vertexY = vertexs[vertexIndex++] - pivotY;
+			#if cpp
+			var pos = SIMDOperations.multiply(new FastVector4(vertexX, vertexY, 0));
+			#else
 			var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
+			#end
 			buffer.set(vertexBufferCounter++, pos.x + offsetX * cameraScale);
 			buffer.set(vertexBufferCounter++, pos.y + offsetY * cameraScale);
 			buffer.set(vertexBufferCounter++, pos.z);
@@ -228,7 +236,11 @@ class Sprite implements IAnimation implements IRotation {
 		for (i in 0...4) {
 			var vertexX = vertexs[vertexIndex++] - pivotX;
 			var vertexY = vertexs[vertexIndex++] - pivotY;
+			#if cpp
+			var pos = SIMDOperations.multiply(new FastVector4(vertexX, vertexY, 0));
+			#else
 			var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
+			#end
 			buffer.set(vertexBufferCounter++, pos.x + offsetX * cameraScale);
 			buffer.set(vertexBufferCounter++, pos.y + offsetY * cameraScale);
 			buffer.set(vertexBufferCounter++, pos.z);
@@ -266,7 +278,11 @@ class Sprite implements IAnimation implements IRotation {
 			for (k in 0...4) {
 				var vertexX = vertexs[vertexIndex++] - pivotX;
 				var vertexY = vertexs[vertexIndex++] - pivotY;
+				#if cpp
+				var pos = SIMDOperations.multiply(new FastVector4(vertexX, vertexY, 0));
+				#else
 				var pos = model.multvec(new FastVector4(vertexX, vertexY, 0));
+				#end
 				writeColorVertex(pos.x + offsetX * cameraScale, pos.y + offsetY * cameraScale, pos.z + offsetZ, uvs[uvIndex++], uvs[uvIndex++], redMul,
 					greenMul, blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd, buffer, vertexBufferCounter);
 				vertexBufferCounter += 13;
