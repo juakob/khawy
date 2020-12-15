@@ -12,7 +12,6 @@ import kha.FastFloat;
 import com.gEngine.painters.PaintMode;
 import kha.math.FastMatrix4;
 import com.gEngine.display.DisplayObject;
-import js.lib.intl.Collator.Usage;
 import kha.graphics4.IndexBuffer;
 import kha.graphics4.Usage;
 import kha.graphics5_.VertexData;

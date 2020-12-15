@@ -290,7 +290,7 @@ class GEngine {
 		stage.update();
 	}
 
-	public function draw(frameBuffer:Framebuffer, clear:Bool = true):Void {
+	public function draw(frameBuffer:Framebuffer, clear:Bool = true, needRefresh:Bool):Void {
 		if (frameBuffer.width * oversample != width || frameBuffer.height * oversample != height)
 			resizeInput(frameBuffer.width, frameBuffer.height);
 
@@ -301,7 +301,7 @@ class GEngine {
 		if (clear)
 			g.clear(clearColor, 1);
 		g.end();
-		stage.render();
+		stage.render(needRefresh);
 		drawDebugInfo(frameBuffer);
 	}
 

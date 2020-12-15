@@ -42,15 +42,15 @@ class Stage {
 		}
 	}
 
-	public function render():Void {
+	public function render(needRefresh:Bool):Void {
 		for (camera in cameras) {
-			camera.render(painterMode, matrix);
+			camera.render(painterMode, matrix,needRefresh);
 			if (painterMode.vertexCount() > 0) {
 				painterMode.render();
 			}
 		}
 		for (stage in subStages) {
-			stage.render();
+			stage.render(needRefresh);
 		}
 	}
 

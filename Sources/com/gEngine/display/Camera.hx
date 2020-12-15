@@ -150,23 +150,25 @@ class Camera {
 		return angle;
 	}
 
-	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
-		GEngine.i.setCanvas(renderTarget);
-		GEngine.i.beginCanvas();
-		var g = GEngine.i.currentCanvas().g4;
+	public function render(paintMode:PaintMode, transform:FastMatrix4,needRefresh:Bool):Void {
+		if(needRefresh){
+			GEngine.i.setCanvas(renderTarget);
+			GEngine.i.beginCanvas();
+			var g = GEngine.i.currentCanvas().g4;
 
-		g.clear(clearColor, 1);
+			g.clear(clearColor, 1);
 
-		paintMode.camera = this;
-		paintMode.resetRenderArea();
-		paintMode.adjustRenderArea(drawArea);
+			paintMode.camera = this;
+			paintMode.resetRenderArea();
+			paintMode.adjustRenderArea(drawArea);
 
-		if (onPreRender != null)
-			onPreRender(this, view);
+			if (onPreRender != null)
+				onPreRender(this, view);
 
-		world.render(paintMode, view);
-		paintMode.render();
-		GEngine.i.endCanvas();
+			world.render(paintMode, view);
+			paintMode.render();
+			GEngine.i.endCanvas();
+		}
 		GEngine.i.setFrameBufferAsCanvas();
 		GEngine.i.beginCanvas();
 		var painter = postProcess != null ? postProcess : GEngine.i.getSimplePainter(blend);
