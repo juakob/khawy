@@ -46,18 +46,20 @@ class CollisionTileMap implements ICollider {
 	}
 
 	function calculateEdges(minX:Int, minY:Int, maxX:Int, maxY:Int) {
-		for (tileY in minY...(maxY + 1)) {
-			for (tileX in minX...(maxX + 1)) {
-				var edge:Int = Sides.NONE;
-				if (getTileId(tileX, tileY - 1) < startingCollisionIndex)
-					edge |= Sides.TOP;
-				if (getTileId(tileX - 1, tileY) < startingCollisionIndex)
-					edge |= Sides.LEFT;
-				if (getTileId(tileX + 1, tileY) < startingCollisionIndex)
-					edge |= Sides.RIGHT;
-				if (getTileId(tileX, tileY + 1) < startingCollisionIndex)
-					edge |= Sides.BOTTOM;
-				edges[tileX + tileY * widthIntTiles] = edge;
+		for (tileY in minY...maxY ) {
+			for (tileX in minX...maxX ) {
+				if(getTileId(tileX, tileY)>=startingCollisionIndex){
+					var edge:Int = Sides.NONE;
+					if (getTileId(tileX, tileY - 1) < startingCollisionIndex)
+						edge |= Sides.TOP;
+					if (getTileId(tileX - 1, tileY) < startingCollisionIndex)
+						edge |= Sides.LEFT;
+					if (getTileId(tileX + 1, tileY) < startingCollisionIndex)
+						edge |= Sides.RIGHT;
+					if (getTileId(tileX, tileY + 1) < startingCollisionIndex)
+						edge |= Sides.BOTTOM;
+					edges[tileX + tileY * widthIntTiles] = edge;
+				}
 			}
 		}
 	}

@@ -46,6 +46,21 @@ class Tilemap {
 		return collision;
 	}
 
+	public function createCombineCollisions(tileMaps:Array<TmxTileLayer>,vertical:Bool):CollisionTileMap {
+		var tiles = new Array<Int>();
+		var scaleX:Int=vertical?1:tileMaps.length;
+		var scaleY:Int=vertical?tileMaps.length:1;
+		for(map in tileMaps){
+			for (tile in map.data.tiles) {
+				tiles.push(tile.gid);
+			}
+		}
+		
+		var collision = new CollisionTileMap(tiles, tileWidth * scale*scaleX, tileHeight * scale*scaleY, tileMaps[0].width*scaleX, tileMaps[0].height*scaleY);
+		this.collision.add(collision);
+		return collision;
+	}
+
 	/**
 	 * [creates and adds a tile map display]
 	 * @param tileMap tile layer

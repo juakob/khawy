@@ -1200,7 +1200,7 @@ private class TessMesh
 
 private class Geom
 {
-  static public function vertEq(u:TessVertex, v:TessVertex):Bool {
+  static inline public  function vertEq(u:TessVertex, v:TessVertex):Bool {
     return (u.s == v.s && u.t == v.t);
   }
 
@@ -1482,7 +1482,7 @@ private class Dict
 {
   public var head:DictNode;
   public var frame:Tesselator;
-  public var leq:Tesselator->ActiveRegion->ActiveRegion->Bool;
+  //public var leq:Tesselator->ActiveRegion->ActiveRegion->Bool;
   
   public function new(frame:Tesselator, leq:Tesselator->ActiveRegion->ActiveRegion->Bool):Void 
   {
@@ -1490,7 +1490,7 @@ private class Dict
     this.head.next = this.head;
     this.head.prev = this.head;
     this.frame = frame;
-    this.leq = leq;
+   // this.leq = leq;
   }
   
   public function min():DictNode {
@@ -1513,7 +1513,7 @@ private class Dict
     var node = this.head;
     do {
       node = node.next;
-    } while (node.key != null && !this.leq(this.frame, key, node.key));
+    } while (node.key != null && !Sweep.edgeLeq(this.frame, key, node.key));
 
     return node;
   }
@@ -1521,7 +1521,7 @@ private class Dict
   public function insertBefore(node:DictNode, key:ActiveRegion):DictNode {
     do {
       node = node.prev;
-    } while (node.key != null && !this.leq(this.frame, node.key, key));
+    } while (node.key != null && !Sweep.edgeLeq(this.frame, node.key, key));
 
     var newNode = new DictNode();
     newNode.key = key;
@@ -1595,17 +1595,31 @@ private class PriorityQ
     hCurr = n[curr].handle;
     while (true) {
       child = curr << 1;
-      if (child < this.size && this.leq(h[n[child + 1].handle].key, h[n[child].handle].key)) {
-        ++child;
+      
+      if (child < this.size) {
+        var u=h[n[child + 1].handle].key;
+        var v=h[n[child].handle].key;
+        if(((u.s < v.s) || (u.s == v.s && u.t <= v.t))){
+          ++child;
+        }
       }
 
       Debug.assert(child <= this.max);
 
       hChild = n[child].handle;
-      if (child > this.size || this.leq( h[hCurr].key, h[hChild].key)) {
+      
+      if (child > this.size) {
         n[curr].handle = hCurr;
         h[hCurr].node = curr;
         break;
+      }else{
+        var u=h[hCurr].key;
+        var v=h[hChild].key;
+        if(((u.s < v.s) || (u.s == v.s && u.t <= v.t))){
+          n[curr].handle = hCurr;
+          h[hCurr].node = curr;
+          break;
+        }
       }
       n[curr].handle = hChild;
       h[hChild].node = curr;

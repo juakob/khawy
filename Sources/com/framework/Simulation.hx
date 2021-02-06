@@ -43,6 +43,7 @@ class Simulation {
 
 	var mManualLoad:Bool;
 	var iterationRest:Float = 0;
+	var needRender:Bool;
 
 	public function new(initialState:Class<State>, virtualWidth:Int, virtualHeight:Int, oversample:Float = 1, antiAlias:Int = 0) {
 		startingSeed = 50;
@@ -152,13 +153,14 @@ class Simulation {
 			nextState = null;
 			return;
 		}
+		needRender=true;
 	}
 
 	function onRender(framebuffers:Array<Framebuffer>) {
 		var framebuffer = framebuffers[0];
 		Input.i.screenScale.setTo(virtualWidth / framebuffer.width, virtualHeight / framebuffer.height);
 		if (initialized) currentState.render();
-		GEngine.i.draw(framebuffer);
+		GEngine.i.draw(framebuffer,true,needRender);
 		currentState.draw(framebuffer);
 		if (isPause) {
 			var g2:Graphics = framebuffer.g2;
@@ -173,6 +175,7 @@ class Simulation {
 
 			g2.end();
 		}
+		needRender=false;
 	}
 
 	private function update(dt:Float):Void {

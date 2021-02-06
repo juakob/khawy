@@ -6,6 +6,7 @@ class Profiler {
 	#if profile
 	static var functionsTimes:Array<Array<Float>> = new Array();
 	static var functionsNames:Array<String> = new Array();
+	static var counter:Int=0;
 	#end
 
 	public inline static function startMeasure(name:String) {
@@ -16,6 +17,7 @@ class Profiler {
 			functionsTimes.push(new Array());
 		}
 		functionsTimes[index].push(Scheduler.realTime());
+		++counter;
 		#end
 	}
 
@@ -23,15 +25,23 @@ class Profiler {
 		#if profile
 		var time = Scheduler.realTime();
 		var index = functionsNames.indexOf(name);
-		if (index > 0) {
-			var endIndex = functionsTimes[index].length - 1;
-			functionsTimes[index][endIndex] = time - functionsTimes[index][endIndex];
+		if (index >= 0) {
+			var times = functionsTimes[index];
+			var endIndex = times.length - 1;
+			var startTime = times[endIndex];
+			times[endIndex] = time - startTime;
+		}else{
+			throw "call startMeasure before ending it";
 		}
+		--counter;
 		#end
 	}
 
 	public inline static function show() {
 		#if (!worker && profile)
+		if(counter!=0){
+			throw  "close all measures before calling show";
+		}
 		trace("Profiler///////////////////////////////");
 		var i:Int = 0;
 		for (name in functionsNames) {

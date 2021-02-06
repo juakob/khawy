@@ -12,8 +12,8 @@ import kha.graphics4.PipelineState;
 class ShRgbSplit extends Painter {
 	var resolutionID:ConstantLocation;
 
-	public var spreadX:Float = 2;
-	public var spreadY:Float = 2;
+	public var spreadX:Float = 1.5;
+	public var spreadY:Float = 1.5;
 
 	public function new(blend:Blend) {
 		super(true, blend);
