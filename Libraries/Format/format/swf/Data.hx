@@ -383,21 +383,21 @@ typedef ClipEvent = {
 	var data : haxe.io.Bytes;
 }
 
-enum abstract BlendMode(Int) {
-	var BNormal;
-	var BLayer;
-	var BMultiply;
-	var BScreen;
-	var BLighten;
-	var BDarken;
-	var BDifference;
-	var BAdd;
-	var BSubtract;
-	var BInvert;
-	var BAlpha;
-	var BErase;
-	var BOverlay;
-	var BHardLight;
+enum  BlendMode {
+	BNormal;
+	BLayer;
+	BMultiply;
+	BScreen;
+	BLighten;
+	BDarken;
+	BDifference;
+	BAdd;
+	BSubtract;
+	BInvert;
+	BAlpha;
+	BErase;
+	BOverlay;
+	BHardLight;
 }
 
 enum Filter {
