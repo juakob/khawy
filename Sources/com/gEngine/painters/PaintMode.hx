@@ -51,7 +51,7 @@ class PaintMode {
 	}
 
 	public function canBatch(info:PaintInfo, size:Int, painter:IPainter):Bool {
-		return currentPainter == painter && currentPainter.canBatch(info, size);
+		return currentPainter == painter ;
 	}
 
 	public function adjustRenderArea(area:MinMax) {

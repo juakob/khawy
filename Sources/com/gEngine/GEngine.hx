@@ -96,7 +96,7 @@ class GEngine {
 		return simplePainters[cast blend];
 	}
 
-	public function getAlphaPainter(blend:BlendMode) {
+	public inline function getAlphaPainter(blend:BlendMode) {
 		return alphaPainters[cast blend];
 	}
 

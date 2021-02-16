@@ -50,7 +50,7 @@ class Profiler {
 			for (time in times) {
 				activeTime += time;
 			}
-			trace(name + " total: " + activeTime + " avg: " + activeTime / times.length + " frame% " + (activeTime / times.length) / (1 / 60));
+			trace(name + " total: " + activeTime + " avg: " + activeTime / times.length + " frame% " + 100*((activeTime / times.length) / (1 / 60)));
 			++i;
 		}
 		#end
