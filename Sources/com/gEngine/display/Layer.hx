@@ -100,8 +100,7 @@ class Layer implements DisplayObject implements IContainer {
 		paintMode.mulG *= mulG;
 		paintMode.mulB *= mulB;
 		paintMode.mulA *= mulA;
-		paintMode.colorTransform = true;
-
+		
 		if (drawArea != null) {
 			paintMode.render();
 			scaleArea.setFrom(drawArea);
