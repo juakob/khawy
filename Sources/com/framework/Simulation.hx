@@ -111,7 +111,7 @@ class Simulation {
 	#end
 
 	private function onEnterFrame():Void {
-	
+		needRender=true;
 		var time = Scheduler.time();
 		mFrameByFrameTime = time - mLastFrameTime;
 		mLastFrameTime = time;
@@ -143,7 +143,6 @@ class Simulation {
 		}
 		#end
 		
-		
 		if (!isPause) {
 			TimeManager.setDelta(mFrameByFrameTime);
 			update(mFrameByFrameTime);
@@ -154,8 +153,6 @@ class Simulation {
 			nextState = null;
 			return;
 		}
-		needRender=true;
-		
 	}
 
 	function onRender(framebuffers:Array<Framebuffer>) {
