@@ -74,8 +74,8 @@ class Sprite implements IAnimation implements IRotation {
 	public var filter:Filter;
 	public var timeline(default, null):Timeline;
 
-	var alphaPainter:PainterAlpha;
-	var colorPainter:PainterColorTransform;
+	var alphaPainters:Array<PainterAlpha>;
+	var colorPainters:Array<PainterColorTransform>;
 
 	var paintInfo:PaintInfo;
 
@@ -95,8 +95,8 @@ class Sprite implements IAnimation implements IRotation {
 
 		textureId = animationData.texturesID;
 
-		alphaPainter = GEngine.i.getAlphaPainter(blend);
-		colorPainter = GEngine.i.getColorTransformPainter(blend);
+		alphaPainters = GEngine.i.getAlphaPainters();
+		colorPainters = GEngine.i.getColorTransformPainters();
 	}
 
 	public function clone():Sprite {
@@ -226,7 +226,7 @@ class Sprite implements IAnimation implements IRotation {
 		var vertexs:Array<FastFloat> = frame.vertexs;
 		var cameraScale = paintMode.camera.scale;
 		var uvs = frame.UVs;
-		var painter:PainterAlpha = alphaPainter;
+		var painter:PainterAlpha = alphaPainters[cast blend];
 		checkBatchAlpha(paintMode, paintInfo, Std.int(frame.vertexs.length*0.5), painter);
 		var buffer = inline painter.getVertexBuffer();
 		var vertexBufferCounter = inline painter.getVertexDataCounter();
@@ -261,7 +261,7 @@ class Sprite implements IAnimation implements IRotation {
 		var cameraScale = paintMode.camera.scale;
 		var uvs = frame.UVs;
 		//var painter:IPainter = customPainter != null ? customPainter : GEngine.i.getColorTransformPainter(blend);
-		var painter:PainterColorTransform = this.colorPainter;
+		var painter:PainterColorTransform = this.colorPainters[cast blend];
 		checkBatchColor(paintMode, paintInfo, Std.int(frame.vertexs.length *0.5), painter);
 		var redMul, blueMul, greenMul, alphaMul:Float;
 		var redAdd, blueAdd, greenAdd, alphaAdd:Float;
