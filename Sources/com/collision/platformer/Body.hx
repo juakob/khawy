@@ -48,13 +48,13 @@ class Body {
 
 		if (accelerationX == 0) {
 			velocityX *= dragX;
-			if (Math.abs(velocityX) < 70) {
+			if (Math.abs(velocityX) < 0.5) {
 				velocityX = 0;
 			}
 		}
 		if (accelerationY == 0) {
 			velocityY *= dragY;
-			if (Math.abs(velocityY) < 70) {
+			if (Math.abs(velocityY) < 0.5) {
 				velocityY = 0;
 			}
 		}
