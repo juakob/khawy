@@ -111,6 +111,7 @@ class Simulation {
 	#end
 
 	private function onEnterFrame():Void {
+		needRender=true;
 		var time = Scheduler.time();
 		mFrameByFrameTime = time - mLastFrameTime;
 		mLastFrameTime = time;
@@ -142,7 +143,6 @@ class Simulation {
 		}
 		#end
 		
-		
 		if (!isPause) {
 			TimeManager.setDelta(mFrameByFrameTime);
 			update(mFrameByFrameTime);
@@ -153,10 +153,10 @@ class Simulation {
 			nextState = null;
 			return;
 		}
-		needRender=true;
 	}
 
 	function onRender(framebuffers:Array<Framebuffer>) {
+		com.debug.Profiler.startMeasure("renderSim");
 		var framebuffer = framebuffers[0];
 		Input.i.screenScale.setTo(virtualWidth / framebuffer.width, virtualHeight / framebuffer.height);
 		if (initialized) currentState.render();
@@ -176,6 +176,7 @@ class Simulation {
 			g2.end();
 		}
 		needRender=false;
+		com.debug.Profiler.endMeasure("renderSim");
 	}
 
 	private function update(dt:Float):Void {

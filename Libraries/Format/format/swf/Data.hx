@@ -383,7 +383,7 @@ typedef ClipEvent = {
 	var data : haxe.io.Bytes;
 }
 
-enum BlendMode {
+enum  BlendMode {
 	BNormal;
 	BLayer;
 	BMultiply;

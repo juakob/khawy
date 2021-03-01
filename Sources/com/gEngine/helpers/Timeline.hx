@@ -6,7 +6,7 @@ class Timeline {
 	public var frameRate:Float;
 	public var frameSkiped:Int = 0;
 	public var totalFrames:Int;
-	public var currentFrame(default, null):Int = 0;
+	public var currentFrame:Int = 0;
 	public var playing:Bool = true;
 	public var frameChange:Bool;
 	public var loop:Bool = true;

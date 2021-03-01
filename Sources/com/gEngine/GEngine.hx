@@ -92,16 +92,26 @@ class GEngine {
 		RectangleDisplay.init(id);
 	}
 
-	public function getSimplePainter(blend:BlendMode) {
+	public inline function getSimplePainter(blend:BlendMode) {
 		return simplePainters[cast blend];
 	}
-
-	public function getAlphaPainter(blend:BlendMode) {
-		return alphaPainters[cast blend];
+	public inline function getSimplePainters() {
+		return simplePainters;
 	}
 
-	public function getColorTransformPainter(blend:BlendMode) {
+	public inline function getAlphaPainter(blend:BlendMode) {
+		return alphaPainters[cast blend];
+	}
+	public inline function getAlphaPainters() {
+		return alphaPainters;
+	}
+
+	public inline function getColorTransformPainter(blend:BlendMode) {
 		return colorPainters[cast blend];
+	}
+
+	public inline function getColorTransformPainters() {
+		return colorPainters;
 	}
 
 	function calculateModelViewMatrix(targetWidth:Int, targetHeight:Int):Void {

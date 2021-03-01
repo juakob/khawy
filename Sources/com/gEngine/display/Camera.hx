@@ -1,5 +1,6 @@
 package com.gEngine.display;
 
+import kha.Color;
 import kha.Image;
 import kha.math.FastVector2;
 import kha.math.FastVector4;
@@ -83,6 +84,9 @@ class Camera {
 		this.width = width;
 		this.height = height;
 		renderTarget = GEngine.i.getRenderTarget(width, height);
+		var texture=GEngine.i.getTexture(renderTarget);
+		texture.g2.begin(true,Color.Black);
+		texture.g2.end();
 		setOrthogonalProjection();
 		projection = orthogonal;
 		projectionIsOrthogonal = true;

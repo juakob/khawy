@@ -301,7 +301,7 @@ class Tess2
 
 private class TessVertex 
 {
-  
+  static var idCounter:Int=0;
   public var next:TessVertex = null;			/* next vertex (never NULL) */
   public var prev:TessVertex = null;			/* previous vertex (never NULL) */
   public var anEdge:TessHalfEdge = null;		/* a half-edge with this origin */
@@ -314,8 +314,9 @@ private class TessVertex
   public var pqHandle:Int = 0;				/* to allow deletion from priority queue */
   public var n:Int = 0;						/* to allow identify unique vertices */
   public var idx:Int = 0;						/* to allow map result to original verts */
+  public var compareId:Int=0;
   
-  public function new() {}
+  public function new() {compareId=idCounter++;}
 } 
 
 private class TessFace 
@@ -335,6 +336,7 @@ private class TessFace
 
 private class TessHalfEdge
 {
+  static var idCounter:Int=0;
   public var next:TessHalfEdge = null;		/* doubly-linked list (prev==Sym->next) */
   public var Sym:TessHalfEdge = null;			/* same edge, opposite direction */
   public var Onext:TessHalfEdge = null;		/* next edge CCW around origin */
@@ -348,10 +350,12 @@ private class TessHalfEdge
                            from the right face to the left face */
   public var side:Int;						/* 0 for original dir, 1 for symmetric */
   public var mark:Bool; 						/* Used by the Edge Flip algorithm */
+  public var compareId:Int=0;
   
   public function new(side:Int)
   {
     this.side = side;
+    this.compareId=idCounter++;
   }
   
   public var Rface(get, set):TessFace;
@@ -605,7 +609,7 @@ private class TessMesh
     do {
       e.Org = vNew;
       e = e.Onext;
-    } while (e != eOrig);
+    } while (e.compareId != eOrig.compareId);
   }
 
   /* MakeFace( newFace, eOrig, fNext ) attaches a new face and makes it the left
@@ -640,7 +644,7 @@ private class TessMesh
     do {
       e.Lface = fNew;
       e = e.Lnext;
-    } while (e != eOrig);
+    } while (e.compareId != eOrig.compareId);
   }
 
   /* KillEdge( eDel ) destroys an edge (the half-edges eDel and eDel->Sym),
@@ -834,8 +838,8 @@ private class TessMesh
     fa.anEdge = a0;
     fb.anEdge = b0;
 
-    if (aOrg.anEdge == a0) aOrg.anEdge = b1;
-    if (bOrg.anEdge == b0) bOrg.anEdge = a1;
+    if (aOrg.anEdge.compareId == a0.compareId) aOrg.anEdge = b1;
+    if (bOrg.anEdge.compareId == b0.compareId) bOrg.anEdge = a1;
 
     Debug.assert(a0.Lnext.Onext.Sym == a0);
     Debug.assert(a0.Onext.Sym.Lnext == a0);
@@ -2876,7 +2880,7 @@ private class Sweep
     
     vHead = tess.mesh.vHead;
     v = vHead.next;
-    while (v != vHead) {
+    while (v.compareId != vHead.compareId) {
       vertexCount++;
       v = v.next;
     }
@@ -2888,14 +2892,14 @@ private class Sweep
 
     vHead = tess.mesh.vHead;
     v = vHead.next;
-    while (v != vHead) {
+    while (v.compareId != vHead.compareId) {
       v.pqHandle = pq.insert(v);
       v = v.next;
   //		if (v.pqHandle == INV_HANDLE)
   //			break;
     }
 
-    if (v != vHead) {
+    if (v.compareId != vHead.compareId) {
       return false;
     }
 
@@ -3106,7 +3110,7 @@ class Tesselator
     
 
     v = vHead.next;
-    while (v != vHead) {
+    while (v.compareId != vHead.compareId) {
         i=0;
         c = v.x;
         if (c < minVal[i]) { minVal[i] = c; minVert[i] = v; }
@@ -3139,7 +3143,7 @@ class Tesselator
     var d1X = v1.x - v2.y;
     var d1Y = v1.x - v2.y;
     v = vHead.next;
-    while (v != vHead) {
+    while (v.compareId != vHead.compareId) {
       var d2X = v.x - v2.y;
       var d2Y = v.x - v2.y;
 
@@ -3185,7 +3189,7 @@ class Tesselator
     if (area < 0) {
       /* Reverse the orientation by flipping all the t-coordinates */
       v = vHead.next;
-      while (v != vHead) {
+      while (v.compareId != vHead.compareId) {
         v.t = - v.t;
         v = v.next;
       }
@@ -3273,7 +3277,7 @@ class Tesselator
 
     /* Project the vertices onto the sweep plane */
     v = vHead.next;
-    while (v != vHead) {
+    while (v.compareId != vHead.compareId) {
       v.s = v.x* sUnit[0]+v.y*sUnit[1];
       v.t = v.x* tUnit[0]+v.y*tUnit[1];
       v = v.next;
@@ -3285,7 +3289,7 @@ class Tesselator
     /* Compute ST bounds. */
     first = true;
     v = vHead.next;
-    while (v != vHead) {
+    while (v.compareId != vHead.compareId) {
       if (first) {
         this.bmin[0] = this.bmax[0] = v.s;
         this.bmin[1] = this.bmax[1] = v.t;
@@ -3553,7 +3557,7 @@ class Tesselator
 
     // Mark unused
     v = mesh.vHead.next;
-    while (v != mesh.vHead) {
+    while (v.compareId != mesh.vHead.compareId) {
       v.n = -1;
       v = v.next;
     }
@@ -3581,7 +3585,7 @@ class Tesselator
         faceVerts++;
         edge = edge.Lnext;
       }
-      while (edge != f.anEdge);
+      while (edge.compareId != f.anEdge.compareId);
       
       Debug.assert(faceVerts <= polySize);
 
@@ -3627,7 +3631,7 @@ class Tesselator
     
     // Output vertices.
     v = mesh.vHead.next;
-    while (v != mesh.vHead)
+    while (v.compareId != mesh.vHead.compareId)
     {
       if (v.n != -1)
       {
@@ -3661,7 +3665,7 @@ class Tesselator
         faceVerts++;
         edge = edge.Lnext;
       }
-      while (edge != f.anEdge);
+      while (edge.compareId != f.anEdge.compareId);
       // Fill unused.
       for (i in faceVerts...polySize)
         this.elements[nel++] = -1;
@@ -3675,7 +3679,7 @@ class Tesselator
           this.elements[nel++] = this.getNeighbourFace_(edge);
           edge = edge.Lnext;
         }
-        while (edge != f.anEdge);
+        while (edge.compareId != f.anEdge.compareId);
         // Fill unused.
         for (i in faceVerts...polySize)
           this.elements[nel++] = -1;
@@ -3711,7 +3715,7 @@ class Tesselator
       {
         this.vertexCount++;
         edge = edge.Lnext;
-      } while (edge != start);
+      } while (edge.compareId != start.compareId);
 
       this.elementCount++;
       f = f.next;
@@ -3770,7 +3774,7 @@ class Tesselator
         this.vertexIndices[nvi++] = edge.Org.idx;
         vertCount++;
         edge = edge.Lnext;
-      } while (edge != start);
+      } while (edge.compareId != start.compareId);
 
       this.elements[nel++] = startVert;
       this.elements[nel++] = vertCount;

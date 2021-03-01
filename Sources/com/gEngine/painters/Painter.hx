@@ -34,7 +34,7 @@ class Painter implements IPainter {
 	public var blue:FastFloat = 0.;
 	public var alpha:FastFloat = 0.;
 
-	var MAX_VERTEX_PER_BUFFER:Int = 4000;
+	var MAX_VERTEX_PER_BUFFER:Int = 1500*4;
 
 	var dataPerVertex:Int = 5;
 	var mvpID:ConstantLocation;
@@ -204,8 +204,9 @@ class Painter implements IPainter {
 	public function adjustRenderArea(area:MinMax):Void {}
 
 	public function canBatch(info:PaintInfo, size:Int):Bool {
-		return info.texture == textureID && info.mipMapFilter == mipMapFilter && info.textureFilter == this.filter && ((counter +
-			size * dataPerVertex) <= MAX_VERTEX_PER_BUFFER * dataPerVertex);
+		//return info.texture == textureID && info.mipMapFilter == mipMapFilter && info.textureFilter == this.filter && ((counter +
+		//	size * dataPerVertex) <= MAX_VERTEX_PER_BUFFER * dataPerVertex);
+		return info.texture == textureID&&((counter +	size * dataPerVertex) <= (MAX_VERTEX_PER_BUFFER * dataPerVertex));
 	}
 
 	public function setProjection(proj:FastMatrix4):Void {
