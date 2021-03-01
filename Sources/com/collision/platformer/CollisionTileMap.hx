@@ -28,7 +28,7 @@ class CollisionTileMap implements ICollider {
 			parent.remove(this);
 	}
 
-	public function new(aTiles:Array<Int>, aTileWidth:Float, aTileHeight:Float, aWidthInTiles:Int, aHeightInTiles:Int) {
+	public function new(aTiles:Array<Int>, aTileWidth:Float, aTileHeight:Float, aWidthInTiles:Int, aHeightInTiles:Int,?startCollisionIndex:Int=1) {
 		tiles = aTiles;
 		tileWidth = aTileWidth;
 		tileHeight = aTileHeight;
@@ -38,6 +38,7 @@ class CollisionTileMap implements ICollider {
 		helperTile.width = aTileWidth;
 		helperTile.height = aTileHeight;
 		helperTile.staticObject = true;
+		this.startingCollisionIndex=startCollisionIndex;
 		edges = new Array();
 		for (i in 0...tiles.length) {
 			edges.push(0);
