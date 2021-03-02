@@ -1,5 +1,7 @@
 package com.gEngine.display;
 
+import com.helpers.Point;
+import com.helpers.Rectangle;
 import kha.Color;
 import kha.Image;
 import kha.math.FastVector2;
@@ -66,6 +68,9 @@ class Camera {
 	public var world:Layer;
 	public var camera2d:Bool = true;
 	public var projectionIsOrthogonal:Bool = false;
+
+	var deadZone:Rectangle=new Rectangle();
+	var deadOffset:Point=new Point();
 
 	public function new(width:Int = -1, height:Int = -1) {
 		if (width < 0 || height < 0) {
@@ -234,14 +239,36 @@ class Camera {
 		GEngine.i.releaseRenderTarget(renderTarget);
 	}
 
+	public function setDeadZone(x:Float,y:Float,width:Float,height:Float) {
+		deadOffset.x=x-this.width*0.5;
+		deadOffset.y=y-this.height*0.5;
+		deadZone.width=width;
+		deadZone.height=height;
+	}
+
 	public var maxSeparationFromTarget:Float = 100 * 100;
 
 	public function update(dt:Float):Void {
 		// var deltaX:Float = this.x - targetPos.x;
 		// var deltaY:Float = this.y - targetPos.y;
 		if (camera2d) {
-			this.x = targetPos.x;
-			this.y = targetPos.y;
+			deadZone.x=this.x+deadOffset.x;
+			deadZone.y=this.y+deadOffset.y;
+			if(targetPos.x < deadZone.x){
+				this.x += targetPos.x-deadZone.x;
+			}else
+			if(targetPos.x > (deadZone.x+deadZone.width)){
+				this.x += targetPos.x-(deadZone.x+deadZone.width);
+			}
+
+			if(targetPos.y < deadZone.y){
+				this.y += targetPos.y-deadZone.y;
+			}else
+			if(targetPos.y > (deadZone.y+deadZone.height)){
+				this.y += targetPos.y-(deadZone.y+deadZone.height);
+			}
+			
+
 			/*if(projectionIsOrthogonal){
 				this.x-=width*0.5*1/scale;
 				this.y-=height*0.5*1/scale;
