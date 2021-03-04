@@ -93,6 +93,9 @@ class Entity {
 	}
 
 	public function addChild(entity:Entity):Void {
+		#if debug
+		if(entity.parent!=null) throw "remove from parent first";
+		#end
 		children.push(entity);
 		entity.parent = this;
 	}
