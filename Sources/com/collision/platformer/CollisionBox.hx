@@ -143,7 +143,7 @@ class CollisionBox extends Body implements ICollider {
 		} else if (collider.collisionType() == CollisionType.TileMap) {
 			return collider.overlap(this, NotifyCallback);
 		} else if (collider.collisionType() == CollisionType.Group) {
-			collider.overlap(this, NotifyCallback); // TODO: Fix order
+			return collider.overlap(this, NotifyCallback); // TODO: Fix order
 		}
 		return false;
 	}
