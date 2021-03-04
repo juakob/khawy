@@ -36,7 +36,7 @@ class Tilemap {
 		display = new Layer();
 	}
 
-	public function createCollisions(tileMap:TmxTileLayer,?startCollisionIndex:Int=0):CollisionTileMap {
+	public function createCollisions(tileMap:TmxTileLayer,?startCollisionIndex:Int=1):CollisionTileMap {
 		var tiles = new Array<Int>();
 		for (tile in tileMap.data.tiles) {
 			tiles.push(tile.gid);
