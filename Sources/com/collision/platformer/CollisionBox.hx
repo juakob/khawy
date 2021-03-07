@@ -108,10 +108,10 @@ class CollisionBox extends Body implements ICollider {
 						y += overlapY * myPonderation;
 					if(boxCollider.velocityY*overlapY>=0)
 						boxCollider.y -= overlapY * colliderPonderation;
-					if (velocityY * overlapY >= 0) { // dot product to se direction
+					if (velocityY * overlapY >= 0 && !staticObject) { // dot product to see direction
 						velocityY *= -bounce;
 					}
-					if (boxCollider.velocityY * overlapY >= 0) { // dot product to se direction
+					if (boxCollider.velocityY * overlapY >= 0 && !boxCollider.staticObject) { // dot product to see direction
 						boxCollider.velocityY *= -boxCollider.bounce;
 					}
 
