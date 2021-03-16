@@ -91,10 +91,10 @@ class CollisionBox extends Body implements ICollider {
 					x += overlapX * myPonderation;
 					boxCollider.x -= overlapX * colliderPonderation;
 
-					if (velocityX * overlapX >= 0) { // dot product to see direction
+					if (velocityX * overlapX >= 0 && !staticObject) { // dot product to see direction
 						velocityX *= -bounce;
 					}
-					if (boxCollider.velocityX * overlapX >= 0) { // dot product to see direction
+					if (boxCollider.velocityX * overlapX >= 0 && !boxCollider.staticObject) { // dot product to see direction
 						boxCollider.velocityX *= -boxCollider.bounce;
 					}
 					touching |= myCollisionNeededX;
@@ -127,7 +127,12 @@ class CollisionBox extends Body implements ICollider {
 		} else if (collider.collisionType() == CollisionType.TileMap) {
 			return collider.collide(this, notifyCallback);
 		} else if (collider.collisionType() == CollisionType.Group) {
-			return collider.collide(this, notifyCallback);
+			var collision:CollisionGroup=cast collider;
+			var result:Bool=false;
+			for(col in collision.colliders){
+				result = result || collide(col,notifyCallback);
+			}
+			return result;
 		}
 		return false;
 	}
