@@ -3,9 +3,9 @@ package com.collision.platformer;
 /**
  * @author Joaquin
  */
-enum CollisionType {
-	Box;
-	TileMap;
-	Group;
-	Circle;
+ enum abstract CollisionType(Int) {
+	var Box;
+	var TileMap;
+	var Group;
+	var Circle;
 }

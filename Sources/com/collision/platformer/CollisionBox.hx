@@ -91,10 +91,10 @@ class CollisionBox extends Body implements ICollider {
 					x += overlapX * myPonderation;
 					boxCollider.x -= overlapX * colliderPonderation;
 
-					if (velocityX * overlapX >= 0) { // dot product to see direction
+					if (velocityX * overlapX >= 0 && !staticObject) { // dot product to see direction
 						velocityX *= -bounce;
 					}
-					if (boxCollider.velocityX * overlapX >= 0) { // dot product to see direction
+					if (boxCollider.velocityX * overlapX >= 0 && !boxCollider.staticObject) { // dot product to see direction
 						boxCollider.velocityX *= -boxCollider.bounce;
 					}
 					touching |= myCollisionNeededX;
@@ -108,10 +108,10 @@ class CollisionBox extends Body implements ICollider {
 						y += overlapY * myPonderation;
 					if(boxCollider.velocityY*overlapY>=0)
 						boxCollider.y -= overlapY * colliderPonderation;
-					if (velocityY * overlapY >= 0) { // dot product to se direction
+					if (velocityY * overlapY >= 0 && !staticObject) { // dot product to see direction
 						velocityY *= -bounce;
 					}
-					if (boxCollider.velocityY * overlapY >= 0) { // dot product to se direction
+					if (boxCollider.velocityY * overlapY >= 0 && !boxCollider.staticObject) { // dot product to see direction
 						boxCollider.velocityY *= -boxCollider.bounce;
 					}
 
@@ -127,7 +127,12 @@ class CollisionBox extends Body implements ICollider {
 		} else if (collider.collisionType() == CollisionType.TileMap) {
 			return collider.collide(this, notifyCallback);
 		} else if (collider.collisionType() == CollisionType.Group) {
-			return collider.collide(this, notifyCallback);
+			var collision:CollisionGroup=cast collider;
+			var result:Bool=false;
+			for(col in collision.colliders){
+				result = result || collide(col,notifyCallback);
+			}
+			return result;
 		}
 		return false;
 	}
@@ -143,7 +148,7 @@ class CollisionBox extends Body implements ICollider {
 		} else if (collider.collisionType() == CollisionType.TileMap) {
 			return collider.overlap(this, NotifyCallback);
 		} else if (collider.collisionType() == CollisionType.Group) {
-			collider.overlap(this, NotifyCallback); // TODO: Fix order
+			return collider.overlap(this, NotifyCallback); // TODO: Fix order
 		}
 		return false;
 	}
