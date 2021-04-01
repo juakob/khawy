@@ -277,6 +277,8 @@ class Camera {
 			}*/
 			this.z = zMapDistance * 1 / scale;
 
+			var shakeX=0.;
+			var shakeY=0.;
 		
 			adjustToLimits();
 			if (time > 0) {
@@ -288,12 +290,12 @@ class Camera {
 				shakeX = maxShakeX - 2*perlin.OctavePerlin(time +randomSeed, time+randomSeed, time+randomSeed, 8, s, shakeInterval) * maxShakeX*2 ;
 				shakeY = maxShakeY - 2*perlin.OctavePerlin(-time-randomSeed, -time-randomSeed, -time-randomSeed, 8, s, shakeInterval) * maxShakeY*2 ;
 				// this.rotation=shakeRotation-2*shakeRotation*perlin.OctavePerlin(time,time,time, 8, s, shakeInterval);
-				this.x+=shakeX*s;
-				this.y+=shakeY*s; 
+				shakeX*=s;
+				shakeY*=s;
 			}
 			
-			eye.setFrom((new FastVector3(this.x, this.y, this.z)).sub(offsetEye));
-			at.setFrom(new FastVector3(this.x, this.y, 0));
+			eye.setFrom((new FastVector3(this.x+shakeX, this.y+shakeY, this.z)).sub(offsetEye));
+			at.setFrom(new FastVector3(this.x+shakeX, this.y+shakeY, 0));
 		}
 
 		// this.pivotX=targetPos.x+(width*0.5-targetPos.x)*2;
