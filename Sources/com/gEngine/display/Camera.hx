@@ -1,5 +1,6 @@
 package com.gEngine.display;
 
+import com.framework.utils.Random;
 import kha.Image;
 import kha.math.FastVector2;
 import kha.math.FastVector4;
@@ -25,6 +26,7 @@ class Camera {
 	public var angle(default, set):Float = 1;
 
 	var time:Float = 0;
+	var randomSeed:Float;
 	var maxShakeX:Float;
 	var maxShakeY:Float;
 	var shakeRotation:Float;
@@ -244,19 +246,21 @@ class Camera {
 			}*/
 			this.z = zMapDistance * 1 / scale;
 
-			shakeX = 0;
-			shakeY = 0;
+		
 			adjustToLimits();
 			if (time > 0) {
 				time -= dt;
 
 				var s = time / totalTime;
-				shakeX = maxShakeX - perlin.OctavePerlin(time * s, time, time, 8, s, shakeInterval) * maxShakeX * 2;
-				shakeY = maxShakeY - perlin.OctavePerlin(-time, -time, -time, 8, s, shakeInterval) * maxShakeY * 2;
+			
+				//perlin nose is only returning up to 0.5;
+				shakeX = maxShakeX - 2*perlin.OctavePerlin(time +randomSeed, time+randomSeed, time+randomSeed, 8, s, shakeInterval) * maxShakeX*2 ;
+				shakeY = maxShakeY - 2*perlin.OctavePerlin(-time-randomSeed, -time-randomSeed, -time-randomSeed, 8, s, shakeInterval) * maxShakeY*2 ;
 				// this.rotation=shakeRotation-2*shakeRotation*perlin.OctavePerlin(time,time,time, 8, s, shakeInterval);
+				this.x+=shakeX*s;
+				this.y+=shakeY*s; 
 			}
-			this.x+=shakeX;
-			this.y+=shakeY; 
+			
 			eye.setFrom((new FastVector3(this.x, this.y, this.z)).sub(offsetEye));
 			at.setFrom(new FastVector3(this.x, this.y, 0));
 		}
@@ -311,6 +315,7 @@ class Camera {
 		shakeRotation = rotation;
 		maxShakeX = maxX;
 		maxShakeY = maxY;
+		randomSeed=Math.random()*100;
 
 		this.shakeInterval = shakeInterval;
 	}
