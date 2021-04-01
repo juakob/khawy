@@ -36,12 +36,12 @@ class Tilemap {
 		display = new Layer();
 	}
 
-	public function createCollisions(tileMap:TmxTileLayer):CollisionTileMap {
+	public function createCollisions(tileMap:TmxTileLayer,?startCollisionIndex:Int=0):CollisionTileMap {
 		var tiles = new Array<Int>();
 		for (tile in tileMap.data.tiles) {
 			tiles.push(tile.gid);
 		}
-		var collision = new CollisionTileMap(tiles, tileWidth * scale, tileHeight * scale, tileMap.width, tileMap.height);
+		var collision = new CollisionTileMap(tiles, tileWidth * scale, tileHeight * scale, tileMap.width, tileMap.height,startCollisionIndex);
 		this.collision.add(collision);
 		return collision;
 	}
