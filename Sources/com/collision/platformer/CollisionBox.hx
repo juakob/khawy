@@ -48,14 +48,14 @@ class CollisionBox extends Body implements ICollider {
 				var overlapX:Float = width * 0.5 + boxCollider.width * 0.5 - Math.abs((x + width * 0.5) -(boxCollider.x + boxCollider.width * 0.5));
 				var overlapY:Float = height * 0.5 + boxCollider.height * 0.5 - Math.abs((y + height * 0.5) -(boxCollider.y + boxCollider.height * 0.5));
 				var overlapXSmaller:Bool = overlapX < overlapY;
-				var myCollisionNeededX:Int = Sides.LEFT;
-				var colliderNeededX:Int = Sides.RIGHT;
+				var myCollisionNeededX:Int = Sides.RIGHT;
+				var colliderNeededX:Int = Sides.LEFT;
 				var myCollisionNeededY:Int = Sides.TOP;
 				var colliderNeededY:Int = Sides.BOTTOM;
 
 				if ((x + width * 0.5) < (boxCollider.x + boxCollider.width * 0.5)) {
-					myCollisionNeededX = Sides.RIGHT;
-					colliderNeededX = Sides.LEFT;
+					myCollisionNeededX = Sides.LEFT;
+					colliderNeededX = Sides.RIGHT;
 					overlapX *= -1;
 				}
 				if ((y + height * 0.5) < (boxCollider.y + boxCollider.height * 0.5)) {
@@ -88,14 +88,14 @@ class CollisionBox extends Body implements ICollider {
 
 				}
 				if (overlapXSmaller && (collisionAllow & myCollisionNeededX > 0) && (boxCollider.collisionAllow & colliderNeededX > 0)) {
-					x += overlapX * myPonderation;
-					boxCollider.x -= overlapX * colliderPonderation;
-
-					if (velocityX * overlapX >= 0 && !staticObject) { // dot product to see direction
+					
+					if (velocityX * overlapX <= 0 && !staticObject) { // dot product to see direction
 						velocityX *= -bounce;
+						x += overlapX * myPonderation;
 					}
 					if (boxCollider.velocityX * overlapX >= 0 && !boxCollider.staticObject) { // dot product to see direction
 						boxCollider.velocityX *= -boxCollider.bounce;
+						boxCollider.x -= overlapX * colliderPonderation;
 					}
 					touching |= myCollisionNeededX;
 					boxCollider.touching |= colliderNeededX;
@@ -104,15 +104,13 @@ class CollisionBox extends Body implements ICollider {
 					}
 					return true;
 				} else if ((collisionAllow & myCollisionNeededY > 0) && (boxCollider.collisionAllow & colliderNeededY > 0)) {
-					if(velocityY*overlapY>=0)
-						y += overlapY * myPonderation;
-					if(boxCollider.velocityY*overlapY>=0)
-						boxCollider.y -= overlapY * colliderPonderation;
-					if (velocityY * overlapY >= 0 && !staticObject) { // dot product to see direction
+					if (velocityY * overlapY <= 0 && !staticObject) { // dot product to see direction
 						velocityY *= -bounce;
+						y += overlapY * myPonderation;
 					}
 					if (boxCollider.velocityY * overlapY >= 0 && !boxCollider.staticObject) { // dot product to see direction
 						boxCollider.velocityY *= -boxCollider.bounce;
+						boxCollider.y -= overlapY * colliderPonderation;
 					}
 
 					touching |= myCollisionNeededY;
@@ -130,7 +128,7 @@ class CollisionBox extends Body implements ICollider {
 			var collision:CollisionGroup=cast collider;
 			var result:Bool=false;
 			for(col in collision.colliders){
-				result = result || collide(col,notifyCallback);
+				result = collide(col,notifyCallback) || result;
 			}
 			return result;
 		}
