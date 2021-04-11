@@ -84,6 +84,9 @@ class Sprite implements IAnimation implements IRotation {
 			animationData = com.basicDisplay.SpriteSheetDB.i.getData(name);
 		}
 		transform = FastMatrix4.identity();
+		#if PIXEL_GAME
+		smooth=false;
+		#end
 
 		paintInfo = new PaintInfo();
 		timeline = new Timeline(1 / 30, animationData.frames.length, animationData.labels);
