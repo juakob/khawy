@@ -206,7 +206,7 @@ class Painter implements IPainter {
 	public function canBatch(info:PaintInfo, size:Int):Bool {
 		//return info.texture == textureID && info.mipMapFilter == mipMapFilter && info.textureFilter == this.filter && ((counter +
 		//	size * dataPerVertex) <= MAX_VERTEX_PER_BUFFER * dataPerVertex);
-		return info.texture == textureID&&((counter +	size * dataPerVertex) <= (MAX_VERTEX_PER_BUFFER * dataPerVertex));
+		return info.texture == textureID&& info.mipMapFilter == mipMapFilter && info.textureFilter == this.filter &&((counter +	size * dataPerVertex) <= (MAX_VERTEX_PER_BUFFER * dataPerVertex));
 	}
 
 	public function setProjection(proj:FastMatrix4):Void {

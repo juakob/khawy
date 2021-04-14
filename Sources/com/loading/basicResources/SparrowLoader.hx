@@ -1,5 +1,6 @@
 package com.loading.basicResources;
 
+import com.gEngine.GEngine;
 import com.basicDisplay.SpriteSheetDB;
 import com.imageAtlas.Bitmap;
 import kha.Assets;
@@ -92,7 +93,8 @@ class SparrowLoader extends TilesheetLoader {
 			++counter;
 			var frameX = trimmed ? -Std.parseInt(texture.att.frameX) : 0;
 			var frameY = trimmed ? -Std.parseInt(texture.att.frameY) : 0;
-			frames.push(TilesheetLoader.createFrame(frameX, frameY, Std.parseInt(texture.att.width), Std.parseInt(texture.att.height), rotated));
+			frames.push(TilesheetLoader.createFrame(frameX, frameY, Std.parseInt(texture.att.width), Std.parseInt(texture.att.height), rotated,
+				Std.parseInt(texture.att.x), Std.parseInt(texture.att.y), image.realWidth, image.realHeight));
 			// var rect = FlxRect.get(Std.parseFloat(texture.att.x), Std.parseFloat(texture.att.y), Std.parseFloat(texture.att.width), Std.parseFloat(texture.att.height));
 			var bitmap:Bitmap = new Bitmap();
 			bitmap.x = Std.parseInt(texture.att.x);
@@ -107,6 +109,7 @@ class SparrowLoader extends TilesheetLoader {
 		animation.frames = frames;
 		animation.name = imageName;
 		animation.labels = labels;
+		animation.texturesID = GEngine.i.addTexture(image);
 		SpriteSheetDB.i.add(animation);
 	}
 
