@@ -100,6 +100,9 @@ class Camera {
 		screenTransform = createScreenTransform();
 		perlin = new Perlin(1);
 		update(0);
+		#if PIXEL_GAME
+		pixelSnap=true;
+		#end
 	}
 
 	public function updateView() {
