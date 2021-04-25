@@ -152,14 +152,14 @@ class Sprite implements IAnimation implements IRotation {
 		this.transform._00 = cosAng * scaleX;
 		this.transform._10 = -sinAng * scaleY;
 		#if PIXEL_GAME
-		this.transform._30 = Std.int(x) + pivotX;
+		this.transform._30 = Std.int(x + pivotX);
 		#else
 		this.transform._30 = x + pivotX;
 		#end
 		this.transform._01 = sinAng * scaleX;
 		this.transform._11 = cosAng * scaleY;
 		#if PIXEL_GAME
-		this.transform._31 = Std.int(y) + pivotY;
+		this.transform._31 = Std.int(y + pivotY);
 		#else
 		this.transform._31 = y + pivotY;
 		#end
