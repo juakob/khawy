@@ -11,10 +11,19 @@ class CollisionBox extends Body implements ICollider {
 	public var userData:Dynamic;
 	public var parent:CollisionGroup;
 
+	public var middleX(get,null):Float;
+	public var middleY(get,null):Float;
+
 	public function removeFromParent() {
 		if (parent != null) {
 			parent.remove(this);
 		}
+	}
+	public function get_middleX() {
+		return x+width*0.5;
+	}
+	public function get_middleY() {
+		return y+height*0.5;
 	}
 
 	public function new() {
