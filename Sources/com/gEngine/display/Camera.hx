@@ -102,6 +102,7 @@ class Camera {
 		update(0);
 		#if PIXEL_GAME
 		pixelSnap=true;
+		smooth=false;
 		#end
 	}
 
