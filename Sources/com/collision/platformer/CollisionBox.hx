@@ -155,7 +155,7 @@ class CollisionBox extends Body implements ICollider {
 		} else if (collider.collisionType() == CollisionType.TileMap) {
 			return collider.overlap(this, NotifyCallback);
 		} else if (collider.collisionType() == CollisionType.Group) {
-			return collider.overlap(this, NotifyCallback); // TODO: Fix order
+			return (cast collider).overlapInverted(this, NotifyCallback); 
 		}
 		return false;
 	}
