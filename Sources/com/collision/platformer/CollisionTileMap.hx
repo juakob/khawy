@@ -23,12 +23,15 @@ class CollisionTileMap implements ICollider {
 
 	public var parent:CollisionGroup;
 
+	public var x:Float = 0;
+	public var y:Float = 0;
+
 	public function removeFromParent() {
 		if (parent != null)
 			parent.remove(this);
 	}
 
-	public function new(aTiles:Array<Int>, aTileWidth:Float, aTileHeight:Float, aWidthInTiles:Int, aHeightInTiles:Int,?startCollisionIndex:Int=1) {
+	public function new(aTiles:Array<Int>, aTileWidth:Float, aTileHeight:Float, aWidthInTiles:Int, aHeightInTiles:Int, ?startCollisionIndex:Int = 1) {
 		tiles = aTiles;
 		tileWidth = aTileWidth;
 		tileHeight = aTileHeight;
@@ -38,7 +41,7 @@ class CollisionTileMap implements ICollider {
 		helperTile.width = aTileWidth;
 		helperTile.height = aTileHeight;
 		helperTile.staticObject = true;
-		this.startingCollisionIndex=startCollisionIndex;
+		this.startingCollisionIndex = startCollisionIndex;
 		edges = new Array();
 		for (i in 0...tiles.length) {
 			edges.push(0);
@@ -47,9 +50,9 @@ class CollisionTileMap implements ICollider {
 	}
 
 	function calculateEdges(minX:Int, minY:Int, maxX:Int, maxY:Int) {
-		for (tileY in minY...maxY ) {
-			for (tileX in minX...maxX ) {
-				if(getTileId(tileX, tileY)>=startingCollisionIndex){
+		for (tileY in minY...maxY) {
+			for (tileX in minX...maxX) {
+				if (getTileId(tileX, tileY) >= startingCollisionIndex) {
 					var edge:Int = Sides.NONE;
 					if (getTileId(tileX, tileY - 1) < startingCollisionIndex)
 						edge |= Sides.TOP;
@@ -70,18 +73,18 @@ class CollisionTileMap implements ICollider {
 		if (aCollider.collisionType() == CollisionType.Box) {
 			// TODO calculate more points if the box is much larger than tiles
 			var box:CollisionBox = cast aCollider;
-			var minX:Int = Std.int(box.x / tileWidth);
-			var minY:Int = Std.int(box.y / tileHeight);
-			var maxX:Int = Std.int((box.x + box.width) / tileWidth) + 1;
-			var maxY:Int = Std.int((box.y + box.height) / tileHeight) + 1;
+			var minX:Int = Std.int(( box.x-this.x) / tileWidth);
+			var minY:Int = Std.int(( box.y-this.y) / tileHeight);
+			var maxX:Int = Std.int(( box.x-this.x + box.width) / tileWidth) + 1;
+			var maxY:Int = Std.int(( box.y-this.y + box.height) / tileHeight) + 1;
 
 			var toReturn:Bool = false;
 			for (tileY in minY...maxY) {
 				for (tileX in minX...maxX) {
 					if (getTileId(tileX, tileY) >= startingCollisionIndex) {
 						helperTile.collisionAllow = edges[tileX + tileY * widthIntTiles];
-						helperTile.x = tileX * tileWidth;
-						helperTile.y = tileY * tileHeight;
+						helperTile.x = this.x + tileX * tileWidth;
+						helperTile.y = this.y + tileY * tileHeight;
 						toReturn = helperTile.collide(box, NotifyCallback) || toReturn;
 					}
 				}
@@ -118,8 +121,8 @@ class CollisionTileMap implements ICollider {
 				for (tileX in minX...maxX) {
 					if (getTileId(tileX, tileY) >= startingCollisionIndex) {
 						helperTile.collisionAllow = edges[tileX + tileY * widthIntTiles];
-						helperTile.x = tileX * tileWidth;
-						helperTile.y = tileY * tileHeight;
+						helperTile.x = this.x + tileX * tileWidth;
+						helperTile.y = this.y + tileY * tileHeight;
 						toReturn = helperTile.overlap(box, NotifyCallback) || toReturn;
 					}
 				}
