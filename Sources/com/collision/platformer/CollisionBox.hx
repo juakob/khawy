@@ -11,10 +11,19 @@ class CollisionBox extends Body implements ICollider {
 	public var userData:Dynamic;
 	public var parent:CollisionGroup;
 
+	public var middleX(get,null):Float;
+	public var middleY(get,null):Float;
+
 	public function removeFromParent() {
 		if (parent != null) {
 			parent.remove(this);
 		}
+	}
+	public function get_middleX() {
+		return x+width*0.5;
+	}
+	public function get_middleY() {
+		return y+height*0.5;
 	}
 
 	public function new() {
@@ -48,14 +57,14 @@ class CollisionBox extends Body implements ICollider {
 				var overlapX:Float = width * 0.5 + boxCollider.width * 0.5 - Math.abs((x + width * 0.5) -(boxCollider.x + boxCollider.width * 0.5));
 				var overlapY:Float = height * 0.5 + boxCollider.height * 0.5 - Math.abs((y + height * 0.5) -(boxCollider.y + boxCollider.height * 0.5));
 				var overlapXSmaller:Bool = overlapX < overlapY;
-				var myCollisionNeededX:Int = Sides.RIGHT;
-				var colliderNeededX:Int = Sides.LEFT;
+				var myCollisionNeededX:Int = Sides.LEFT;
+				var colliderNeededX:Int = Sides.RIGHT;
 				var myCollisionNeededY:Int = Sides.TOP;
 				var colliderNeededY:Int = Sides.BOTTOM;
 
 				if ((x + width * 0.5) < (boxCollider.x + boxCollider.width * 0.5)) {
-					myCollisionNeededX = Sides.LEFT;
-					colliderNeededX = Sides.RIGHT;
+					myCollisionNeededX = Sides.RIGHT;
+					colliderNeededX = Sides.LEFT;
 					overlapX *= -1;
 				}
 				if ((y + height * 0.5) < (boxCollider.y + boxCollider.height * 0.5)) {
@@ -146,7 +155,7 @@ class CollisionBox extends Body implements ICollider {
 		} else if (collider.collisionType() == CollisionType.TileMap) {
 			return collider.overlap(this, NotifyCallback);
 		} else if (collider.collisionType() == CollisionType.Group) {
-			return collider.overlap(this, NotifyCallback); // TODO: Fix order
+			return (cast collider).overlapInverted(this, NotifyCallback); 
 		}
 		return false;
 	}

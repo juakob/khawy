@@ -70,6 +70,23 @@ class CollisionGroup implements ICollider {
 		return toReturn;
 	}
 
+	public function overlapInverted(aCollider:ICollider, ?NotifyCallback:ICollider->ICollider->Void):Bool {
+		var toReturn:Bool = false;
+		if (aCollider.collisionType() == CollisionType.Group) {
+			var group:CollisionGroup = cast aCollider;
+			for (col1 in colliders) {
+				for (col2 in group.colliders) {
+					toReturn = col2.overlap(col1, NotifyCallback) || toReturn;
+				}
+			}
+		} else {
+			for (col in colliders) {
+				toReturn = aCollider.overlap(col, NotifyCallback) || toReturn;
+			}
+		}
+		return toReturn;
+	}
+
 	public function collisionType():CollisionType {
 		return CollisionType.Group;
 	}
