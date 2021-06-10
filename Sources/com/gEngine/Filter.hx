@@ -41,12 +41,12 @@ class Filter {
 		var passFilters:Array<IPainter> = new Array();
 		renderPass = new Array();
 		for (filter in filters) {
-			if (Std.is(filter, ShRender)) {
+			if (Std.isOfType(filter, ShRender)) {
 				renderPass.push(new RenderPass(passFilters, true));
 				passFilters = new Array();
 				continue;
 			}
-			if (Std.is(filter, ShDontRender)) {
+			if (Std.isOfType(filter, ShDontRender)) {
 				renderPass.push(new RenderPass(passFilters, false));
 				passFilters = new Array();
 				continue;
