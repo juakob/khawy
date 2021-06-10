@@ -9,9 +9,7 @@ import js.Browser.navigator;
 
 class Html5 {
 	public static inline function hotReload() {
-		#if hotml
-		new hotml.Client();
-		#end
+		#if hotml new hotml.client.Client(); #end
 	}
 
 	public static inline function fillScreen() {
