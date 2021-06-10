@@ -49,7 +49,7 @@ class Text extends Layer {
 		while (i < text.length) {
 			if (text.charAt(i) == "\n") {
 				i += 1;
-				ypos += fontSize * 0.8;
+				ypos += fontSize ;
 				xpos = 0;
 				bakedQuadCache.xadvance = 0;
 				continue;
