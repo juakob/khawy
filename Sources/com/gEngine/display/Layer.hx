@@ -32,11 +32,14 @@ class Layer implements DisplayObject implements IContainer {
 	public var filter:Filter;
 	public var drawArea(default, set):MinMax;
 	public var length(get, null):Int;
+	public var useCustomTransform:Bool;
+	var customTransform:FastMatrix4;
 
 	private var cosAng:FastFloat;
 	private var sinAng:FastFloat;
 	var scaleArea:MinMax = new MinMax();
 	var transform:FastMatrix4;
+	
 
 	public var billboard:Bool = false;
 
@@ -68,22 +71,28 @@ class Layer implements DisplayObject implements IContainer {
 		cosAng = 1;
 		sinAng = 0;
 		this.transform = FastMatrix4.identity();
+		this.customTransform = FastMatrix4.identity();
 	}
 
 	inline function calculateTransform(transform:FastMatrix4) {
-		var model = FastMatrix4.translation(-pivotX, -pivotY, 0);
-		model.setFrom((FastMatrix4.scale(scaleX, scaleY, 1)).multmat(model));
-		if (billboard) {
-			var rotation = transform.inverse();
-			rotation._30 = rotation._31 = rotation._32 = 0;
-			model.setFrom(rotation.multmat(model));
-		} else {
-			model.setFrom(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).multmat(model));
+		if(useCustomTransform){
+			this.transform.setFrom(transform.multmat(customTransform));
+		}else{
+			var model = FastMatrix4.translation(-pivotX, -pivotY, 0);
+			model.setFrom((FastMatrix4.scale(scaleX, scaleY, 1)).multmat(model));
+			if (billboard) {
+				var rotation = transform.inverse();
+				rotation._30 = rotation._31 = rotation._32 = 0;
+				model.setFrom(rotation.multmat(model));
+			} else {
+				model.setFrom(new FastMatrix4(cosAng, -sinAng, 0, 0, sinAng, cosAng, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1).multmat(model));
+			}
+			model.setFrom(FastMatrix4.translation(x + pivotX + offsetX, y + pivotY + offsetY, z).multmat(model));
+			this.transform.setFrom(transform.multmat(model));
+			this.transform._30 *= paralaxX;
+			this.transform._31 *= paralaxY;
 		}
-		model.setFrom(FastMatrix4.translation(x + pivotX + offsetX, y + pivotY + offsetY, z).multmat(model));
-		this.transform.setFrom(transform.multmat(model));
-		this.transform._30 *= paralaxX;
-		this.transform._31 *= paralaxY;
+		
 	}
 
 	public function render(paintMode:PaintMode, transform:FastMatrix4):Void {
@@ -152,6 +161,10 @@ class Layer implements DisplayObject implements IContainer {
 
 	public function play():Void {
 		playing = true;
+	}
+	public inline function setCustomTransform(transform:FastMatrix4) {
+		useCustomTransform=true;
+		customTransform.setFrom(transform);
 	}
 
 	public function update(passedTime:Float):Void {
