@@ -35,10 +35,6 @@ class CollisionBox extends Body implements ICollider {
 		return CollisionType.Box;
 	}
 
-	public function isTouching(side:Int):Bool {
-		return side & touching > 0;
-	}
-
 	public function collide(collider:ICollider, ?notifyCallback:ICollider->ICollider->Void):Bool {
 		if (collider == this)
 			return false;

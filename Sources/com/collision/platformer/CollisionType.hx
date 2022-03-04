@@ -8,4 +8,6 @@ package com.collision.platformer;
 	var TileMap;
 	var Group;
 	var Circle;
+	var Track;
+	var Cart;
 }

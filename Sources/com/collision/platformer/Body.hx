@@ -59,4 +59,7 @@ class Body {
 			}
 		}
 	}
+	public function isTouching(side:Int):Bool {
+		return side & touching > 0;
+	}
 }
