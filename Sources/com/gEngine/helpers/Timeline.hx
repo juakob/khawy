@@ -196,8 +196,8 @@ class Timeline {
 		playing = false;
 	}
 
-	public inline function isComplete():Bool {
-		return !playing && !loop;
+	public  function isComplete():Bool {
+		return currentFrame == lastFrame  && !loop;
 	}
 
 	public function goRandomFrame(stop:Bool=true) {
