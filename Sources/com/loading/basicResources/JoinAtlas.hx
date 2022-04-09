@@ -1,5 +1,6 @@
 package com.loading.basicResources;
 
+//import format.png.Writer;
 import kha.Image;
 import com.framework.Simulation;
 import kha.Assets;
@@ -65,7 +66,17 @@ class JoinAtlas implements Resource {
 			resource.update(textureId);
 		}
 		onFinish();
+		//var pixels=image.getPixels();
+		//writePixels24("test.png",pixels,width,height);
+	
 	}
+
+	/*function writePixels24(file:String, pixels:haxe.io.Bytes, width:Int, height:Int) {
+		var handle = sys.io.File.write(file, true);
+		new format.png.Writer(handle)
+			.write(format.png.Tools.build32BGRA(width, height, pixels));
+		handle.close();
+	}*/
 
 	public function unload():Void {
 		for (resource in resources) {
