@@ -19,7 +19,7 @@ import com.helpers.FastPoint;
 class Camera {
 	private var targetPos:FastPoint;
 
-	static inline var zMapDistance:Float = 869.1168 - 223; // distance where x,y are map to the screen if z=0;
+	public static inline var zMapDistance:Float = 869.1168 - 223; // distance where x,y are map to the screen if z=0;
 
 	public var min:FastPoint;
 	public var max:FastPoint;
@@ -213,7 +213,7 @@ class Camera {
 		this.y = y - height * 0.5;
 	}
 
-	public inline function worldToScreen(x:Float, y:Float, z:Float):FastVector2 {
+	public  function worldToScreen(x:Float, y:Float, z:Float):FastVector2 {
 		var transform = projection.multmat(view);
 		var screen = transform.multvec(new FastVector4(x, y, z));
 		screen.mult(screen.w);
