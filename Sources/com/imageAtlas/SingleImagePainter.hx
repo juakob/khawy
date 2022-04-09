@@ -1,5 +1,6 @@
 package com.imageAtlas;
 
+import kha.graphics4.VertexData;
 import kha.graphics4.PipelineState;
 import kha.graphics4.MipMapFilter;
 import kha.math.FastVector2;
@@ -81,7 +82,10 @@ class SingleImagePainter {
 
 	private static function initShaders(): Void {
 		if (structure == null) {
-			structure = Graphics2.createImageVertexStructure();
+			structure = new VertexStructure();
+			structure.add("vertexPosition", VertexData.Float32_3X);
+			structure.add("vertexUV", VertexData.Float32_2X);
+			structure.add("vertexColor", VertexData.Float4);
 		}
 		if (standardImagePipeline == null) {
 			var pipeline = Graphics2.createImagePipeline(structure);
