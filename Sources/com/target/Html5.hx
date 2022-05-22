@@ -1,5 +1,6 @@
 package com.target;
 
+import kha.Macros;
 #if (kha_html5 && js)
 import js.html.CanvasElement;
 import js.Browser.document;
@@ -12,14 +13,14 @@ class Html5 {
 		#if hotml new hotml.client.Client(); #end
 	}
 
-	public static inline function fillScreen() {
-		#if (kha_html5 && js)
-		// make html5 canvas resizable
+	public static function fillScreen():Void {
+		#if kha_html5
+		//make html5 canvas resizable
 		document.documentElement.style.padding = "0";
 		document.documentElement.style.margin = "0";
 		document.body.style.padding = "0";
 		document.body.style.margin = "0";
-		var canvas:CanvasElement = cast(document.getElementById("khanvas"), CanvasElement);
+		var canvas:CanvasElement = cast document.getElementById(Macros.canvasId());
 		canvas.style.display = "block";
 
 		var resize = function() {
