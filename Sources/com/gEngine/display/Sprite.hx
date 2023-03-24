@@ -270,18 +270,18 @@ class Sprite implements IAnimation implements IRotation {
 			+ model._32);
 	}
 
-	inline function renderWithColorTransform(paintMode:PaintMode, model:FastMatrix4) {
+	function renderWithColorTransform(paintMode:PaintMode, model:FastMatrix4) {
 		var frame = animationData.frames[timeline.currentFrame];
 		var vertexs:Array<FastFloat> = frame.vertexs;
 		var cameraScale = paintMode.camera.scale;
 		var uvs = frame.UVs;
-		// var painter:IPainter = customPainter != null ? customPainter : GEngine.i.getColorTransformPainter(blend);
-		var painter:PainterColorTransform = this.colorPainters[cast blend];
+		var painter:IPainter = customPainter != null ? customPainter : this.colorPainters[cast blend];
+		//var painter:PainterColorTransform = this.colorPainters[cast blend];
 		checkBatchColor(paintMode, paintInfo, Std.int(frame.vertexs.length * 0.5), painter);
 		var redMul, blueMul, greenMul, alphaMul:Float;
 		var redAdd, blueAdd, greenAdd, alphaAdd:Float;
-		var buffer = inline painter.getVertexBuffer();
-		var vertexBufferCounter = inline painter.getVertexDataCounter();
+		var buffer =  painter.getVertexBuffer();
+		var vertexBufferCounter =  painter.getVertexDataCounter();
 		redMul = this.mulRed * paintMode.mulR;
 		greenMul = this.mulGreen * paintMode.mulG;
 		blueMul = this.mulBlue * paintMode.mulB;
@@ -311,8 +311,8 @@ class Sprite implements IAnimation implements IRotation {
 		}
 	}
 
-	static inline function checkBatchColor(paintMode:PaintMode, paintInfo:PaintInfo, count:Int, painter:PainterColorTransform) {
-		if (!(paintMode.canBatch(paintInfo, count, painter) && (inline painter.canBatch(paintInfo, count)))) {
+	static function checkBatchColor(paintMode:PaintMode, paintInfo:PaintInfo, count:Int, painter:IPainter) {
+		if (!(paintMode.canBatch(paintInfo, count, painter) && ( painter.canBatch(paintInfo, count)))) {
 			paintMode.render();
 			paintMode.changePainter(painter, paintInfo);
 		}

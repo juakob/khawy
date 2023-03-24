@@ -29,7 +29,8 @@ class BakePainter implements IPainter {
 
 	public function finish():Void {}
 
-	public function render(clear:Bool = false, area:MinMax = null):Void {}
+	public function render(clear:Bool = false, area:MinMax = null):Void {
+	}
 
 	public function canBatch(info:PaintInfo, size:Int):Bool {
 		return true;

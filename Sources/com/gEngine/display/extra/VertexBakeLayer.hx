@@ -25,6 +25,8 @@ class VertexBakeLayer extends Layer {
 		baked = false;
 		var vertexCount = countVertexLayer(this);
 		painter = new VertexBakePainter(vertexCount);
+		setPainter(this,painter);
+		
 
 		var bakePainter = new BakePainter(painter.getVertexBuffer());
 		var paintMode = new BakePaintMode(bakePainter);
@@ -43,6 +45,16 @@ class VertexBakeLayer extends Layer {
 		}
 		this.painter = painter;
 		return painter;
+	}
+	function setPainter(layer:Layer,painter:VertexBakePainter) {
+		for (child in layer.children) {
+			if (Std.is(child, Layer)) {
+				countVertexLayer(cast child);
+			}else if(Std.is(child,Sprite)){
+				var sprite:Sprite=cast child;
+				sprite.customPainter = painter;
+			}
+		}
 	}
 
 	function countVertexLayer(layer:Layer):Int {

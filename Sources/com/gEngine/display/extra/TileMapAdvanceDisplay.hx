@@ -45,6 +45,7 @@ class TileMapAdvanceDisplay extends Layer {
 	public function setTile2(index:Int, value:Int, flipX:Bool = false, flipY:Bool = false, rotate:Bool = false) {
 		if (tiles[index].display == null) {
 			var display = displayConstructor(value);
+			if(display==null) return;
 			addChild(display);
 			display.x = Std.int(index % widthInTiles) * tileWidth;
 			display.y = Std.int(index / widthInTiles) * tileHeight;

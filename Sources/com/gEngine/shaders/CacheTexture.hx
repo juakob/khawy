@@ -4,7 +4,7 @@ import com.gEngine.painters.Painter;
 
 class CacheTexture extends Painter {
 	public function new(autoDestroy:Bool = true) {
-		super(autoDestroy);
+		super(autoDestroy,null,true);
 	}
 
 	var totalReferences:Int = 0;
