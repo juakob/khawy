@@ -92,8 +92,9 @@ class Camera {
 		this.height = height;
 		renderTarget = GEngine.i.getRenderTarget(width, height);
 		var texture=GEngine.i.getTexture(renderTarget);
-		texture.g2.begin(true,Color.Black);
-		texture.g2.end();
+		texture.g4.begin();
+		texture.g4.clear(Color.Transparent,1,0);
+		texture.g4.end();
 		setOrthogonalProjection();
 		projection = orthogonal;
 		projectionIsOrthogonal = true;
