@@ -1,5 +1,6 @@
 package com.gEngine.display;
 
+import kha.Window;
 import com.framework.utils.Random;
 import com.helpers.Point;
 import com.helpers.Rectangle;
@@ -19,7 +20,7 @@ import com.helpers.FastPoint;
 class Camera {
 	private var targetPos:FastPoint;
 
-	public static inline var zMapDistance:Float = 869.1168 - 223; // distance where x,y are map to the screen if z=0;
+	public static var zMapDistance:Float = 869.1168 - 223; // distance where x,y are map to the screen if z=0;
 
 	public var min:FastPoint;
 	public var max:FastPoint;
@@ -48,8 +49,8 @@ class Camera {
 	public var orthogonal:FastMatrix4;
 	public var screenTransform:FastMatrix4;
 
-	var finalX:Float = 0;
-	var finalY:Float = 0;
+	var finalX:Int = 0;
+	var finalY:Int = 0;
 
 	public var eye:FastVector3;
 	public var at:FastVector3;
@@ -71,29 +72,48 @@ class Camera {
 	public var camera2d:Bool = true;
 	public var projectionIsOrthogonal:Bool = false;
 
-	var deadZone:Rectangle=new Rectangle();
-	var deadOffset:Point=new Point();
+	var deadZone:Rectangle = new Rectangle();
+	var deadOffset:Point = new Point();
 
 	public function new(width:Int = -1, height:Int = -1) {
-		if (width < 0 || height < 0) {
-			width = GEngine.virtualWidth;
-			height = GEngine.virtualHeight;
-		}
-		eye = new FastVector3(0, 0, zMapDistance);
-		at = new FastVector3(0, 0, 0);
-		up = new FastVector3(0, 1, 0);
-		view = FastMatrix4.identity();
-		targetPos = new FastPoint(width * 0.5, height * 0.5);
-
-		setDrawArea(0, 0, width, height);
 		finalX = 0;
 		finalY = 0;
+		if (width < 0 || height < 0) {
+			var wWidth = Window.get(0).width;
+			var wHeight = Window.get(0).height;
+			width = wWidth;
+			height = wHeight;
+			var ratio = wWidth/wHeight;
+			if (ratio>21/9) {
+				width = Math.ceil(wHeight*21/9);
+				finalX = Math.ceil(wWidth*0.5-width*0.5);
+				scale = scale *width/GEngine.virtualWidth;
+			}
+			if (ratio<4/3) {
+				height = Math.ceil(wWidth*3/4);
+				finalY = Math.ceil(wHeight*0.5-height*0.5);
+				scale = scale *height/GEngine.virtualHeight;
+				//offsetEye.x = width*0.5;
+				//offsetEye.y = height*0.5;
+			}
+		//	width = GEngine.virtualWidth;
+		//	height = GEngine.virtualHeight;
+		
+		}
+		eye = new FastVector3(0, 0, zMapDistance);
+		at = new FastVector3(x, y, 0);
+		up = new FastVector3(0, 1, 0);
+		view = FastMatrix4.identity();
+		targetPos = new FastPoint(width * 0.5*1/scale, height * 0.5*1/scale);
+
+		setDrawArea(finalX, finalY, width, height);
+		
 		this.width = width;
 		this.height = height;
 		renderTarget = GEngine.i.getRenderTarget(width, height);
-		var texture=GEngine.i.getTexture(renderTarget);
+		var texture = GEngine.i.getTexture(renderTarget);
 		texture.g4.begin();
-		texture.g4.clear(Color.Transparent,1,0);
+		texture.g4.clear(Color.Transparent);
 		texture.g4.end();
 		setOrthogonalProjection();
 		projection = orthogonal;
@@ -102,8 +122,8 @@ class Camera {
 		perlin = new Perlin(1);
 		update(0);
 		#if PIXEL_GAME
-		pixelSnap=true;
-		smooth=false;
+		pixelSnap = true;
+		smooth = false;
 		#end
 	}
 
@@ -166,13 +186,13 @@ class Camera {
 		return angle;
 	}
 
-	public function render(paintMode:PaintMode, transform:FastMatrix4,needRefresh:Bool):Void {
-		if(needRefresh){
+	public function render(paintMode:PaintMode, transform:FastMatrix4, needRefresh:Bool):Void {
+		if (needRefresh) {
 			GEngine.i.setCanvas(renderTarget);
 			GEngine.i.beginCanvas();
 			var g = GEngine.i.currentCanvas().g4;
-
-			g.clear(clearColor, 1);
+			
+			g.clear(clearColor);
 
 			paintMode.camera = this;
 			paintMode.resetRenderArea();
@@ -214,7 +234,7 @@ class Camera {
 		this.y = y - height * 0.5;
 	}
 
-	public  function worldToScreen(x:Float, y:Float, z:Float):FastVector2 {
+	public function worldToScreen(x:Float, y:Float, z:Float):FastVector2 {
 		var transform = projection.multmat(view);
 		var screen = transform.multvec(new FastVector4(x, y, z));
 		screen.mult(screen.w);
@@ -224,7 +244,7 @@ class Camera {
 	public inline function screenToWorld(targetX:Float, targetY:Float, targetZ:Float = 0):FastVector2 {
 		var homogeneousTargetX = (targetX / width) * 2 - 1;
 		var homogeneousTargetY = Image.renderTargetsInvertedY() ? (targetY / height) * 2 - 1 : 1 - (targetY / height) * 2;
-		var transform:FastMatrix4=FastMatrix4.identity();
+		var transform:FastMatrix4 = FastMatrix4.identity();
 		if (projectionIsOrthogonal) {
 			homogeneousTargetX = targetX - width * 0.5;
 			homogeneousTargetY = targetY - height * 0.5;
@@ -246,11 +266,11 @@ class Camera {
 		GEngine.i.releaseRenderTarget(renderTarget);
 	}
 
-	public function setDeadZone(x:Float,y:Float,width:Float,height:Float) {
-		deadOffset.x=x-this.width*0.5;
-		deadOffset.y=y-this.height*0.5;
-		deadZone.width=width;
-		deadZone.height=height;
+	public function setDeadZone(x:Float, y:Float, width:Float, height:Float) {
+		deadOffset.x = x - this.width * 0.5;
+		deadOffset.y = y - this.height * 0.5;
+		deadZone.width = width;
+		deadZone.height = height;
 	}
 
 	public var maxSeparationFromTarget:Float = 100 * 100;
@@ -259,22 +279,19 @@ class Camera {
 		// var deltaX:Float = this.x - targetPos.x;
 		// var deltaY:Float = this.y - targetPos.y;
 		if (camera2d) {
-			deadZone.x=this.x+deadOffset.x;
-			deadZone.y=this.y+deadOffset.y;
-			if(targetPos.x < deadZone.x){
-				this.x += targetPos.x-deadZone.x;
-			}else
-			if(targetPos.x > (deadZone.x+deadZone.width)){
-				this.x += targetPos.x-(deadZone.x+deadZone.width);
+			deadZone.x = this.x + deadOffset.x;
+			deadZone.y = this.y + deadOffset.y;
+			if (targetPos.x < deadZone.x) {
+				this.x += targetPos.x - deadZone.x;
+			} else if (targetPos.x > (deadZone.x + deadZone.width)) {
+				this.x += targetPos.x - (deadZone.x + deadZone.width);
 			}
 
-			if(targetPos.y < deadZone.y){
-				this.y += targetPos.y-deadZone.y;
-			}else
-			if(targetPos.y > (deadZone.y+deadZone.height)){
-				this.y += targetPos.y-(deadZone.y+deadZone.height);
+			if (targetPos.y < deadZone.y) {
+				this.y += targetPos.y - deadZone.y;
+			} else if (targetPos.y > (deadZone.y + deadZone.height)) {
+				this.y += targetPos.y - (deadZone.y + deadZone.height);
 			}
-			
 
 			/*if(projectionIsOrthogonal){
 				this.x-=width*0.5*1/scale;
@@ -282,25 +299,25 @@ class Camera {
 			}*/
 			this.z = zMapDistance * 1 / scale;
 
-			var shakeX=0.;
-			var shakeY=0.;
-		
+			var shakeX = 0.;
+			var shakeY = 0.;
+
 			adjustToLimits();
 			if (time > 0) {
 				time -= dt;
 
 				var s = time / totalTime;
-			
-				//perlin nose is only returning up to 0.5;
-				shakeX = maxShakeX - 2*perlin.OctavePerlin(time +randomSeed, time+randomSeed, time+randomSeed, 8, s, shakeInterval) * maxShakeX*2 ;
-				shakeY = maxShakeY - 2*perlin.OctavePerlin(-time-randomSeed, -time-randomSeed, -time-randomSeed, 8, s, shakeInterval) * maxShakeY*2 ;
+
+				// perlin nose is only returning up to 0.5;
+				shakeX = maxShakeX - 2 * perlin.OctavePerlin(time + randomSeed, time + randomSeed, time + randomSeed, 8, s, shakeInterval) * maxShakeX * 2;
+				shakeY = maxShakeY - 2 * perlin.OctavePerlin(-time - randomSeed, -time - randomSeed, -time - randomSeed, 8, s, shakeInterval) * maxShakeY * 2;
 				// this.rotation=shakeRotation-2*shakeRotation*perlin.OctavePerlin(time,time,time, 8, s, shakeInterval);
-				shakeX*=s;
-				shakeY*=s;
+				shakeX *= s;
+				shakeY *= s;
 			}
-			
-			eye.setFrom((new FastVector3(this.x+shakeX, this.y+shakeY, this.z)).sub(offsetEye));
-			at.setFrom(new FastVector3(this.x+shakeX, this.y+shakeY, 0));
+
+			eye.setFrom((new FastVector3(this.x + shakeX, this.y + shakeY, this.z)).sub(offsetEye));
+			at.setFrom(new FastVector3(this.x + shakeX, this.y + shakeY, 0));
 		}
 
 		// this.pivotX=targetPos.x+(width*0.5-targetPos.x)*2;
@@ -310,9 +327,6 @@ class Camera {
 			this.x = targetPos.x + (deltaX / length) * maxSeparationFromTarget;
 			this.y = targetPos.y + (deltaY / length) * maxSeparationFromTarget;
 		}*/
-		
-
-			
 
 		updateView();
 	}
@@ -353,7 +367,7 @@ class Camera {
 		shakeRotation = rotation;
 		maxShakeX = maxX;
 		maxShakeY = maxY;
-		randomSeed=Math.random()*100;
+		randomSeed = Math.random() * 100;
 
 		this.shakeInterval = shakeInterval;
 	}
