@@ -147,15 +147,22 @@ class Simulation {
 			TimeManager.setDelta(mFrameByFrameTime);
 			update(mFrameByFrameTime);
 		}
+	
+	}
+	var skip_fame =true;
+	function onRender(framebuffers:Array<Framebuffer>) {
 		if (requestChangeState) {
+			if(skip_fame){
+				skip_fame =false;
+				return;
+			}
 			requestChangeState = false;
 			loadState(nextState);
 			nextState = null;
-			return;
 		}
-	}
-
-	function onRender(framebuffers:Array<Framebuffer>) {
+		if (!initialized){
+			resources.update();
+		}
 		com.debug.Profiler.startMeasure("renderSim");
 		var framebuffer = framebuffers[0];
 		Input.i.screenScale.setTo(virtualWidth / framebuffer.width, virtualHeight / framebuffer.height);
@@ -184,7 +191,7 @@ class Simulation {
 			if(currentState!=null){
 				currentState.loading(resources.percentage());
 			}	
-			resources.update();
+			//resources.update();
 			return;
 		}
 			
