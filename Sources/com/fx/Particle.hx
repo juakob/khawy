@@ -13,6 +13,8 @@ class Particle extends Entity {
 	private var mLife:Float = 0;
 	private var mTotalLife:Float = 0;
 	private var mVelocity:FastPoint = new FastPoint();
+	public var dragX:Float = 1;
+	public var dragY:Float = 1;
 
 	public var gravity:Float = 100;
 	public var accelerationX:Float = 0;
@@ -60,8 +62,8 @@ class Particle extends Entity {
 			animation.scaleX = animation.scaleY = mInitialScale * mLife / mTotalLife;
 		}
 
-		mVelocity.y += gravity * aDt;
-		mVelocity.x += accelerationX * aDt;
+		mVelocity.x = mVelocity.x*dragX + accelerationX * aDt;
+		mVelocity.y = mVelocity.y*dragY + gravity * aDt;
 		mX += mVelocity.x * aDt;
 		mY += mVelocity.y * aDt;
 		animation.x = mX;

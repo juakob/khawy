@@ -1,6 +1,6 @@
 package com.gEngine.display;
 
-@:enum
+enum
 abstract BlendMode(Int) { // warning dont change the order
 	var Default = 0;
 	var Multipass = 1;

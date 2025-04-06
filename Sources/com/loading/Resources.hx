@@ -7,6 +7,7 @@ class Resources {
 	var loadedCount:Int;
 	var onFinish:Void->Void;
 	var loadingFile:Bool;
+	var fileLoaded:Bool;
 
 	public function new() {
 		resources = new Array();
@@ -52,14 +53,20 @@ class Resources {
 			loadingFile=true;
 			resources[loadedCount].load(onLoad);
 		}
+		if(fileLoaded){
+			
+			resources[loadedCount].postLoad();
+			fileLoaded = false;
+			++loadedCount;
+			loadingFile=false;
+			if (loadedCount == resources.length) {
+				onFinish();
+			}
+		}
 	}
 
 	function onLoad() {
-		++loadedCount;
-		loadingFile=false;
-		if (loadedCount == resources.length) {
-			onFinish();
-		}
+		fileLoaded = true;
 	}
 
 	public function unload() {

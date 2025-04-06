@@ -65,9 +65,21 @@ class State extends Entity {
 		}
 	}
 
-	public function onActivate() {}
+	public function onForeground() {
+    }
 
-	public function onDesactivate() {}
+    public function onResume() {
+    }
+
+    public function onPause() {
+    }
+
+    public function onBackground() {
+    }
+
+    public function onShutdown() {
+    }
+
 
 	public function onMessage(message:Dynamic) {}
 

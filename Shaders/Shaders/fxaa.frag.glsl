@@ -9,7 +9,7 @@ out vec4 fragColor;
 void main() {
 	const float FXAA_REDUCE_MIN = 1.0 / 50.0;
 	const float FXAA_REDUCE_MUL = 1.0 / 3.0;
-	const float FXAA_SPAN_MAX = 4.0;
+	const float FXAA_SPAN_MAX = 2.0;
 	
 	vec2 tcrgbNW = (texCoord + vec2(-1.0, -1.0) * screenSizeInv);
 	vec2 tcrgbNE = (texCoord + vec2(1.0, -1.0) * screenSizeInv);

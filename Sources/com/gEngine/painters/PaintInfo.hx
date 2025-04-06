@@ -7,7 +7,7 @@ import kha.graphics4.MipMapFilter;
 class PaintInfo {
 	public var texture:Int;
 	public var blend:BlendMode;
-	public var textureFilter:TextureFilter;
+	public var textureFilter:TextureFilter = TextureFilter.LinearFilter;
 	public var mipMapFilter:MipMapFilter;
 
 	public function new() {}

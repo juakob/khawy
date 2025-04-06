@@ -151,7 +151,17 @@ class CollisionBox extends Body implements ICollider {
 		} else if (collider.collisionType() == CollisionType.TileMap) {
 			return collider.overlap(this, NotifyCallback);
 		} else if (collider.collisionType() == CollisionType.Group) {
-			return (cast collider).overlapInverted(this, NotifyCallback); 
+			var group:CollisionGroup = cast collider;
+			return group.overlapInverted(this, NotifyCallback); 
+		} else if (collider.collisionType() == CollisionType.Circle) {
+			var circle:CollisionCircle = cast collider;
+			if(circle.x>x && circle.x< x+width && circle.y>y && circle.y< y+height) //temp calculation
+			{
+				if (NotifyCallback != null)
+					NotifyCallback(this, collider);
+				return true;
+			}
+
 		}
 		return false;
 	}

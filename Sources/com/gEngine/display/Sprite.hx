@@ -151,18 +151,12 @@ class Sprite implements IAnimation implements IRotation {
 		this.transform.setFrom(FastMatrix4.identity());
 		this.transform._00 = cosAng * scaleX;
 		this.transform._10 = -sinAng * scaleY;
-		#if PIXEL_GAME
-		this.transform._30 = Std.int(x + pivotX);
-		#else
-		this.transform._30 = x + pivotX;
-		#end
+		this.transform._30 = x ;
+
 		this.transform._01 = sinAng * scaleX;
 		this.transform._11 = cosAng * scaleY;
-		#if PIXEL_GAME
-		this.transform._31 = Std.int(y + pivotY);
-		#else
-		this.transform._31 = y + pivotY;
-		#end
+		this.transform._31 = y ;
+
 		this.transform._22 = scaleZ;
 		this.transform._32 = z;
 		if (billboard) {
@@ -212,7 +206,8 @@ class Sprite implements IAnimation implements IRotation {
 	public function renderFastColor(paintMode:PaintMode, transform:FastMatrix4, frame:Int):Void {
 		// calculateTransform(transform);
 		paintInfo.blend = blend;
-		paintInfo.mipMapFilter = mipMapFilter;
+		//paintInfo.mipMapFilter = mipMapFilter;
+		//
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
 		timeline.currentFrame = frame;
@@ -222,7 +217,7 @@ class Sprite implements IAnimation implements IRotation {
 	public function renderFastAlpha(paintMode:PaintMode, transform:FastMatrix4, frame:Int):Void {
 		// calculateTransform(transform);
 		paintInfo.blend = blend;
-		paintInfo.mipMapFilter = mipMapFilter;
+		//paintInfo.mipMapFilter = mipMapFilter;
 		paintInfo.textureFilter = textureFilter;
 		paintInfo.texture = textureId;
 		timeline.currentFrame = frame;
@@ -234,7 +229,7 @@ class Sprite implements IAnimation implements IRotation {
 		var vertexs:Array<FastFloat> = frame.vertexs;
 		var cameraScale = paintMode.camera.scale;
 		var uvs = frame.UVs;
-		var painter:PainterAlpha = alphaPainters[cast blend];
+		var painter:PainterAlpha = alphaPainters[0];
 		checkBatchAlpha(paintMode, paintInfo, Std.int(frame.vertexs.length * 0.5), painter);
 		var buffer = inline painter.getVertexBuffer();
 		var vertexBufferCounter = inline painter.getVertexDataCounter();
@@ -275,7 +270,7 @@ class Sprite implements IAnimation implements IRotation {
 		var vertexs:Array<FastFloat> = frame.vertexs;
 		var cameraScale = paintMode.camera.scale;
 		var uvs = frame.UVs;
-		var painter:IPainter = customPainter != null ? customPainter : this.colorPainters[cast blend];
+		var painter:IPainter = customPainter != null ? customPainter : this.colorPainters[0];
 		//var painter:PainterColorTransform = this.colorPainters[cast blend];
 		checkBatchColor(paintMode, paintInfo, Std.int(frame.vertexs.length * 0.5), painter);
 		var redMul, blueMul, greenMul, alphaMul:Float;
@@ -286,10 +281,10 @@ class Sprite implements IAnimation implements IRotation {
 		greenMul = this.mulGreen * paintMode.mulG;
 		blueMul = this.mulBlue * paintMode.mulB;
 		alphaMul = this.alpha * paintMode.mulA;
-		redAdd = this.addRed;
-		greenAdd = this.addGreen;
-		blueAdd = this.addBlue;
-		alphaAdd = this.addAlpha;
+		redAdd = this.addRed + paintMode.addR;
+		greenAdd = this.addGreen + paintMode.addG;
+		blueAdd = this.addBlue + paintMode.addB;
+		alphaAdd = this.addAlpha + paintMode.addA;
 		var vertexIndex:Int = 0;
 		var uvIndex:Int = 0;
 		for (k in 0...4) {

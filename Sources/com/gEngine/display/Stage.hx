@@ -34,23 +34,23 @@ class Stage {
 	public function update():Void {
 		var dt = TimeManager.delta * timeScale;
 		world.update(dt);
-		for (camera in cameras) {
-			camera.update(dt);
+		for (i in 0...cameras.length) {
+			cameras[i].update(dt);
 		}
-		for (stage in subStages) {
-			stage.update();
+		for (i in 0...subStages.length) {
+			subStages[i].update();
 		}
 	}
 
 	public function render(needRefresh:Bool):Void {
-		for (camera in cameras) {
-			camera.render(painterMode, matrix,needRefresh);
+		for (i in 0...cameras.length) {
+			cameras[i].render(painterMode, matrix,needRefresh);
 			if (painterMode.vertexCount() > 0) {
 				painterMode.render();
 			}
 		}
-		for (stage in subStages) {
-			stage.render(needRefresh);
+		for (i in 0...subStages.length) {
+			subStages[i].render(needRefresh);
 		}
 	}
 

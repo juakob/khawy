@@ -82,19 +82,48 @@ class Simulation {
 
 		Scheduler.addTimeTask(onEnterFrame, 0, 1 / 60);
 		System.notifyOnFrames(onRender);
+		System.notifyOnApplicationState(
+			onForeground, 
+			onResume,     
+			onPause,     
+			onBackground, 
+			onShutdown    
+		);
 	}
 
-	private function onDeactivate():Void {
-		if (currentState != null) {
-			currentState.onDesactivate();
+	private function onForeground() {
+		isPause = false;
+        if (currentState != null) {
+			currentState.onForeground();
 		}
-	}
+    }
 
-	private function onActive():Void {
-		if (currentState != null) {
-			currentState.onActivate();
+    public function onResume() {
+		isPause = false;
+        if (currentState != null) {
+			currentState.onResume();
 		}
-	}
+    }
+
+    public function onPause() {
+		isPause = true;
+        if (currentState != null) {
+			currentState.onPause();
+		}
+    }
+
+    private function onBackground() {
+		isPause = true;
+        if (currentState != null) {
+			currentState.onBackground();
+		}
+    }
+
+    private function onShutdown() {
+        if (currentState != null) {
+			currentState.onShutdown();
+		}
+    }
 
 	private var mFrameByFrameTime:Float = 0;
 	private var mLastFrameTime:Float = 0;
@@ -173,12 +202,25 @@ class Simulation {
 			var g2:Graphics = framebuffer.g2;
 			g2.begin(false);
 
-			g2.transformation = FastMatrix3.scale(0.75, 0.75);
-			g2.color = Color.fromFloats(0.5, 0.5, 0.5, 0.5);
-			g2.fillRect(0, 0, 1280, 720);
+			var width = framebuffer.width;
+			var height = framebuffer.height;
 
+			// Fondo gris semitransparente
+			g2.color = Color.fromFloats(0.5, 0.5, 0.5, 0.5);
+			g2.fillRect(0, 0, width, height); // Ahora cubre toda la pantalla correctamente
+
+			// Dibujar triángulo de "play" en el centro
 			g2.color = Color.fromFloats(1, 1, 1, 1);
-			g2.fillTriangle(485, 270, 740, 390, 485, 510);
+
+			var centerX = width / 2;
+			var centerY = height / 2;
+			var size = 100; // Tamaño del triángulo
+
+			g2.fillTriangle(
+				centerX - size / 2, centerY - size,  // Punto izquierdo
+				centerX + size / 2, centerY,         // Punta derecha
+				centerX - size / 2, centerY + size   // Punto inferior izquierdo
+			);
 
 			g2.end();
 		}
@@ -253,17 +295,4 @@ class Simulation {
 		nextState = state;
 	}
 
-	public function pause():Void {
-		isPause = true;
-		if (currentState != null) {
-			currentState.onDesactivate();
-		}
-	}
-
-	public function unpause():Void {
-		isPause = false;
-		if (currentState != null) {
-			currentState.onActivate();
-		}
-	}
 }

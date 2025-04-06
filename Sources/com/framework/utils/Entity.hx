@@ -11,48 +11,42 @@ class Entity {
 
 	private var limbo:Bool = false;
 	private var childrenInLimbo:Int = 0;
-	private var toDelete:Array<Int> = new Array();
-
 	public function new() {}
 
 	public function update(dt:Float):Void {
-		var counter:Int = 0;
-		for (child in children) {
+		var i = children.length - 1;
+		while(i >= 0) {
+			var child = children[i];
 			if (child.limbo) {
-				++counter;
+				i--;
 				continue;
 			}
+			
 			child.update(dt);
+			
 			if (child.isDead()) {
 				if (pool) {
 					child.limbo = true;
 					child.limboStart();
-					++childrenInLimbo;
+					childrenInLimbo++;
 				} else {
-					child.destroy();
-					toDelete.push(counter);
+					children.splice(i, 1);
 				}
 			}
-			++counter;
+			i--;
 		}
-		var offset = 0;
-		for (index in toDelete) {
-			children.splice(index - offset, 1);
-			++offset;
-		}
-		toDelete.splice(0, toDelete.length);
 	}
 
 	public function render():Void {
-		for (child in children) {
-			if (!child.limbo)
-				child.render();
+		for (i in 0...children.length) {
+			var child = children[i];
+			if (!child.limbo) child.render();
 		}
 	}
 
 	public function destroy():Void {
-		for (child in children) {
-			child.destroy();
+		for (i in 0...children.length) {
+			children[i].destroy();
 		}
 		parent = null;
 	}
@@ -68,13 +62,12 @@ class Entity {
 
 	public function recycle(type:Class<Entity>, arg:Array<Dynamic> = null):Entity {
 		if (childrenInLimbo > 0) {
-			for (child in children) {
-				if (!child.limbo)
-					continue;
-
+			for (i in 0...children.length) {
+				var child = children[i];
+				if (!child.limbo) continue;
 				child.limbo = false;
 				child.dead = false;
-				--childrenInLimbo;
+				childrenInLimbo--;
 				return child;
 			}
 		}
@@ -120,7 +113,8 @@ class Entity {
 	}
 
 	public function clear():Void {
-		for (child in children) {
+		for (i in 0...children.length) {
+			var child = children[i];
 			child.limboStart();
 			child.limbo = true;
 			child.dead = true;

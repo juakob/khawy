@@ -1,5 +1,6 @@
 package com.gEngine;
 
+import kha.math.FastVector2;
 import com.gEngine.display.BlendMode;
 import com.gEngine.painters.PainterColorTransform;
 import com.gEngine.painters.PainterAlpha;
@@ -37,9 +38,8 @@ class GEngine {
 	public var realHeight(default, null):Int;
 
 	private var textures:Array<Image>;
-	private var stage:Stage;
+	public var stage:Stage;
 	var modelViewMatrix:FastMatrix4;
-	private var painter:Painter;
 
 	inline static var initialIndex:Int = 2;
 
@@ -61,6 +61,8 @@ class GEngine {
 
 	public static var extraInfo:String = "";
 
+	var resizeRequire:Bool;
+	var newSize:FastVector2=new FastVector2();
 	var fontLoaded:Bool;
 	var identity3x3 = FastMatrix3.identity();
 	#end
@@ -93,21 +95,21 @@ class GEngine {
 	}
 
 	public inline function getSimplePainter(blend:BlendMode) {
-		return simplePainters[cast blend];
+		return simplePainters[0];
 	}
 	public inline function getSimplePainters() {
 		return simplePainters;
 	}
 
 	public inline function getAlphaPainter(blend:BlendMode) {
-		return alphaPainters[cast blend];
+		return alphaPainters[0];
 	}
 	public inline function getAlphaPainters() {
 		return alphaPainters;
 	}
 
 	public inline function getColorTransformPainter(blend:BlendMode) {
-		return colorPainters[cast blend];
+		return colorPainters[0];
 	}
 
 	public inline function getColorTransformPainters() {
@@ -120,17 +122,20 @@ class GEngine {
 		this.width = Std.int(targetWidth * oversample);
 		this.height = Std.int(targetHeight * oversample);
 
-		modelViewMatrix = FastMatrix4.orthogonalProjection(0, virtualWidth, virtualHeight, 0, 0, 5000);
+		modelViewMatrix = FastMatrix4.orthogonalProjection(0, this.width, this.height, 0, 0, 5000);
 		if (Image.renderTargetsInvertedY()) {
 			modelViewMatrix.setFrom(FastMatrix4.scale(1, -1, 1).multmat(modelViewMatrix));
 		}
 	}
 
+	public function resize(width:Int,height:Int) {
+		resizeRequire = true;
+		newSize.x = width;
+		newSize.y = height;
+	}
+
 	public function createDefaultPainters():Void {
 		stage = new Stage();
-		painter = new Painter(false, Blend.blendNone());
-		painter.setProjection(FastMatrix4.identity());
-		painter.filter = TextureFilter.LinearFilter;
 	}
 
 	public static function init(virtualWidth:Int, virtualHeight:Int, oversample:Float, antiAlias:Int):Void {
@@ -209,10 +214,6 @@ class GEngine {
 	function createPainters() {
 		var blends:Array<Blend> = [
 			Blend.blendDefault(),
-			Blend.blendMultipass(),
-			Blend.blendAdd(),
-			Blend.blendMultiply(),
-			Blend.blendScreen()
 		];
 		simplePainters = new Array();
 		alphaPainters = new Array();
@@ -268,9 +269,18 @@ class GEngine {
 	}
 
 	public function renderToFrameBuffer(source:Int, painter:IPainter, x:Float, y:Float, width:Float, height:Float, sourceScale:Float, clear:Bool,
-			outScale:Float = 1) {
+			outScale:Float = 1,matrixSize:Bool=false) {
 		painter.textureID = source;
-		painter.setProjection(getMatrix());
+		if (!matrixSize) {
+			painter.setProjection(getMatrix());
+		}else{
+			var mvp = FastMatrix4.orthogonalProjection(0, currentCanvas().width, currentCanvas().height, 0, 0, 5000);
+			if (Image.renderTargetsInvertedY()) {
+				mvp.setFrom(FastMatrix4.scale(1, -1, 1).multmat(mvp));
+			}
+			painter.setProjection(mvp);
+		}
+		
 		var text = getTexture(source);
 		writeVertexFull(painter, x, y, 0, 0, 0, outScale);
 
@@ -301,6 +311,14 @@ class GEngine {
 	}
 
 	public function draw(frameBuffer:Framebuffer, clear:Bool = true, needRefresh:Bool):Void {
+		if(resizeRequire){
+			resizeRequire = false;
+			var width = Math.round(newSize.x);
+			var height = Math.round(newSize.y);
+			calculateModelViewMatrix(width, height);
+			stage.defaultCamera().resize(width,height);
+			releaseUnuseRenderTargets();
+		}
 		if (frameBuffer.width * oversample != width || frameBuffer.height * oversample != height)
 			resizeInput(frameBuffer.width, frameBuffer.height);
 
@@ -368,11 +386,19 @@ class GEngine {
 	public function releaseRenderTarget(id:Int) {
 		renderTargetPool.release(id);
 	}
+	public function releaseUnuseRenderTargets():Void {
+		for (proxy in renderTargetPool.targets) {
+			if(!proxy.inUse){
+				textures[proxy.textureId].unload();
+			}
+		}
+		renderTargetPool.removeUnused();
+	}
 
 	public function adjustRenderTargets():Void {
 		for (proxy in renderTargetPool.targets) {
 			textures[proxy.textureId].unload();
-			textures[proxy.textureId] = Image.createRenderTarget(width, height, null, DepthStencilFormat.DepthOnly, antiAliasing);
+			textures[proxy.textureId] = Image.createRenderTarget(width, height, null, DepthStencilFormat.NoDepthAndStencil, antiAliasing);
 		}
 	}
 

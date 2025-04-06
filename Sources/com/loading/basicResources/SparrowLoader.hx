@@ -41,7 +41,12 @@ class SparrowLoader extends TilesheetLoader {
 		var counter:Int = 0;
 		var currentAnimation:String = null;
 		var textures = data.nodes.SubTexture;
-
+		textures.sort(function(a:Access, b:Access):Int {
+			if (a.att.name < b.att.name) return -1;
+            if (a.att.name > b.att.name) return 1;
+            return 0;
+        });
+/*
 		textures.sort(function(a:Access, b:Access):Int {
 			var aName = a.att.name;
 			var aNumber:String = "";
@@ -76,7 +81,7 @@ class SparrowLoader extends TilesheetLoader {
 			if (aString > bString)
 				return 1;
 			return 0;
-		});
+		});*/
 		for (texture in textures) {
 			var name = texture.att.name;
 			var trimmed = texture.has.frameX;
@@ -91,17 +96,31 @@ class SparrowLoader extends TilesheetLoader {
 				labels.push(label);
 			}
 			++counter;
-			var frameX = trimmed ? -Std.parseInt(texture.att.frameX) : 0;
-			var frameY = trimmed ? -Std.parseInt(texture.att.frameY) : 0;
+			var name_parts = name.split("#");
+			var frameX =0.;
+			var frameY =0.;
+			var offsets:Array<String> = null;
+			if (name_parts.length>1){
+				var offsets = name_parts[1].split("x");
+				frameX =0+Std.parseFloat(offsets[0]);// trimmed ? -Std.parseInt(texture.att.frameX) : 0;
+				frameY =0+Std.parseFloat(offsets[1]);
+			}else{
+				frameX = trimmed ? -Std.parseInt(texture.att.frameX) : 0;
+				frameY = trimmed ? -Std.parseInt(texture.att.frameY) : 0;
+			}
+			// trimmed ? -Std.parseInt(texture.att.frameY) : 0;
+			
 			frames.push(TilesheetLoader.createFrame(frameX, frameY, Std.parseInt(texture.att.width), Std.parseInt(texture.att.height), rotated,
 				Std.parseInt(texture.att.x), Std.parseInt(texture.att.y), image.realWidth, image.realHeight));
 			// var rect = FlxRect.get(Std.parseFloat(texture.att.x), Std.parseFloat(texture.att.y), Std.parseFloat(texture.att.width), Std.parseFloat(texture.att.height));
 			var bitmap:Bitmap = new Bitmap();
-			bitmap.x = Std.parseInt(texture.att.x);
-			bitmap.y = Std.parseInt(texture.att.y);
+			if (offsets!=null) {
+				bitmap.x = Std.parseInt(texture.att.x)+Std.parseFloat(offsets[0]);
+				bitmap.y = Std.parseInt(texture.att.y)+Std.parseFloat(offsets[1]);
+			}
 			bitmap.width = Std.parseInt(texture.att.width);
 			bitmap.height = Std.parseInt(texture.att.height);
-			bitmap.name = name;
+			bitmap.name = name_parts[0]+name_parts[2];
 			bitmap.image = image;
 			bitmaps.push(bitmap);
 		}

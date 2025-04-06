@@ -119,8 +119,8 @@ class Layer implements DisplayObject implements IContainer {
 		if (filter != null) {
 			filter.filterStart(this, paintMode, transform);
 		}
-		for (child in children) {
-			child.render(paintMode, this.transform);
+		for(i in 0...children.length) {
+			children[i].render(paintMode, this.transform);
 		}
 		if (filter != null) {
 			filter.filterEnd(paintMode);

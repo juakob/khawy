@@ -389,19 +389,19 @@ class Input {
 	}
 
 	public inline function getMouseX():Float {
-		return mousePosition.x * screenScale.x;
+		return mousePosition.x ;
 	}
 
 	public inline function getMouseY():Float {
-		return mousePosition.y * screenScale.y;
+		return mousePosition.y ;
 	}
 
 	public inline function touchX(id:Int):Float {
-		return touchPos[id * 2] * screenScale.x;
+		return touchPos[id * 2] ;
 	}
 
 	public inline function touchY(id:Int):Float {
-		return touchPos[id * 2 + 1] * screenScale.y;
+		return touchPos[id * 2 + 1] ;
 	}
 
 	public inline function isTouchActive(id:Int):Bool {

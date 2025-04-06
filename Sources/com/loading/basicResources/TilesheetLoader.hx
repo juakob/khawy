@@ -109,7 +109,7 @@ class TilesheetLoader implements AtlasJoinable {
 		}
 	}
 
-	public static function createFrame(x:Int, y:Int, width:Int, height:Int, rotated:Bool, textureOriginX, textureOriginY, textureW:Int,textureH:Int):Frame {
+	public static function createFrame(x:Float, y:Float, width:Int, height:Int, rotated:Bool, textureOriginX, textureOriginY, textureW:Int,textureH:Int):Frame {
 		if (rotated) {
 			var temp = width;
 			width = height;
@@ -157,4 +157,6 @@ class TilesheetLoader implements AtlasJoinable {
 
 		return frame;
 	}
+
+	public function postLoad() {}
 }

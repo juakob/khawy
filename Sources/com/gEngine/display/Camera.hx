@@ -20,7 +20,7 @@ import com.helpers.FastPoint;
 class Camera {
 	private var targetPos:FastPoint;
 
-	public static var zMapDistance:Float = 869.1168 - 223; // distance where x,y are map to the screen if z=0;
+	public var zMapDistance:Float = 869.1168 - 223; // distance where x,y are map to the screen if z=0;
 
 	public var min:FastPoint;
 	public var max:FastPoint;
@@ -48,9 +48,11 @@ class Camera {
 	public var projection:FastMatrix4;
 	public var orthogonal:FastMatrix4;
 	public var screenTransform:FastMatrix4;
+	
 
 	var finalX:Int = 0;
 	var finalY:Int = 0;
+	var scaleCompensation:Float = 1;
 
 	public var eye:FastVector3;
 	public var at:FastVector3;
@@ -76,41 +78,54 @@ class Camera {
 	var deadOffset:Point = new Point();
 
 	public function new(width:Int = -1, height:Int = -1) {
+		resize(width,height);
+		perlin = new Perlin(1);
+		update(0);
+		#if PIXEL_GAME
+		pixelSnap = true;
+		smooth = false;
+		#end
+	}
+	public function resize(width:Int,height:Int) {
 		finalX = 0;
 		finalY = 0;
-		if (width < 0 || height < 0) {
-			var wWidth = Window.get(0).width;
-			var wHeight = Window.get(0).height;
-			width = wWidth;
-			height = wHeight;
-			var ratio = wWidth/wHeight;
-			if (ratio>21/9) {
-				width = Math.ceil(wHeight*21/9);
-				finalX = Math.ceil(wWidth*0.5-width*0.5);
-				scale = scale *width/GEngine.virtualWidth;
-			}
-			if (ratio<4/3) {
-				height = Math.ceil(wWidth*3/4);
-				finalY = Math.ceil(wHeight*0.5-height*0.5);
-				scale = scale *height/GEngine.virtualHeight;
-				//offsetEye.x = width*0.5;
-				//offsetEye.y = height*0.5;
-			}
-		//	width = GEngine.virtualWidth;
-		//	height = GEngine.virtualHeight;
-		
+		if(width<=0||height<=0){
+			width=Window.get(0).width;
+			height = Window.get(0).height;
 		}
+		//if (width < 0 || height < 0) {
+
+			var scaleX:Float = width / GEngine.virtualWidth;
+			var scaleY:Float = height / GEngine.virtualHeight;
+			
+			
+			scaleCompensation = Math.min(scaleX, scaleY);
+			
+			
+		
+		// //	width = GEngine.virtualWidth;
+		// //	height = GEngine.virtualHeight;
+		
+		// }
+		
+		this.width = width;
+		this.height = height;
+		
+		
+
 		eye = new FastVector3(0, 0, zMapDistance);
 		at = new FastVector3(x, y, 0);
 		up = new FastVector3(0, 1, 0);
 		view = FastMatrix4.identity();
-		targetPos = new FastPoint(width * 0.5*1/scale, height * 0.5*1/scale);
+		targetPos = new FastPoint(width * 0.5*1/scale*scaleCompensation, height * 0.5*1/scale*scaleCompensation);
 
 		setDrawArea(finalX, finalY, width, height);
 		
-		this.width = width;
-		this.height = height;
-		renderTarget = GEngine.i.getRenderTarget(width, height);
+		
+		if (renderTarget >= 0){
+			GEngine.i.releaseRenderTarget(renderTarget);
+		}
+		renderTarget = GEngine.i.getRenderTarget(Math.ceil(width*0.95), Math.ceil(height*0.95));
 		var texture = GEngine.i.getTexture(renderTarget);
 		texture.g4.begin();
 		texture.g4.clear(Color.Transparent);
@@ -119,18 +134,12 @@ class Camera {
 		projection = orthogonal;
 		projectionIsOrthogonal = true;
 		screenTransform = createScreenTransform();
-		perlin = new Perlin(1);
-		update(0);
-		#if PIXEL_GAME
-		pixelSnap = true;
-		smooth = false;
-		#end
 	}
 
 	public function updateView() {
 		view.setFrom(FastMatrix4.lookAt(eye, at, up));
 		if (projectionIsOrthogonal) {
-			view.setFrom(FastMatrix4.scale(scale, scale, 1).multmat(view));
+			view.setFrom(FastMatrix4.scale(scale*scaleCompensation, scale*scaleCompensation, 1).multmat(view));
 		}
 		if (pixelSnap) {
 			view._30 = Std.int(view._30);
@@ -211,7 +220,7 @@ class Camera {
 		painter.filter = textureFilter;
 		painter.setProjection(GEngine.i.getMatrix());
 		if (postProcess != null) {}
-		GEngine.i.renderToFrameBuffer(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1);
+		GEngine.i.renderToFrameBuffer(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1/0.95);
 		GEngine.i.endCanvas();
 	}
 
@@ -297,7 +306,7 @@ class Camera {
 				this.x-=width*0.5*1/scale;
 				this.y-=height*0.5*1/scale;
 			}*/
-			this.z = zMapDistance * 1 / scale;
+			this.z = zMapDistance * 1 / scale*scaleCompensation;
 
 			var shakeX = 0.;
 			var shakeY = 0.;
@@ -343,16 +352,16 @@ class Camera {
 		if (min != null) {
 			// if (width * 1 / scale > max.x - min.x || height * 1 / scale > max.y - min.y)
 			//	return;
-			if (this.x - width * 0.5 * 1 / scale < min.x) {
-				this.x = (min.x + width * 0.5 * 1 / scale);
-			} else if (this.x + width * 0.5 * 1 / scale > max.x) {
-				this.x = (max.x - width * 0.5 * 1 / scale);
+			if (this.x - width * 0.5 * 1 / (scale*scaleCompensation) < min.x) {
+				this.x = (min.x + width * 0.5 * 1 / (scale*scaleCompensation));
+			} else if (this.x + width * 0.5 * 1 / (scale*scaleCompensation) > max.x) {
+				this.x = (max.x - width * 0.5 * 1 / (scale*scaleCompensation));
 			}
 
-			if (this.y - height * 0.5 * 1 / scale < min.y) {
-				this.y = (min.y + height * 0.5 * 1 / scale);
-			} else if (this.y + height * 0.5 * 1 / scale > max.y) {
-				this.y = (max.y - height * 0.5 * 1 / scale);
+			if (this.y - height * 0.5 * 1 / (scale*scaleCompensation) < min.y) {
+				this.y = (min.y + height * 0.5 * 1 / (scale*scaleCompensation));
+			} else if (this.y + height * 0.5 * 1 / (scale*scaleCompensation) > max.y) {
+				this.y = (max.y - height * 0.5 * 1 / (scale*scaleCompensation));
 			}
 		}
 	}

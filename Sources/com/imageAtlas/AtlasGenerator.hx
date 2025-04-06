@@ -17,7 +17,7 @@ import com.imageAtlas.Bitmap;
 class AtlasGenerator {
 	static var clearPipeline:PipelineState;
 
-	public static function generate(width:Int, height:Int, bitmaps:Array<Bitmap>, separation:Int = 2):Image {
+	public static function generate(width:Int, height:Int, bitmaps:Array<Bitmap>, separation:Int = 2, expand:Bool=true):Image {
 		if (clearPipeline == null)
 			clearPipeline = createClearPipeline();
 		bitmaps.sort(sortArea);
@@ -26,8 +26,8 @@ class AtlasGenerator {
 		var realHeight:Int = atlasImage.realWidth;
 		var atlasMap = new ImageTree(width, height, separation);
 
-		var g:SingleImagePainter = new SingleImagePainter(atlasImage.g4);
-		g.setProjection(width,height);
+		var g = atlasImage.g2;//new SingleImagePainter(atlasImage.g4);
+		//g.setProjection(width,height);
 		//Color.fromFloats(1, 1, 1, 1);
 		g.begin(true, Color.fromFloats(0, 0, 0, 0));
 		for (bitmap in bitmaps) {
@@ -43,22 +43,26 @@ class AtlasGenerator {
 				g.begin(false);
 			}
 			if (bitmap.specialPipeline != null) {
-				g.setPipeline(bitmap.specialPipeline);
+				g.pipeline = bitmap.specialPipeline ;
 			} else {
-				g.setPipeline(clearPipeline);
+				g.pipeline = clearPipeline;
 			}
 
 			
-			g.setBilinearMipmapFilter(bitmap.hasMipMap);
+		//	g.setBilinearMipmapFilter(bitmap.hasMipMap);
 			
-			g.setBilinearFilter(false);
+		//	g.setBilinearFilter(false);
 			// extrude image border pixel width and height
-			g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
-				rectangle.x - 1, rectangle.y, bitmap.width + 2, bitmap.height);
-			g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
-				rectangle.x, rectangle.y - 1, bitmap.width, bitmap.height + 2);
+			//g.imageScaleQuality = ImageScaleQuality.Low;
+			if(expand){
+				g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
+					rectangle.x - 1, rectangle.y, bitmap.width + 2, bitmap.height);
+				g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
+					rectangle.x, rectangle.y - 1, bitmap.width, bitmap.height + 2);
+			}
 			
-			g.setBilinearFilter(true);
+			
+		//	g.setBilinearFilter(true);
 			g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
 				rectangle.x, rectangle.y, bitmap.width, bitmap.height);
 

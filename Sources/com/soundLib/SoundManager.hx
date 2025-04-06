@@ -79,11 +79,12 @@ class SoundManager {
 	}
 
 	public static function muteMusic():Void {
-		musicMuted = true;
-		if (music != null) {
+		
+		if (music != null && !musicMuted) {
 			musicPosition = music.position;
 			music.pause();
 		}
+		musicMuted = true;
 	}
 
 	public static function musicVolume(vol:Float):Void {
@@ -105,10 +106,11 @@ class SoundManager {
 	}
 
 	public static function unMuteMusic():Void {
-		musicMuted = false;
-		if (music != null) {
+		
+		if (music != null && musicMuted) {
 			music.play();
 		}
+		musicMuted = false;
 	}
 
 	static public function reset() {

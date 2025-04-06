@@ -26,4 +26,6 @@ class FontKhaLoader implements Resource {
 	}
 
 	public function unloadLocal():Void {}
+
+	public function postLoad() {}
 }

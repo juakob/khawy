@@ -39,4 +39,9 @@ class Point {
 		var deltaY:Float = A.y - B.y;
 		return Math.sqrt(deltaX * deltaX + deltaY * deltaY);
 	}
+	public static inline function Length2(A:Point, B:Point):Float {
+		var deltaX:Float = A.x - B.x;
+		var deltaY:Float = A.y - B.y;
+		return deltaX * deltaX + deltaY * deltaY;
+	}
 }

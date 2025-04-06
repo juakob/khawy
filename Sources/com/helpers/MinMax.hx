@@ -261,6 +261,11 @@ class MinMax {
 	public function inside(x:Float, y:Float) {
 		return x > min.x && x < max.x && y > min.y && y < max.y;
 	}
+	public function insideOffset(x:Float, y:Float,offsetX:Float,offsetY:Float) {
+		x = x-offsetX;
+		y = y-offsetY;
+		return x > min.x && x < max.x && y > min.y && y < max.y;
+	}
 
 	static public function from(left:FastFloat, top:FastFloat, right:FastFloat, bottom:FastFloat):MinMax {
 		var minMax:MinMax = new MinMax();
