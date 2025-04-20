@@ -242,9 +242,10 @@ class Simulation {
 			#if INPUT_REC
 			Input.i.updatePlayeback();
 			#end
+			Input.i.update();
 			currentState.update(dt);
 			GEngine.i.update();
-			Input.i.update();
+			
 		}
 		iterationRest = (TimeManager.multiplier + iterationRest) - fullIterations;
 	}

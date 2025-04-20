@@ -3,8 +3,6 @@ package com.framework.utils;
 #if INPUT_REC
 import com.framework.utils.SaveFile.StreamReader;
 #end
-import haxe.io.BytesBuffer;
-import com.g3d.OgexData.Key;
 import kha.input.Gamepad;
 import com.helpers.FastPoint;
 import kha.input.KeyCode;
@@ -100,13 +98,26 @@ class Input {
 	private var keysReleased:Array<Int>;
 	private var touchPos:Array<Int>;
 	private var touchActive:Array<Int>;
-
 	public var mouseDeltaX:Float = 0;
 	public var mouseDeltaY:Float = 0;
+	private var mousePosition:FastPoint;
+
+	private var t_mouseIsDown:Bool;
+	private var t_mousePressed:Bool;
+	private var t_mouseReleased:Bool;
+	private var t_keysDown:Array<Int>;
+	private var t_keysPressed:Array<Int>;
+	private var t_keysReleased:Array<Int>;
+	private var t_touchPos:Array<Int>;
+	private var t_touchActive:Array<Int>;
+	public var t_mouseDeltaX:Float = 0;
+	public var t_mouseDeltaY:Float = 0;
+	private var t_mousePosition:FastPoint;
+
 	public var activeTouchSpots(default, null):Int;
 
 	var joysticks:Array<JoystickProxy>;
-	private var mousePosition:FastPoint;
+	
 
 	static public inline var TOUCH_MAX:Int = 6;
 
@@ -133,18 +144,29 @@ class Input {
 		keysPressed = new Array();
 		keysReleased = new Array();
 
+		t_keysDown = new Array();
+		t_keysPressed = new Array();
+		t_keysReleased = new Array();
+
 		onKeyDownSubscribers = new Array();
 		onKeyUpSubscribers = new Array();
 
 		activeTouchSpots = 0;
+
 		touchActive = new Array();
 		touchPos = new Array();
+		t_touchActive = new Array();
+		t_touchPos = new Array();
+
 		for (i in 0...TOUCH_MAX) {
 			touchPos.push(0);
 			touchPos.push(0);
+			t_touchPos.push(0);
+			t_touchPos.push(0);
 		}
 
 		mousePosition = new FastPoint();
+		t_mousePosition = new FastPoint();
 
 		joysticks = new Array();
 	}
@@ -179,53 +201,53 @@ class Input {
 		touchPos[id * 2] = x;
 		touchPos[id * 2 + 1] = y;
 		if (id == 0) {
-			mousePosition.setTo(x, y);
+			t_mousePosition.setTo(x, y);
 		}
 	}
 
 	function onTouchEnd(id:Int, x:Int, y:Int) {
-		touchActive.remove(id);
-		touchPos[id * 2] = x;
-		touchPos[id * 2 + 1] = y;
+		t_touchActive.remove(id);
+		t_touchPos[id * 2] = x;
+		t_touchPos[id * 2 + 1] = y;
 		--activeTouchSpots;
 		if (id == 0) {
-			mousePosition.setTo(x, y);
-			mouseIsDown = false;
-			mouseReleased = true;
+			t_mousePosition.setTo(x, y);
+			t_mouseIsDown = false;
+			t_mouseReleased = true;
 		}
 	}
 
 	function onTouchStart(id:Int, x:Int, y:Int) {
 		++activeTouchSpots;
-		touchActive.push(id);
-		touchPos[id * 2] = x;
-		touchPos[id * 2 + 1] = y;
+		t_touchActive.push(id);
+		t_touchPos[id * 2] = x;
+		t_touchPos[id * 2 + 1] = y;
 		if (id == 0) {
-			mousePosition.setTo(x, y);
-			mouseIsDown = true;
-			mousePressed = true;
+			t_mousePosition.setTo(x, y);
+			t_mouseIsDown = true;
+			t_mousePressed = true;
 		}
 	}
 
 	function onMouseMove(x:Int, y:Int, moveX:Int, moveY:Int):Void {
-		touchPos[0] = x;
-		touchPos[1] = y;
-		mousePosition.x = x;
-		mousePosition.y = y;
-		mouseDeltaX = moveX;
-		mouseDeltaY = moveY;
+		t_touchPos[0] = x;
+		t_touchPos[1] = y;
+		t_mousePosition.x = x;
+		t_mousePosition.y = y;
+		t_mouseDeltaX = moveX;
+		t_mouseDeltaY = moveY;
 		#if INPUT_REC
 		if(record) records.push(new InputRecord(MouseMove(x,y,moveX,moveY)));
 		#end
 	}
 
 	function onMouseUp(button:Int, x:Int, y:Int):Void {
-		touchActive.remove(0);
+		t_touchActive.remove(0);
 		--activeTouchSpots;
-		mousePosition.x = x;
-		mousePosition.y = y;
-		mouseReleased = (button == 0);
-		mouseIsDown = !(button == 0);
+		t_mousePosition.x = x;
+		t_mousePosition.y = y;
+		t_mouseReleased = (button == 0);
+		t_mouseIsDown = !(button == 0);
 		#if INPUT_REC
 		if(record) records.push(new InputRecord(MouseUp(button,x,y)));
 		#end
@@ -233,21 +255,21 @@ class Input {
 
 	function onMouseDown(button:Int, x:Int, y:Int):Void {
 		++activeTouchSpots;
-		touchActive.push(0);
-		touchPos[0] = x;
-		touchPos[1] = y;
-		mousePosition.x = x;
-		mousePosition.y = y;
-		mousePressed = mouseIsDown = (button == 0);
+		t_touchActive.push(0);
+		t_touchPos[0] = x;
+		t_touchPos[1] = y;
+		t_mousePosition.x = x;
+		t_mousePosition.y = y;
+		t_mousePressed = t_mouseIsDown = (button == 0);
 		#if INPUT_REC
 		if(record) records.push(new InputRecord(MouseDown(button,x,y)));
 		#end
 	}
 
 	function onKeyDown(key:KeyCode):Void {
-		if (keysDown.indexOf(cast key) == -1) {
-			keysDown.push(cast key);
-			keysPressed.push(cast key);
+		if (t_keysDown.indexOf(cast key) == -1) {
+			t_keysDown.push(cast key);
+			t_keysPressed.push(cast key);
 		}
 		for(listener in onKeyDownSubscribers){
 			listener(key);
@@ -258,11 +280,11 @@ class Input {
 	}
 
 	function onKeyUp(key:KeyCode):Void {
-		var vIndex:Int = keysDown.indexOf(cast key);
+		var vIndex:Int = t_keysDown.indexOf(cast key);
 		if (vIndex != -1) {
-			keysDown.splice(vIndex, 1);
+			t_keysDown.splice(vIndex, 1);
 		}
-		keysReleased.push(cast key);
+		t_keysReleased.push(cast key);
 		
 		for(listener in onKeyUpSubscribers){
 			listener(key);
@@ -285,17 +307,34 @@ class Input {
 	}
 
 	public function update():Void {
-		mousePressed = false;
-		mouseReleased = false;
+		mousePressed = t_mousePressed;
+		mouseReleased = t_mouseReleased;
+
+		t_mousePressed = false;
+		t_mouseReleased = false;
 
 		keysPressed.splice(0, keysPressed.length);
 		keysReleased.splice(0, keysReleased.length);
+		for (i in 0...t_keysPressed.length){
+			keysPressed.push(t_keysPressed[i]);
+		}
+		for (i in 0...t_keysReleased.length){
+			keysReleased.push(t_keysReleased[i]);
+		}
+
+		t_keysPressed.splice(0, keysPressed.length);
+		t_keysReleased.splice(0, keysReleased.length);
 
 		for (joystick in joysticks) {
 			joystick.update();
 		}
-		mouseDeltaX = 0;
-		mouseDeltaY = 0;
+
+		mouseDeltaX = t_mouseDeltaX;
+		mouseDeltaY = t_mouseDeltaY;
+		
+		t_mouseDeltaX = 0;
+		t_mouseDeltaY = 0;
+		mousePosition.setTo(t_mousePosition.x,t_mousePosition.y);
 	}
 	#if INPUT_REC
 	public function updatePlayeback() {
