@@ -33,6 +33,7 @@ class Simulation {
 	var initState:Bool = false;
 	var resources:Resources;
 	var resourcesHandlers:Array<ResourceHandler>;
+	var finishLoading:Bool;
 
 	public var startingSeed:Float;
 
@@ -230,6 +231,12 @@ class Simulation {
 
 	private function update(dt:Float):Void {
 		if (!initialized){
+			if(finishLoading){
+				initialized = true;
+				currentState.init();
+				GEngine.i.update();
+				return;
+			}
 			if(currentState!=null){
 				currentState.loading(resources.percentage());
 			}	
@@ -245,6 +252,7 @@ class Simulation {
 			Input.i.update();
 			currentState.update(dt);
 			GEngine.i.update();
+			
 			
 		}
 		iterationRest = (TimeManager.multiplier + iterationRest) - fullIterations;
@@ -286,9 +294,7 @@ class Simulation {
 	}
 
 	private function finishUpload():Void {
-		initialized = true;
-		currentState.init();
-		GEngine.i.update();
+		finishLoading = true;
 	}
 
 	public function changeState(state:State):Void {

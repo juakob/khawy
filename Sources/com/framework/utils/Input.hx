@@ -80,6 +80,7 @@ class InputRecord {
 class Input {
 	public static var i(default, null):Input = null;
 	public static var inst(get, null):Input = null;
+	
 
 	public static function get_inst():Input {
 		return i;
@@ -115,6 +116,8 @@ class Input {
 	private var t_mousePosition:FastPoint;
 
 	public var activeTouchSpots(default, null):Int;
+
+	public var uiCapture:Bool;
 
 	var joysticks:Array<JoystickProxy>;
 	
@@ -309,6 +312,7 @@ class Input {
 	public function update():Void {
 		mousePressed = t_mousePressed;
 		mouseReleased = t_mouseReleased;
+		mouseIsDown = t_mouseIsDown;
 
 		t_mousePressed = false;
 		t_mouseReleased = false;
