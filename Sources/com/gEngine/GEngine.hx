@@ -47,7 +47,9 @@ class GEngine {
 
 	var renderTargetPool:RenderTargetPool;
 	var currentRenderTargetId:Int = -1;
-
+	var resizeRequire:Bool;
+	var newSize:FastVector2=new FastVector2();
+	
 	#if debugInfo
 	private var deltaTime:Float = 0.0;
 	private var totalFrames:Int = 0;
@@ -61,8 +63,6 @@ class GEngine {
 
 	public static var extraInfo:String = "";
 
-	var resizeRequire:Bool;
-	var newSize:FastVector2=new FastVector2();
 	var fontLoaded:Bool;
 	var identity3x3 = FastMatrix3.identity();
 	#end

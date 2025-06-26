@@ -30,6 +30,7 @@ class Entity {
 					child.limboStart();
 					childrenInLimbo++;
 				} else {
+					child.destroy();
 					children.splice(i, 1);
 				}
 			}
