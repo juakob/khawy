@@ -93,28 +93,28 @@ class Simulation {
 	}
 
 	private function onForeground() {
-		isPause = false;
+		//isPause = false;
         if (currentState != null) {
 			currentState.onForeground();
 		}
     }
 
     public function onResume() {
-		isPause = false;
+		//isPause = false;
         if (currentState != null) {
 			currentState.onResume();
 		}
     }
 
     public function onPause() {
-		isPause = true;
+		//isPause = true;
         if (currentState != null) {
 			currentState.onPause();
 		}
     }
 
     private function onBackground() {
-		isPause = true;
+		//isPause = true;
         if (currentState != null) {
 			currentState.onBackground();
 		}
@@ -173,10 +173,10 @@ class Simulation {
 		}
 		#end
 		
-		if (!isPause) {
-			TimeManager.setDelta(mFrameByFrameTime);
-			update(mFrameByFrameTime);
-		}
+		
+		TimeManager.setDelta(mFrameByFrameTime);
+		update(mFrameByFrameTime);
+		
 	
 	}
 	var skip_fame =true;
@@ -245,15 +245,16 @@ class Simulation {
 		}
 			
 		var fullIterations = Math.floor(TimeManager.multiplier + iterationRest);
-		for (i in 0...fullIterations) {
-			#if INPUT_REC
-			Input.i.updatePlayeback();
-			#end
-			Input.i.update();
-			currentState.update(dt);
-			GEngine.i.update();
-			
-			
+		if (!isPause) {
+			for (i in 0...fullIterations) {
+				#if INPUT_REC
+				Input.i.updatePlayeback();
+				#end
+				Input.i.update();
+				currentState.update(dt);
+				GEngine.i.update();
+				
+			}
 		}
 		iterationRest = (TimeManager.multiplier + iterationRest) - fullIterations;
 	}
