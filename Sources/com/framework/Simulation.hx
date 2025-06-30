@@ -276,6 +276,7 @@ class Simulation {
 		}
 		currentState = state;
 		currentState.stage = GEngine.i.getStage();
+		finishLoading = false;
 		currentState.load(resources);
 		if (manualLoad) {
 			resources.loadLocal(finishUpload);
