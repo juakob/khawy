@@ -43,9 +43,9 @@ class AtlasGenerator {
 				g.begin(false);
 			}
 			if (bitmap.specialPipeline != null) {
-				//g.setPipeline(bitmap.specialPipeline);
+				g.pipeline = bitmap.specialPipeline ;
 			} else {
-			//	g.setPipeline(clearPipeline);
+				g.pipeline = clearPipeline;
 			}
 
 			

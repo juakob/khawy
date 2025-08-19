@@ -13,7 +13,7 @@ class Emitter extends Entity {
 	public var maxLife:Float = 0;
 	public var minLife:Float = 0;
 
-	private var container:Layer;
+	public var container:Layer;
 	private var playing:Bool;
 	private var timePlaying:Bool;
 	private var time:Float = 0;
@@ -28,6 +28,8 @@ class Emitter extends Entity {
 	public var angularVelocityMin:Float = 0;
 	public var gravity:Float = 0;
 	public var accelerationX:Float = 0;
+	public var emissionTimer:Float = 0;
+	public var emissionRate:Float = 0.5;
 
 	public function new() {
 		super();
@@ -58,27 +60,43 @@ class Emitter extends Entity {
 
 	override function update(dt:Float):Void {
 		super.update(dt);
+		
 		if (timePlaying) {
 			time -= dt;
 			if (time < 0) {
 				stop();
 			}
 		}
+		
 		if (!playing) {
-			if(numAliveChildren()==0){
-				die();
+			if (numAliveChildren() == 0) {
+				// die();
 			}
 			return;
 		}
-		while (numAliveChildren() != currentCapacity()) {
+		
+		emissionTimer += dt;
+		
+		while (numAliveChildren() < currentCapacity() && emissionTimer >= emissionRate) {
+			emissionTimer -= emissionRate; // Restar el tiempo del rate para la próxima emisión
+			
 			var particle:Particle = cast(recycle(Particle));
-			particle.reset(x + xRandom - xRandom * 2 * Math.random(), y + yRandom - yRandom * 2 * Math.random(), minLife + (maxLife - minLife) * Math.random(),
-				minVelocityX + (maxVelocityX - minVelocityX) * Math.random(), minVelocityY + (maxVelocityY - minVelocityY) * Math.random(), container,
-				angularVelocityMin + (angularVelocityMax - angularVelocityMin) * Math.random(), minScale + (maxScale - minScale) * Math.random());
+			particle.reset(
+				x + xRandom - xRandom * 2 * Math.random(),
+				y + yRandom - yRandom * 2 * Math.random(),
+				minLife + (maxLife - minLife) * Math.random(),
+				minVelocityX + (maxVelocityX - minVelocityX) * Math.random(),
+				minVelocityY + (maxVelocityY - minVelocityY) * Math.random(),
+				container,
+				angularVelocityMin + (angularVelocityMax - angularVelocityMin) * Math.random(),
+				minScale + (maxScale - minScale) * Math.random()
+			);
+			
 			particle.gravity = gravity;
 			particle.accelerationX = accelerationX;
 		}
 	}
+	
 
 	public function get_allX():Float {
 		return container.x;

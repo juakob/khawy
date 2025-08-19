@@ -1,5 +1,6 @@
 package com.gEngine;
 
+import kha.math.FastVector2;
 import com.gEngine.display.BlendMode;
 import com.gEngine.painters.PainterColorTransform;
 import com.gEngine.painters.PainterAlpha;
@@ -37,7 +38,7 @@ class GEngine {
 	public var realHeight(default, null):Int;
 
 	private var textures:Array<Image>;
-	private var stage:Stage;
+	public var stage:Stage;
 	var modelViewMatrix:FastMatrix4;
 
 	inline static var initialIndex:Int = 2;
@@ -46,7 +47,9 @@ class GEngine {
 
 	var renderTargetPool:RenderTargetPool;
 	var currentRenderTargetId:Int = -1;
-
+	var resizeRequire:Bool;
+	var newSize:FastVector2=new FastVector2();
+	
 	#if debugInfo
 	private var deltaTime:Float = 0.0;
 	private var totalFrames:Int = 0;
@@ -123,6 +126,12 @@ class GEngine {
 		if (Image.renderTargetsInvertedY()) {
 			modelViewMatrix.setFrom(FastMatrix4.scale(1, -1, 1).multmat(modelViewMatrix));
 		}
+	}
+
+	public function resize(width:Int,height:Int) {
+		resizeRequire = true;
+		newSize.x = width;
+		newSize.y = height;
 	}
 
 	public function createDefaultPainters():Void {
@@ -302,6 +311,14 @@ class GEngine {
 	}
 
 	public function draw(frameBuffer:Framebuffer, clear:Bool = true, needRefresh:Bool):Void {
+		if(resizeRequire){
+			resizeRequire = false;
+			var width = Math.round(newSize.x);
+			var height = Math.round(newSize.y);
+			calculateModelViewMatrix(width, height);
+			stage.defaultCamera().resize(width,height);
+			releaseUnuseRenderTargets();
+		}
 		if (frameBuffer.width * oversample != width || frameBuffer.height * oversample != height)
 			resizeInput(frameBuffer.width, frameBuffer.height);
 

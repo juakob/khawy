@@ -27,6 +27,9 @@ class CollisionCircle extends Body implements ICollider {
 			return false;
 		} else if (collider.collisionType() == CollisionType.Group) {
 			return collider.overlap(this, notifyCallback);
+		} else if (collider.collisionType() == CollisionType.Box) {
+			var box:CollisionBox = cast collider;
+			return this.x>box.x && this.x< box.x+box.width && this.x>box.y && this.y< box.y+box.height; //temp calculation
 		}
 		return false;
 	}

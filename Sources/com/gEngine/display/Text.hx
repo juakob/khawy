@@ -108,7 +108,8 @@ class Text extends Layer {
 		for (letter in mLetters) {
 			if (letter.x < min) {
 				min = letter.x;
-			} else if (letter.x + letter.width() > max) {
+			} 
+			if (letter.x + letter.width() > max) {
 				max = letter.x + letter.width();
 			}
 		}

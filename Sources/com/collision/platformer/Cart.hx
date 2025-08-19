@@ -14,8 +14,8 @@ class Cart implements ICollider extends Body {
 	public var track:Track;
 	public var userData:Dynamic;
 	public var parent:CollisionGroup;
-	public var distanceFromOrigin:Float;
-	
+	public var distanceFromOrigin:Float=0;
+	public var length:Float = 0;
 
 	public function new() {
 		super();
@@ -60,11 +60,11 @@ class Cart implements ICollider extends Body {
 			return;
 		}
 		if (stick) {
-			var distanceFromOriginX = x - track.pos.x;
-			var distance = x - this.lastX;
-			if (distanceFromOriginX > track.length) {
+			//var distance = Math.sqrt(velocityX*velocityX+velocityY*velocityY);
+			length += velocityX*dt;
+			if (length>0 && length > track.length) {
 				if (track.nextEdge != null) {
-					distance = distanceFromOriginX - track.length;
+					length = length - track.length;
 					lastStickY=track.pos.y+track.dir.y*track.length;
 					lastX=track.pos.x+track.dir.x*track.length;
 					track = track.nextEdge;
@@ -72,20 +72,22 @@ class Cart implements ICollider extends Body {
 					clearTrack();
 					return;
 				}
-			} else if (distanceFromOriginX < 0) {
+			} else if (length < 0) {
 				if (track.prevEdge != null) {
-					distance = distanceFromOriginX;
+					track = track.prevEdge;
+					length = track.length+length;
 					lastStickY=track.pos.y;
 					lastX=track.pos.x;
-					track = track.prevEdge;
 				} else {
 					clearTrack();
 					return;
 				}
+			}else{
+				super.update(dt);
 			}
-			var finalPos = track.dir.mult(distance);
-			x = lastX + finalPos.x;
-			y = lastStickY + finalPos.y;
+			var finalPos = track.dir.mult(length);
+			x = track.pos.x + finalPos.x;
+			y = track.pos.y + finalPos.y;
 			lastStickY=y;
 			velocityY = 0;
 			distanceFromOrigin=x-track.pos.x;

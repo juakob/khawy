@@ -78,33 +78,41 @@ class Camera {
 	var deadOffset:Point = new Point();
 
 	public function new(width:Int = -1, height:Int = -1) {
+		resize(width,height);
+		perlin = new Perlin(1);
+		update(0);
+		#if PIXEL_GAME
+		pixelSnap = true;
+		smooth = false;
+		#end
+	}
+	public function resize(width:Int,height:Int) {
 		finalX = 0;
 		finalY = 0;
-		if (width < 0 || height < 0) {
-			var wWidth = Window.get(0).width;
-			var wHeight = Window.get(0).height;
-			width = wWidth;
-			height = wHeight;
-			var ratio = wWidth/wHeight;
-			scaleCompensation = width/GEngine.virtualWidth;
-			if (ratio>21/9) {
-				width = Math.ceil(wHeight*21/9);
-				finalX = Math.ceil(wWidth*0.5-width*0.5);
-				scaleCompensation = width/GEngine.virtualWidth;
-			}
-			if (ratio<4/3) {
-				height = Math.ceil(wWidth*3/4);
-				finalY = Math.ceil(wHeight*0.5-height*0.5);
-				scaleCompensation = height/GEngine.virtualHeight;
-				//offsetEye.x = width*0.5;
-				//offsetEye.y = height*0.5;
-				
-			}
-			
-		//	width = GEngine.virtualWidth;
-		//	height = GEngine.virtualHeight;
-		
+		if(width<=0||height<=0){
+			width=Window.get(0).width;
+			height = Window.get(0).height;
 		}
+		//if (width < 0 || height < 0) {
+
+			var scaleX:Float = width / GEngine.virtualWidth;
+			var scaleY:Float = height / GEngine.virtualHeight;
+			
+			
+			scaleCompensation = Math.min(scaleX, scaleY);
+			
+			
+		
+		// //	width = GEngine.virtualWidth;
+		// //	height = GEngine.virtualHeight;
+		
+		// }
+		
+		this.width = width;
+		this.height = height;
+		
+		
+
 		eye = new FastVector3(0, 0, zMapDistance);
 		at = new FastVector3(x, y, 0);
 		up = new FastVector3(0, 1, 0);
@@ -113,9 +121,11 @@ class Camera {
 
 		setDrawArea(finalX, finalY, width, height);
 		
-		this.width = width;
-		this.height = height;
-		renderTarget = GEngine.i.getRenderTarget(width, height);
+		
+		if (renderTarget >= 0){
+			GEngine.i.releaseRenderTarget(renderTarget);
+		}
+		renderTarget = GEngine.i.getRenderTarget(Math.ceil(width*0.95), Math.ceil(height*0.95));
 		var texture = GEngine.i.getTexture(renderTarget);
 		texture.g4.begin();
 		texture.g4.clear(Color.Transparent);
@@ -124,12 +134,6 @@ class Camera {
 		projection = orthogonal;
 		projectionIsOrthogonal = true;
 		screenTransform = createScreenTransform();
-		perlin = new Perlin(1);
-		update(0);
-		#if PIXEL_GAME
-		pixelSnap = true;
-		smooth = false;
-		#end
 	}
 
 	public function updateView() {
@@ -216,7 +220,7 @@ class Camera {
 		painter.filter = textureFilter;
 		painter.setProjection(GEngine.i.getMatrix());
 		if (postProcess != null) {}
-		GEngine.i.renderToFrameBuffer(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1);
+		GEngine.i.renderToFrameBuffer(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1/0.95);
 		GEngine.i.endCanvas();
 	}
 
