@@ -15,16 +15,16 @@ out vec4 FragColor;
 // Creative Commons Attribution 3.0 Unported License
 
 
- const float compoDOFDistance = 0.2; // Focal distance value in meters
- const float compoDOFLength = 250.0; // Focal length in mm 18-200
- const float compoDOFFstop = 15.0; // F-stop value
+ const float compoDOFDistance = 0.4; // Focal distance value in meters
+ const float compoDOFLength = 100.0; // Focal length in mm 18-200
+ const float compoDOFFstop = 0.001; // F-stop value
 
 
 const int samples = 2; // Samples on the first ring
 const int rings = 2; // Ring count
-const vec2 focus = vec2(0.5, 0.4);
-const float coc = 0.11; // Circle of confusion size in mm (35mm film = 0.03mm)
-const float maxblur = 1.0;
+const vec2 focus = vec2(0.5, 0.5);
+const float coc = 0.03; // Circle of confusion size in mm (35mm film = 0.03mm)
+const float maxblur = 0.5;
 const float threshold = 0.5; // Highlight threshold
 const float gain = 2.0; // Highlight gain
 const float bias = 0.5; // Bokeh edge bias
@@ -74,7 +74,7 @@ vec3 dof(const vec2 texCoord, const float gdepth, const sampler2D tex, const sam
 	float w = (texStep.x) * blur * maxblur + noise.x;
 	float h = (texStep.y) * blur * maxblur + noise.y;
 	vec3 col = vec3(0.0);
-	if (blur < 0.05) {
+	if (blur < 1) {
 		col = texture(tex, texCoord).rgb;
 	}
 	else {
@@ -103,6 +103,6 @@ vec3 dof(const vec2 texCoord, const float gdepth, const sampler2D tex, const sam
 void kore() {
     float depth = texture(gbufferD, texCoord).r;
 	vec4 col=vec4(dof(texCoord,depth,tex,gbufferD,vec2(0.01,0.01),vec2(0.2,0.25)).xyz,1);
-
+	col = vec4(depth,0,0,1);
 	FragColor = col;
 }

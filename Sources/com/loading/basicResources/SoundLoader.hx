@@ -41,4 +41,6 @@ class SoundLoader implements Resource {
 	}
 
 	public function unloadLocal():Void {}
+
+	public function postLoad() {}
 }

@@ -20,7 +20,7 @@ import com.helpers.FastPoint;
 class Camera {
 	private var targetPos:FastPoint;
 
-	public static var zMapDistance:Float = 869.1168 - 223; // distance where x,y are map to the screen if z=0;
+	public var zMapDistance:Float = 869.1168 - 223; // distance where x,y are map to the screen if z=0;
 
 	public var min:FastPoint;
 	public var max:FastPoint;
@@ -48,9 +48,11 @@ class Camera {
 	public var projection:FastMatrix4;
 	public var orthogonal:FastMatrix4;
 	public var screenTransform:FastMatrix4;
+	
 
 	var finalX:Int = 0;
 	var finalY:Int = 0;
+	var scaleCompensation:Float = 1;
 
 	public var eye:FastVector3;
 	public var at:FastVector3;
@@ -84,18 +86,21 @@ class Camera {
 			width = wWidth;
 			height = wHeight;
 			var ratio = wWidth/wHeight;
+			scaleCompensation = width/GEngine.virtualWidth;
 			if (ratio>21/9) {
 				width = Math.ceil(wHeight*21/9);
 				finalX = Math.ceil(wWidth*0.5-width*0.5);
-				scale = scale *width/GEngine.virtualWidth;
+				scaleCompensation = width/GEngine.virtualWidth;
 			}
 			if (ratio<4/3) {
 				height = Math.ceil(wWidth*3/4);
 				finalY = Math.ceil(wHeight*0.5-height*0.5);
-				scale = scale *height/GEngine.virtualHeight;
+				scaleCompensation = height/GEngine.virtualHeight;
 				//offsetEye.x = width*0.5;
 				//offsetEye.y = height*0.5;
+				
 			}
+			
 		//	width = GEngine.virtualWidth;
 		//	height = GEngine.virtualHeight;
 		
@@ -104,7 +109,7 @@ class Camera {
 		at = new FastVector3(x, y, 0);
 		up = new FastVector3(0, 1, 0);
 		view = FastMatrix4.identity();
-		targetPos = new FastPoint(width * 0.5*1/scale, height * 0.5*1/scale);
+		targetPos = new FastPoint(width * 0.5*1/scale*scaleCompensation, height * 0.5*1/scale*scaleCompensation);
 
 		setDrawArea(finalX, finalY, width, height);
 		
@@ -130,7 +135,7 @@ class Camera {
 	public function updateView() {
 		view.setFrom(FastMatrix4.lookAt(eye, at, up));
 		if (projectionIsOrthogonal) {
-			view.setFrom(FastMatrix4.scale(scale, scale, 1).multmat(view));
+			view.setFrom(FastMatrix4.scale(scale*scaleCompensation, scale*scaleCompensation, 1).multmat(view));
 		}
 		if (pixelSnap) {
 			view._30 = Std.int(view._30);
@@ -297,7 +302,7 @@ class Camera {
 				this.x-=width*0.5*1/scale;
 				this.y-=height*0.5*1/scale;
 			}*/
-			this.z = zMapDistance * 1 / scale;
+			this.z = zMapDistance * 1 / scale*scaleCompensation;
 
 			var shakeX = 0.;
 			var shakeY = 0.;
@@ -343,16 +348,16 @@ class Camera {
 		if (min != null) {
 			// if (width * 1 / scale > max.x - min.x || height * 1 / scale > max.y - min.y)
 			//	return;
-			if (this.x - width * 0.5 * 1 / scale < min.x) {
-				this.x = (min.x + width * 0.5 * 1 / scale);
-			} else if (this.x + width * 0.5 * 1 / scale > max.x) {
-				this.x = (max.x - width * 0.5 * 1 / scale);
+			if (this.x - width * 0.5 * 1 / (scale*scaleCompensation) < min.x) {
+				this.x = (min.x + width * 0.5 * 1 / (scale*scaleCompensation));
+			} else if (this.x + width * 0.5 * 1 / (scale*scaleCompensation) > max.x) {
+				this.x = (max.x - width * 0.5 * 1 / (scale*scaleCompensation));
 			}
 
-			if (this.y - height * 0.5 * 1 / scale < min.y) {
-				this.y = (min.y + height * 0.5 * 1 / scale);
-			} else if (this.y + height * 0.5 * 1 / scale > max.y) {
-				this.y = (max.y - height * 0.5 * 1 / scale);
+			if (this.y - height * 0.5 * 1 / (scale*scaleCompensation) < min.y) {
+				this.y = (min.y + height * 0.5 * 1 / (scale*scaleCompensation));
+			} else if (this.y + height * 0.5 * 1 / (scale*scaleCompensation) > max.y) {
+				this.y = (max.y - height * 0.5 * 1 / (scale*scaleCompensation));
 			}
 		}
 	}

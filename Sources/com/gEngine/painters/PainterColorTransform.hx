@@ -8,8 +8,9 @@ import kha.graphics4.VertexStructure;
 
 class PainterColorTransform extends Painter {
 	public function new(autoDestroy:Bool = true, blend:Blend, depthWrite:Bool = false) {
-		super(autoDestroy, blend, depthWrite);
+		MAX_VERTEX_PER_BUFFER =100*4;
 		dataPerVertex = 13;
+		super(autoDestroy, blend, depthWrite);
 	}
 
 	override function defineVertexStructure(structure:VertexStructure) {

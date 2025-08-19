@@ -96,7 +96,6 @@ class SingleImagePainter {
 	function initBuffers(): Void {
 		if (rectVertexBuffer == null) {
 			rectVertexBuffer = new VertexBuffer(bufferSize * 4, structure, Usage.DynamicUsage);
-			rectVertices = rectVertexBuffer.lock();
 
 			indexBuffer = new IndexBuffer(bufferSize * 3 * 2, Usage.StaticUsage);
 			var indices = indexBuffer.lock();
@@ -135,7 +134,7 @@ class SingleImagePainter {
 		rectVertices.set(baseIndex + 29, -5.0);
 	}
 
-	private inline function setRectTexCoords(left: FastFloat, top: FastFloat, right: FastFloat, bottom: FastFloat): Void {
+	private inline  function setRectTexCoords(left: FastFloat, top: FastFloat, right: FastFloat, bottom: FastFloat): Void {
 		var baseIndex: Int = (bufferIndex - bufferStart) * vertexSize * 4;
 		rectVertices.set(baseIndex +  3, left);
 		rectVertices.set(baseIndex +  4, bottom);
@@ -178,7 +177,7 @@ class SingleImagePainter {
 			return;
 		}
 
-		rectVertexBuffer.unlock((bufferIndex - bufferStart) * 4);
+		//rectVertexBuffer.unlock((bufferIndex - bufferStart) * 4);
 		var pipeline = myPipeline.get(null, Depth24Stencil8);
 		g.setPipeline(pipeline.pipeline);
 		g.setVertexBuffer(rectVertexBuffer);
@@ -223,9 +222,11 @@ class SingleImagePainter {
 		var tex = img;
 		if (bufferStart + bufferIndex + 1 >= bufferSize || (lastTexture != null && tex != lastTexture)) drawBuffer(false);
 
+		rectVertices = rectVertexBuffer.lock();
 		setRectTexCoords(sx / tex.realWidth, sy / tex.realHeight, (sx + sw) / tex.realWidth, (sy + sh) / tex.realHeight);
 		setRectColor(color.R, color.G, color.B, color.A*opacity );
 		setRectVertices(bottomleftx, bottomlefty, topleftx, toplefty, toprightx, toprighty, bottomrightx, bottomrighty);
+		rectVertexBuffer.unlock();
 
 		++bufferIndex;
 		lastTexture = tex;

@@ -41,6 +41,15 @@ class RenderTargetPool {
 	public function clear() {
 		targets.splice(0, targets.length);
 	}
+	public function removeUnused() {
+		var temp = new Array<ImageProx>();
+		for (target in targets) {
+			if(target.inUse){
+				temp.push(target);
+			}
+		}
+		targets = temp;
+	}
 }
 
 class ImageProx {

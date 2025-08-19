@@ -26,6 +26,7 @@ class CacheTexture extends Painter {
 		++currentReferences;
 		if (releaseTexture()) {
 			GEngine.i.releaseRenderTarget(textureID);
+			textureID = -1;
 		}
 	}
 }

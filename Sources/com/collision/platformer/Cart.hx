@@ -45,14 +45,14 @@ class Cart implements ICollider extends Body {
 
 	override function update(dt:Float) {
 		if (stick) {
-			if(track.updated){
+		//	if(track.updated){
 				//var pos=track.dir.mult(distanceFromOrigin).add(track.pos);
 				var scale = distanceFromOrigin / track.dir.x;
 				y = scale * track.dir.y + track.pos.y;
 				x=track.pos.x+distanceFromOrigin;
 				//y=pos.y;
 				lastStickY=y;
-			}
+		//	}
 		}
 		super.update(dt);
 		if (velocityY < 0 || (stick&& track.isDestroy)) {

@@ -17,11 +17,13 @@ class JoinAtlas implements Resource {
 	var loadedCounter:Int = 0;
 	var separation:Int;
 	var image:Image;
+	var expand:Bool=true;
 
-	public function new(width:Int, height:Int, separation:Int = 2) {
+	public function new(width:Int, height:Int, separation:Int = 2,expand:Bool = true) {
 		this.width = width;
 		this.height = height;
 		this.separation = separation;
+		this.expand = expand;
 		resources = new Array();
 	}
 
@@ -50,7 +52,8 @@ class JoinAtlas implements Resource {
 	function onLoad() {
 		++loadedCounter;
 		if (loadedCounter == resources.length) {
-			createAtlas();
+		//	createAtlas();
+			onFinish();
 		}
 	}
 
@@ -59,13 +62,13 @@ class JoinAtlas implements Resource {
 		for (resource in resources) {
 			bitmaps = bitmaps.concat(resource.getBitmaps());
 		}
-		image = AtlasGenerator.generate(width, height, bitmaps, separation);
+		image = AtlasGenerator.generate(width, height, bitmaps, separation, expand);
 
 		var textureId:Int = GEngine.i.addTexture(image);
 		for (resource in resources) {
 			resource.update(textureId);
 		}
-		onFinish();
+		
 		//var pixels=image.getPixels();
 		//writePixels24("test.png",pixels,width,height);
 	
@@ -91,5 +94,9 @@ class JoinAtlas implements Resource {
 			resource.unloadLocal();
 		}
 		image.unload();
+	}
+
+	public function postLoad() {
+		createAtlas();
 	}
 }

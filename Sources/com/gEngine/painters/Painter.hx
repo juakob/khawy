@@ -1,5 +1,6 @@
 package com.gEngine.painters;
 
+import kha.graphics5_.TextureFilter;
 import kha.graphics4.BlendingOperation;
 import kha.graphics4.CompareMode;
 import kha.math.FastMatrix4;
@@ -26,15 +27,19 @@ import kha.graphics4.VertexStructure;
 
 class Painter implements IPainter {
 	var vertexBuffer:VertexBuffer;
+	var vertexBuffer1:VertexBuffer;
+	var vertexBuffer2:VertexBuffer;
+	var usingBuff1:Bool = true;
 	var indexBuffer:IndexBuffer;
 	var pipeline:PipelineState;
+	
 
 	public var red:FastFloat = 0.;
 	public var green:FastFloat = 0.;
 	public var blue:FastFloat = 0.;
 	public var alpha:FastFloat = 0.;
 
-	var MAX_VERTEX_PER_BUFFER:Int = 1500*4;
+	var MAX_VERTEX_PER_BUFFER:Int ;
 
 	var dataPerVertex:Int = 5;
 	var mvpID:ConstantLocation;
@@ -60,13 +65,15 @@ class Painter implements IPainter {
 	var depthWrite:Bool;
 	var clockWise:CullMode;
 
-	public function new(autoDestroy:Bool = true, blend:Blend = null, depthWrite:Bool = false, clockWise:CullMode = CullMode.None) {
+	public function new(autoDestroy:Bool = true, blend:Blend = null, depthWrite:Bool = false, clockWise:CullMode = CullMode.None,maxV:Int =12,dataV:Int=5) {
 		if (blend == null)
 			blend = Blend.blendDefault();
 		if (autoDestroy)
 			PainterGarbage.i.add(this);
 		this.depthWrite = depthWrite;
 		this.clockWise = clockWise;
+		this.MAX_VERTEX_PER_BUFFER = maxV;
+		this.dataPerVertex = dataV;
 		initShaders(blend);
 		createBuffers();
 		buffer = downloadVertexBuffer();
@@ -100,6 +107,7 @@ class Painter implements IPainter {
 		// Bind state we want to draw with
 		g.setPipeline(pipeline);
 
+		
 		setParameter(g);
 		g.setTextureParameters(textureConstantID, TextureAddressing.Clamp, TextureAddressing.Clamp, filter, filter, mipMapFilter);
 
@@ -107,8 +115,15 @@ class Painter implements IPainter {
 
 		unsetTextures(g);
 		// End rendering
-
+		if (usingBuff1) {
+			vertexBuffer = vertexBuffer1;
+			usingBuff1 = false;
+		}else{
+			vertexBuffer = vertexBuffer1;
+			usingBuff1 = true;
+		}
 		buffer = downloadVertexBuffer();
+		
 
 		#if debugInfo
 		++ GEngine.drawCount;
@@ -125,9 +140,11 @@ class Painter implements IPainter {
 		structure = new VertexStructure();
 		defineVertexStructure(structure);
 		pipeline.inputLayout = [structure];
-		pipeline.depthMode = CompareMode.Less;
 		pipeline.cullMode = clockWise;
-		pipeline.depthWrite = depthWrite;
+		pipeline.depthWrite = false;
+		if (false){
+			pipeline.depthMode = CompareMode.Less;
+		}
 		setShaders(pipeline);
 		setBlends(pipeline, blend);
 		// pipeline.colorWriteMaskAlpha = false;
@@ -142,7 +159,9 @@ class Painter implements IPainter {
 	}
 
 	function createBuffers():Void {
-		vertexBuffer = new VertexBuffer(MAX_VERTEX_PER_BUFFER, structure, Usage.DynamicUsage);
+		vertexBuffer1 = new VertexBuffer(MAX_VERTEX_PER_BUFFER, structure, Usage.DynamicUsage);
+		vertexBuffer2 = new VertexBuffer(MAX_VERTEX_PER_BUFFER, structure, Usage.DynamicUsage);
+		vertexBuffer = vertexBuffer1;
 		// Create index buffer
 		indexBuffer = new IndexBuffer(Std.int(MAX_VERTEX_PER_BUFFER * ratioIndexVertex), Usage.StaticUsage);
 
