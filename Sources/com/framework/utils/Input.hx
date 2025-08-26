@@ -94,6 +94,9 @@ class Input {
 	private var mouseIsDown:Bool;
 	private var mousePressed:Bool;
 	private var mouseReleased:Bool;
+	private var mouseLeftIsDown:Bool;
+	private var mouseLeftPressed:Bool;
+	private var mouseLeftReleased:Bool;
 	private var keysDown:Array<Int>;
 	private var keysPressed:Array<Int>;
 	private var keysReleased:Array<Int>;
@@ -106,6 +109,9 @@ class Input {
 	private var t_mouseIsDown:Bool;
 	private var t_mousePressed:Bool;
 	private var t_mouseReleased:Bool;
+	private var t_mouseLeftIsDown:Bool;
+	private var t_mouseLeftPressed:Bool;
+	private var t_mouseLeftReleased:Bool;
 	private var t_keysDown:Array<Int>;
 	private var t_keysPressed:Array<Int>;
 	private var t_keysReleased:Array<Int>;
@@ -142,6 +148,10 @@ class Input {
 		mouseIsDown = false;
 		mousePressed = false;
 		mouseReleased = false;
+
+		mouseLeftIsDown = false;
+		mouseLeftPressed = false;
+		mouseLeftReleased = false;
 
 		keysDown = new Array();
 		keysPressed = new Array();
@@ -213,10 +223,14 @@ class Input {
 		t_touchPos[id * 2] = x;
 		t_touchPos[id * 2 + 1] = y;
 		--activeTouchSpots;
+		t_mousePosition.setTo(x, y);
 		if (id == 0) {
-			t_mousePosition.setTo(x, y);
 			t_mouseIsDown = false;
 			t_mouseReleased = true;
+		}else
+		if (id == 1) {
+			t_mouseLeftIsDown = false;
+			t_mouseLeftReleased = true;
 		}
 	}
 
@@ -225,10 +239,14 @@ class Input {
 		t_touchActive.push(id);
 		t_touchPos[id * 2] = x;
 		t_touchPos[id * 2 + 1] = y;
+		t_mousePosition.setTo(x, y);
 		if (id == 0) {
-			t_mousePosition.setTo(x, y);
 			t_mouseIsDown = true;
 			t_mousePressed = true;
+		}else
+		if (id == 1) {
+			t_mouseLeftIsDown = true;
+			t_mouseLeftPressed = true;
 		}
 	}
 
@@ -249,8 +267,15 @@ class Input {
 		--activeTouchSpots;
 		t_mousePosition.x = x;
 		t_mousePosition.y = y;
-		t_mouseReleased = (button == 0);
-		t_mouseIsDown = !(button == 0);
+		if(button ==0 ){
+			t_mouseReleased = true;
+			t_mouseIsDown = false;
+		}else
+		if(button==1){
+			t_mouseLeftReleased = true;
+			t_mouseLeftIsDown = false;
+		}
+		
 		#if INPUT_REC
 		if(record) records.push(new InputRecord(MouseUp(button,x,y)));
 		#end
@@ -263,7 +288,12 @@ class Input {
 		t_touchPos[1] = y;
 		t_mousePosition.x = x;
 		t_mousePosition.y = y;
-		t_mousePressed = t_mouseIsDown = (button == 0);
+		if(button ==0 ){
+			t_mousePressed = t_mouseIsDown = true;
+		}else
+		if(button==1){
+			t_mouseLeftPressed = t_mouseLeftIsDown = true;
+		}
 		#if INPUT_REC
 		if(record) records.push(new InputRecord(MouseDown(button,x,y)));
 		#end
@@ -314,8 +344,15 @@ class Input {
 		mouseReleased = t_mouseReleased;
 		mouseIsDown = t_mouseIsDown;
 
+		mouseLeftPressed = t_mouseLeftPressed;
+		mouseLeftReleased = t_mouseLeftReleased;
+		mouseLeftIsDown = t_mouseLeftIsDown;
+
 		t_mousePressed = false;
 		t_mouseReleased = false;
+
+		t_mouseLeftPressed = false;
+		t_mouseLeftReleased = false;
 
 		keysPressed.splice(0, keysPressed.length);
 		keysReleased.splice(0, keysReleased.length);
@@ -429,6 +466,18 @@ class Input {
 
 	public function isMouseReleased():Bool {
 		return mouseReleased;
+	}
+
+	public function isMouseLeftDown():Bool {
+		return mouseLeftIsDown;
+	}
+
+	public function isMouseLeftPressed():Bool {
+		return mouseLeftPressed;
+	}
+
+	public function isMouseLeftReleased():Bool {
+		return mouseLeftReleased;
 	}
 
 	public inline function getMouseX():Float {
