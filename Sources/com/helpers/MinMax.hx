@@ -241,9 +241,16 @@ class MinMax {
 		max.y *= scaleY;
 	}
 
-	public inline function contains(minMax:MinMax):Bool {
+	public  function contains(minMax:MinMax):Bool {
 		return return min.x <= minMax.max.x && minMax.min.x <= max.x && min.y <= minMax.max.y && minMax.min.y <= max.y;
 	}
+	public function overlap(other:MinMax, offsetX:Float = 0, offsetY:Float = 0):Bool {
+    return !(max.x < other.min.x + offsetX ||
+             min.x > other.max.x + offsetX ||
+             max.y < other.min.y + offsetY ||
+             min.y > other.max.y + offsetY);
+}
+
 
 	public inline function offset(x:Float, y:Float):Void {
 		min.x += x;
