@@ -1,8 +1,9 @@
 package com.target;
 
+
+#if (kha_html5 && js)
 import com.gEngine.GEngine;
 import kha.Macros;
-#if (kha_html5 && js)
 import js.html.CanvasElement;
 import js.Browser.document;
 import js.Browser.window;

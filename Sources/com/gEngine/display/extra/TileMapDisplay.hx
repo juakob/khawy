@@ -70,10 +70,10 @@ class TileMapDisplay extends Layer {
 		mergeMinMax(paintMode.camera.screenToWorld(paintMode.camera.width, 0), min, max);
 		mergeMinMax(paintMode.camera.screenToWorld(paintMode.camera.width, paintMode.camera.height), min, max);
 		mergeMinMax(paintMode.camera.screenToWorld(0, paintMode.camera.height), min, max);
-		var startInTilesX = Std.int(min.x / tileWidth) - 1;
-		var endInTilesX = Std.int(max.x / tileWidth) + 1;
-		var startInTilesY = Std.int(min.y / tileHeight) - 1;
-		var endInTilesY = Std.int(max.y / tileHeight) + 1;
+		var startInTilesX = Std.int(min.x / tileWidth) ;
+		var endInTilesX = Std.int(max.x / tileWidth) + 2;
+		var startInTilesY = Std.int(min.y / tileHeight) ;
+		var endInTilesY = Std.int(max.y / tileHeight) + 2;
 		if (startInTilesX < 0)
 			startInTilesX = 0;
 		if (startInTilesY < 0)
