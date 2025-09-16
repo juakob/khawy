@@ -81,7 +81,7 @@ class AtlasGenerator {
 		var img = Image.createRenderTarget(1, 1);
 		img.unload();
 
-		atlasImage.generateMipmaps(4);
+		//atlasImage.generateMipmaps(4);
 		return atlasImage;
 	}
 

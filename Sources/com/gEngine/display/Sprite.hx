@@ -63,8 +63,8 @@ class Sprite implements IAnimation implements IRotation {
 	private var dataUnique:Bool = false;
 
 	public var smooth(get, set):Bool;
-	public var textureFilter:TextureFilter = TextureFilter.LinearFilter;
-	public var mipMapFilter:MipMapFilter = MipMapFilter.LinearMipFilter;
+	public var textureFilter:TextureFilter = TextureFilter.AnisotropicFilter;
+	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
 
 	var transform:FastMatrix4;
 	var rotation3d:FastMatrix4;
