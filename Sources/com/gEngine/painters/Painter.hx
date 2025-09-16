@@ -90,6 +90,12 @@ class Painter implements IPainter {
 	public function render(clear:Bool = false, cropArea:MinMax = null):Void {
 		if (counter == 0)
 			return;
+		#if debugInfo
+		if(GEngine.drawCount> GEngine.maxDrawCount){
+			counter =0;
+			return;
+		}
+		#end
 		var vertexCount:Int = vertexCount();
 		var canvas = GEngine.i.currentCanvas();
 		canvasWidth = canvas.width;

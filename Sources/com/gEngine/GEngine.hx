@@ -58,6 +58,7 @@ class GEngine {
 	private var fps:Int = 0;
 
 	public static var drawCount:Int = 0;
+	public static var maxDrawCount:Int = 99999999;
 
 	public var font:kha.Font;
 
