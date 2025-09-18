@@ -63,7 +63,7 @@ class Sprite implements IAnimation implements IRotation {
 	private var dataUnique:Bool = false;
 
 	public var smooth(get, set):Bool;
-	public var textureFilter:TextureFilter = TextureFilter.AnisotropicFilter;
+	public var textureFilter:TextureFilter = TextureFilter.LinearFilter;
 	public var mipMapFilter:MipMapFilter = MipMapFilter.NoMipFilter;
 
 	var transform:FastMatrix4;
@@ -299,7 +299,7 @@ class Sprite implements IAnimation implements IRotation {
 		painter.setVertexDataCounter(vertexBufferCounter);
 	}
 
-	static inline function checkBatchAlpha(paintMode:PaintMode, paintInfo:PaintInfo, count:Int, painter:PainterAlpha) {
+	static  function checkBatchAlpha(paintMode:PaintMode, paintInfo:PaintInfo, count:Int, painter:PainterAlpha) {
 		if (!(paintMode.canBatch(paintInfo, count, painter) && (inline painter.canBatch(paintInfo, count)))) {
 			paintMode.render();
 			paintMode.changePainter(painter, paintInfo);
