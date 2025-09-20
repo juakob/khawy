@@ -1,6 +1,8 @@
 package com.loading.basicResources;
 
 //import format.png.Writer;
+import com.basicDisplay.SpriteSheetDB;
+import com.gEngine.AnimationData;
 import kha.Image;
 import com.framework.Simulation;
 import kha.Assets;
@@ -18,6 +20,7 @@ class JoinAtlas implements Resource {
 	var separation:Int;
 	var image:Image;
 	var expand:Bool=true;
+	public var name:String;
 
 	public function new(width:Int, height:Int, separation:Int = 2,expand:Bool = true) {
 		this.width = width;
@@ -68,7 +71,18 @@ class JoinAtlas implements Resource {
 		for (resource in resources) {
 			resource.update(textureId);
 		}
+		if(name==null){
+			name = 'atlas_'+textureId;
+		}
+
+		var animationData = new AnimationData();
+		animationData.name = name;
+		animationData.frames = new Array();
+		animationData.texturesID = textureId;
+		animationData.frames.push(TilesheetLoader.createFrame(0, 0,width,height,
+				false,0,0,width,height));
 		
+		SpriteSheetDB.i.add(animationData);
 		//var pixels=image.getPixels();
 		//writePixels24("test.png",pixels,width,height);
 	
