@@ -160,11 +160,12 @@ class Filter {
 				filter.adjustRenderArea(drawArea);
 				var scale = 1 / resolution;
 				renderBuffer(workTargetId, filter, drawArea.min.x, drawArea.min.y, drawArea.width(), drawArea.height(), scale, false);
-				if (filter.releaseTexture() && counter == 0)
+				if (filter.releaseTexture() && counter == 0){
 					GEngine.i.releaseRenderTarget(workTargetId);
-				if (0 != counter) {
-					GEngine.i.endCanvas();
 				}
+				//if (0 != counter) { //not sure why this check was here but it causing a bug with vector swf with filters 
+					GEngine.i.endCanvas();
+				//}
 			}
 		}
 	}

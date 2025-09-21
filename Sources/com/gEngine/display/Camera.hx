@@ -76,8 +76,10 @@ class Camera {
 
 	var deadZone:Rectangle = new Rectangle();
 	var deadOffset:Point = new Point();
+	var staticSize:Bool = false;
 
-	public function new(width:Int = -1, height:Int = -1) {
+	public function new(width:Int = -1, height:Int = -1,staticSize:Bool=false) {
+		this.staticSize = staticSize;
 		resize(width,height);
 		perlin = new Perlin(1);
 		update(0);
@@ -94,13 +96,13 @@ class Camera {
 			height = Window.get(0).height;
 		}
 		//if (width < 0 || height < 0) {
-
+		if(!staticSize){
 			var scaleX:Float = width / GEngine.virtualWidth;
 			var scaleY:Float = height / GEngine.virtualHeight;
 			
 			
 			scaleCompensation = Math.min(scaleX, scaleY);
-			
+		}
 			
 		
 		// //	width = GEngine.virtualWidth;
@@ -125,7 +127,7 @@ class Camera {
 		if (renderTarget >= 0){
 			GEngine.i.releaseRenderTarget(renderTarget);
 		}
-		renderTarget = GEngine.i.getRenderTarget(Math.ceil(width*0.95), Math.ceil(height*0.95));
+		renderTarget = GEngine.i.getRenderTarget(Math.ceil(width), Math.ceil(height));
 		var texture = GEngine.i.getTexture(renderTarget);
 		texture.g4.begin();
 		texture.g4.clear(Color.Transparent);
