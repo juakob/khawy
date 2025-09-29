@@ -53,16 +53,17 @@ class AtlasGenerator {
 			
 		//	g.setBilinearFilter(false);
 			// extrude image border pixel width and height
-			//g.imageScaleQuality = ImageScaleQuality.Low;
+			g.imageScaleQuality = ImageScaleQuality.Low;
 			if(expand){
 				g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
 					rectangle.x - 1, rectangle.y, bitmap.width + 2, bitmap.height);
 				g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
 					rectangle.x, rectangle.y - 1, bitmap.width, bitmap.height + 2);
 			}
-			
+			g.flush();
 			
 		//	g.setBilinearFilter(true);
+			g.imageScaleQuality = ImageScaleQuality.High;
 			g.drawScaledSubImage(bitmap.image, bitmap.x * bitmap.scaleX, bitmap.y * bitmap.scaleY, bitmap.width * bitmap.scaleX, bitmap.height * bitmap.scaleY,
 				rectangle.x, rectangle.y, bitmap.width, bitmap.height);
 
@@ -75,6 +76,7 @@ class AtlasGenerator {
 			// set UVs
 			bitmap.minUV.setTo(rectangle.x / realWidth, rectangle.y / realHeight);
 			bitmap.maxUV.setTo((rectangle.x + rectangle.width) / realWidth, (rectangle.y + rectangle.height) / realHeight);
+			g.flush();
 		}
 		g.end();
 		// hack for electron bug
