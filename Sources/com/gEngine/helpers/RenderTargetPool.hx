@@ -29,7 +29,7 @@ class RenderTargetPool {
 				return;
 			}
 		}
-		throw "render target " + id + " not found";
+		trace ("Warning: render target " + id + " not found");
 	}
 
 	public function releaseAll() {
