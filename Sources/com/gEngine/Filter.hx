@@ -163,9 +163,9 @@ class Filter {
 				if (filter.releaseTexture() && counter == 0){
 					GEngine.i.releaseRenderTarget(workTargetId);
 				}
-				//if (0 != counter) { //not sure why this check was here but it causing a bug with vector swf with filters 
+				if (0 != counter) {
 					GEngine.i.endCanvas();
-				//}
+				}
 			}
 		}
 	}

@@ -229,7 +229,7 @@ class GEngine {
 	public function endCanvas() {
 		#if debug
 		if (!currentCanvasActive) {
-			trace("Warning :start buffer before you end it");
+			throw ("Warning :start buffer before you end it");
 		}
 		#end
 		if (currentCanvasActive) {
@@ -241,7 +241,7 @@ class GEngine {
 	public function beginCanvas() {
 		#if debug
 		if (currentCanvasActive) {
-			trace("Warning :end buffer before you start ");
+			throw ("Warning :end buffer before you start ");
 		}
 		#end
 		if (!currentCanvasActive) {
