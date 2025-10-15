@@ -1,5 +1,6 @@
 package com.collision.platformer;
 
+import kha.math.FastVector2;
 import com.gEngine.display.Sprite;
 import com.gEngine.display.IAnimation;
 import format.tmx.Data.TmxObject;
@@ -149,4 +150,25 @@ class Tilemap {
 		}
 		return collision;
 	}
+
+	static function smoothPath(path:Array<FastVector2>, map:CollisionTileMap):Array<FastVector2> {
+		if (path.length <= 2) return path;
+		var smoothed:Array<FastVector2> = [path[0]];
+		var lastVisible = path[0];
+		for (i in 1...path.length) {
+			if (!hasLineOfSight(lastVisible, path[i], map)) {
+				smoothed.push(path[i - 1]);
+				lastVisible = path[i - 1];
+			}
+		}
+		smoothed.push(path[path.length - 1]);
+		return smoothed;
+	}
+
+	static function hasLineOfSight(a:FastVector2, b:FastVector2, map:CollisionTileMap):Bool {
+		var dir = b.sub(a);
+		var dist = dir.length;
+		return map.raycast(a, dir.normalized(), dist) == -1;
+	}
+
 }

@@ -14,7 +14,7 @@ class CollisionTileMap implements ICollider {
 	public var widthIntTiles(default, null):Int;
 	public var heightInTiles(default, null):Int;
 
-	var startingCollisionIndex:Int = 1;
+	public var startingCollisionIndex:Int = 1;
 	var edges:Array<Int>;
 
 	public var userData:Dynamic;
