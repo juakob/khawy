@@ -200,11 +200,27 @@ class CollisionTileMap implements ICollider {
 				if (currentY < 0 || currentY > heightInTiles)
 					break;
 			}
-			if (tiles[Std.int(currentX + currentY * widthIntTiles)] > 0) {
-				return (Std.int(currentX + currentY * widthIntTiles));
+			var idx = Std.int(currentX + currentY * widthIntTiles);
+			if (tiles[idx] >= startingCollisionIndex) {
+				return idx;
 			}
 		}
 		return -1;
+	}
+
+	inline public function isWalkableTile(tx:Int, ty:Int):Bool {
+		return getTileId(tx, ty) < startingCollisionIndex;
+	}
+
+	inline public function isWalkableAt(px:Float, py:Float):Bool {
+		return getTileId2(px, py) < startingCollisionIndex;
+	}
+
+	public function segmentClear(a:FastVector2, b:FastVector2):Bool {
+		var dir = b.sub(a);
+		var len = dir.length;
+		if (len <= 0) return true;
+		return raycast(a, dir.mult(1.0 / len), len) == -1;
 	}
 
 	#if DEBUGDRAW

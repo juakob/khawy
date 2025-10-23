@@ -87,22 +87,29 @@ class Pathfinder {
 		return Math.sqrt(dx * dx + dy * dy);
 	}
 
-	static function neighbors(n:Node, map:CollisionTileMap):Array<Node> {
-		var dirs = [
-			{x: 1, y: 0}, {x: -1, y: 0},
-			{x: 0, y: 1}, {x: 0, y: -1},
-			{x: 1, y: 1}, {x: -1, y: -1},
-			{x: 1, y: -1}, {x: -1, y: 1}
-		];
-		var list:Array<Node> = [];
-		for (d in dirs) {
-			var nx = n.x + d.x;
-			var ny = n.y + d.y;
-			if (nx >= 0 && ny >= 0 && nx < map.widthIntTiles && ny < map.heightInTiles)
-				list.push(new Node(nx, ny));
-		}
-		return list;
-	}
+    static function neighbors(n:Node, map:CollisionTileMap):Array<Node> {
+        var dirs = [
+            {x: 1, y: 0}, {x: -1, y: 0},
+            {x: 0, y: 1}, {x: 0, y: -1},
+            {x: 1, y: 1}, {x: -1, y: -1},
+            {x: 1, y: -1}, {x: -1, y: 1}
+        ];
+        var list:Array<Node> = [];
+        for (d in dirs) {
+            var nx = n.x + d.x;
+            var ny = n.y + d.y;
+            if (nx < 0 || ny < 0 || nx >= map.widthIntTiles || ny >= map.heightInTiles) continue;
+            // destino debe ser caminable
+            if (!map.isWalkableTile(nx, ny)) continue;
+            // evitar diagonales cortando esquinas
+            if (d.x != 0 && d.y != 0) {
+                if (!map.isWalkableTile(n.x + d.x, n.y)) continue;
+                if (!map.isWalkableTile(n.x, n.y + d.y)) continue;
+            }
+            list.push(new Node(nx, ny));
+        }
+        return list;
+    }
 
 	static function reconstructPath(n:Node, map:CollisionTileMap):Array<FastVector2> {
 		var path:Array<FastVector2> = [];
