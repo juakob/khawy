@@ -1,6 +1,7 @@
 package com.collision.platformer;
 
 import kha.math.FastVector2;
+import com.helpers.MinMax;
 
 /**
  * ...
@@ -26,9 +27,13 @@ class CollisionTileMap implements ICollider {
 	public var x:Float = 0;
 	public var y:Float = 0;
 
-	public function removeFromParent() {
-		if (parent != null)
-			parent.remove(this);
+	/**
+	 Creates an empty CollisionTileMap with all tiles set to 0.
+	 */
+	public static function createEmpty(aTileWidth:Float, aTileHeight:Float, aWidthInTiles:Int, aHeightInTiles:Int, ?startCollisionIndex:Int = 1):CollisionTileMap {
+		var total = aWidthInTiles * aHeightInTiles;
+		var aTiles = [for (i in 0...total) 0];
+		return new CollisionTileMap(aTiles, aTileWidth, aTileHeight, aWidthInTiles, aHeightInTiles, startCollisionIndex);
 	}
 
 	public function new(aTiles:Array<Int>, aTileWidth:Float, aTileHeight:Float, aWidthInTiles:Int, aHeightInTiles:Int, ?startCollisionIndex:Int = 1) {
@@ -47,6 +52,11 @@ class CollisionTileMap implements ICollider {
 			edges.push(0);
 		}
 		calculateEdges(0, 0, aWidthInTiles, aHeightInTiles);
+	}
+
+	public function removeFromParent() {
+		if (parent != null)
+			parent.remove(this);
 	}
 
 	function calculateEdges(minX:Int, minY:Int, maxX:Int, maxY:Int) {
@@ -141,6 +151,44 @@ class CollisionTileMap implements ICollider {
 			calculateEdges(aX - 1, aY - 1, aX + 1, aY + 1);
 		}
 	}
+
+	/**
+	 Sets all tile IDs inside the given rectangle to aId.
+	 The rectangle is provided in world coordinates; it is converted
+	 to tile coordinates using this.x/this.y and tileWidth/tileHeight.
+	 */
+	public function changeTileIdsInRect(rect:MinMax, aId:Int):Void {
+		if (rect == null) return;
+		// Determine tile-range from world coordinates (exclusive max like Haxe ranges).
+		var minX:Int = Std.int(Math.floor((rect.min.x - this.x) / tileWidth));
+		var minY:Int = Std.int(Math.floor((rect.min.y - this.y) / tileHeight));
+		var maxX:Int = Std.int(Math.ceil((rect.max.x - this.x) / tileWidth));
+		var maxY:Int = Std.int(Math.ceil((rect.max.y - this.y) / tileHeight));
+
+		// Clamp to map bounds
+		var sx:Int = Std.int(Math.max(0, minX));
+		var sy:Int = Std.int(Math.max(0, minY));
+		var ex:Int = Std.int(Math.min(widthIntTiles, maxX));
+		var ey:Int = Std.int(Math.min(heightInTiles, maxY));
+
+		if (sx >= ex || sy >= ey) return;
+
+		for (ty in sy...ey) {
+			var rowBase = ty * widthIntTiles;
+			for (tx in sx...ex) {
+				tiles[tx + rowBase] = aId;
+			}
+		}
+
+		// Recalculate edges around the edited area, expanded by 1 tile and clamped.
+		var ceMinX = Std.int(Math.max(0, sx - 1));
+		var ceMinY = Std.int(Math.max(0, sy - 1));
+		var ceMaxX = Std.int(Math.min(widthIntTiles, ex + 1));
+		var ceMaxY = Std.int(Math.min(heightInTiles, ey + 1));
+		calculateEdges(ceMinX, ceMinY, ceMaxX, ceMaxY);
+	}
+
+	
 
 	public function edgeType(tileX:Int, tileY:Int):Int {
 		return edges[tileX + tileY * widthIntTiles];
