@@ -216,6 +216,9 @@ class Camera {
 			paintMode.render();
 			GEngine.i.endCanvas();
 		}
+		#if debugInfo
+		GEngine.drawCount-=2;
+		#end
 		GEngine.i.setFrameBufferAsCanvas();
 		GEngine.i.beginCanvas();
 		var painter = postProcess != null ? postProcess : GEngine.i.getSimplePainter(blend);
@@ -224,6 +227,9 @@ class Camera {
 		if (postProcess != null) {}
 		GEngine.i.renderToFrameBuffer(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1/0.95);
 		GEngine.i.endCanvas();
+		#if debugInfo
+		GEngine.drawCount+=2;
+		#end
 	}
 
 	public function limits(x:Float, y:Float, width:Float, height:Float):Void {
