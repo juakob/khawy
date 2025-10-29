@@ -148,14 +148,20 @@ class Sprite implements IAnimation implements IRotation {
 	}
 
 	inline function calculateTransform(transform:FastMatrix4) {
-		this.transform.setFrom(FastMatrix4.identity());
+		// Manually reset to identity to avoid allocating a temporary matrix
+		this.transform._00 = 1; this.transform._10 = 0; this.transform._20 = 0; this.transform._30 = 0;
+		this.transform._01 = 0; this.transform._11 = 1; this.transform._21 = 0; this.transform._31 = 0;
+		this.transform._02 = 0; this.transform._12 = 0; this.transform._22 = 1; this.transform._32 = 0;
+		this.transform._03 = 0; this.transform._13 = 0; this.transform._23 = 0; this.transform._33 = 1;
+
+		// Apply 2D rotation/scale/translation
 		this.transform._00 = cosAng * scaleX;
 		this.transform._10 = -sinAng * scaleY;
-		this.transform._30 = x ;
+		this.transform._30 = x;
 
 		this.transform._01 = sinAng * scaleX;
 		this.transform._11 = cosAng * scaleY;
-		this.transform._31 = y ;
+		this.transform._31 = y;
 
 		this.transform._22 = scaleZ;
 		this.transform._32 = z;
@@ -235,14 +241,20 @@ class Sprite implements IAnimation implements IRotation {
 		var vertexBufferCounter = inline painter.getVertexDataCounter();
 		var vertexIndex:Int = 0;
 		var uvIndex:Int = 0;
+		var ox = offsetX * cameraScale;
+		var oy = offsetY * cameraScale;
+		var px:FastFloat; var py:FastFloat; var pz:FastFloat;
 		for (i in 0...4) {
-			var vertexX = vertexs[vertexIndex] - pivotX;
-			var vertexY = vertexs[vertexIndex + 1] - pivotY;
-			var pos = fastMult(model, vertexX, vertexY);
+			var vx = vertexs[vertexIndex] - pivotX;
+			var vy = vertexs[vertexIndex + 1] - pivotY;
+			// Inline matrix multiply to avoid temporary vector allocations
+			px = model._00 * vx + model._10 * vy + model._30;
+			py = model._01 * vx + model._11 * vy + model._31;
+			pz = model._02 * vx + model._12 * vy + model._32;
 
-			buffer.set(vertexBufferCounter, pos.x + offsetX * cameraScale);
-			buffer.set(vertexBufferCounter + 1, pos.y + offsetY * cameraScale);
-			buffer.set(vertexBufferCounter + 2, pos.z);
+			buffer.set(vertexBufferCounter    , px + ox);
+			buffer.set(vertexBufferCounter + 1, py + oy);
+			buffer.set(vertexBufferCounter + 2, pz);
 			buffer.set(vertexBufferCounter + 3, uvs[uvIndex]);
 			buffer.set(vertexBufferCounter + 4, uvs[uvIndex + 1]);
 			buffer.set(vertexBufferCounter + 5, alpha);
@@ -255,14 +267,12 @@ class Sprite implements IAnimation implements IRotation {
 	}
 
 	inline function fastMult(model:FastMatrix4, x:Float, y:Float):FastVector3 {
-		return new FastVector3(model._00 * x
-			+ model._10 * y
-			+ model._30, model._01 * x
-			+ model._11 * y
-			+ model._31,
-			model._02 * x
-			+ model._12 * y
-			+ model._32);
+		// Kept for API compatibility; avoid using to prevent allocations
+		return new FastVector3(
+			model._00 * x + model._10 * y + model._30,
+			model._01 * x + model._11 * y + model._31,
+			model._02 * x + model._12 * y + model._32
+		);
 	}
 
 	function renderWithColorTransform(paintMode:PaintMode, model:FastMatrix4) {
@@ -275,8 +285,8 @@ class Sprite implements IAnimation implements IRotation {
 		checkBatchColor(paintMode, paintInfo, Std.int(frame.vertexs.length * 0.5), painter);
 		var redMul, blueMul, greenMul, alphaMul:Float;
 		var redAdd, blueAdd, greenAdd, alphaAdd:Float;
-		var buffer =  painter.getVertexBuffer();
-		var vertexBufferCounter =  painter.getVertexDataCounter();
+		var buffer = painter.getVertexBuffer();
+		var vertexBufferCounter = painter.getVertexDataCounter();
 		redMul = this.mulRed * paintMode.mulR;
 		greenMul = this.mulGreen * paintMode.mulG;
 		blueMul = this.mulBlue * paintMode.mulB;
@@ -287,12 +297,25 @@ class Sprite implements IAnimation implements IRotation {
 		alphaAdd = this.addAlpha + paintMode.addA;
 		var vertexIndex:Int = 0;
 		var uvIndex:Int = 0;
+		var ox = offsetX * cameraScale;
+		var oy = offsetY * cameraScale;
+		var px:FastFloat; var py:FastFloat; var pz:FastFloat;
 		for (k in 0...4) {
-			var vertexX = vertexs[vertexIndex] - pivotX;
-			var vertexY = vertexs[vertexIndex + 1] - pivotY;
-			var pos = fastMult(model, vertexX, vertexY);
-			writeColorVertex(pos.x + offsetX * cameraScale, pos.y + offsetY * cameraScale, pos.z + offsetZ, uvs[uvIndex++], uvs[uvIndex++], redMul, greenMul,
-				blueMul, alphaMul, redAdd, greenAdd, blueAdd, alphaAdd, buffer, vertexBufferCounter);
+			var vx = vertexs[vertexIndex] - pivotX;
+			var vy = vertexs[vertexIndex + 1] - pivotY;
+			// Inline matrix multiply to avoid temporary vector allocations
+			px = model._00 * vx + model._10 * vy + model._30;
+			py = model._01 * vx + model._11 * vy + model._31;
+			pz = model._02 * vx + model._12 * vy + model._32;
+			writeColorVertex(
+				px + ox,
+				py + oy,
+				pz + offsetZ,
+				uvs[uvIndex++], uvs[uvIndex++],
+				redMul, greenMul, blueMul, alphaMul,
+				redAdd, greenAdd, blueAdd, alphaAdd,
+				buffer, vertexBufferCounter
+			);
 			vertexBufferCounter += 13;
 			vertexIndex += 2;
 		}
