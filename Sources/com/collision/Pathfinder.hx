@@ -7,7 +7,7 @@ class Pathfinder {
 	static inline var ORTHO_COST:Float = 1.0;
 	static inline var DIAG_COST:Float = 1.4142;
 
-	public static function findPath(map:CollisionTileMap, start:FastVector2, goal:FastVector2):Array<FastVector2> {
+	public static function findPath(map:CollisionTileMap, start:FastVector2, goal:FastVector2, ?isBlocked:Int->Int->Bool):Array<FastVector2> {
 		var startX = Std.int(start.x / map.tileWidth);
 		var startY = Std.int(start.y / map.tileHeight);
 		var goalX = Std.int(goal.x / map.tileWidth);
@@ -58,6 +58,7 @@ class Pathfinder {
 				var k = key(neighbor.x, neighbor.y);
 				if (closed.exists(k)) continue;
 				if (map.getTileId(neighbor.x, neighbor.y) >= map.startingCollisionIndex) continue;
+				if (isBlocked != null && isBlocked(neighbor.x, neighbor.y)) continue;
 
 				var cost = (neighbor.x == current.x || neighbor.y == current.y) ? ORTHO_COST : DIAG_COST;
 				var tentativeG = current.g + cost;
