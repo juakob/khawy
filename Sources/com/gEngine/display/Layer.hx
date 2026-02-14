@@ -1,6 +1,7 @@
 package com.gEngine.display;
 
 import kha.math.FastVector2;
+import kha.math.FastVector4;
 import kha.math.FastMatrix4;
 import com.gEngine.DrawArea;
 import com.gEngine.Filter;
@@ -31,6 +32,8 @@ class Layer implements DisplayObject implements IContainer {
 	public var visible:Bool = true;
 	public var filter:Filter;
 	public var drawArea(default, set):MinMax;
+	public var cameraCulling:Bool = false;
+	public var cullingPadding:Float = 0;
 	public var length(get, null):Int;
 	public var useCustomTransform:Bool;
 	var customTransform:FastMatrix4;
@@ -38,6 +41,8 @@ class Layer implements DisplayObject implements IContainer {
 	private var cosAng:FastFloat;
 	private var sinAng:FastFloat;
 	var scaleArea:MinMax = new MinMax();
+	var cullingArea:MinMax = new MinMax();
+	var childArea:MinMax = new MinMax();
 	var transform:FastMatrix4;
 	
 
@@ -119,7 +124,27 @@ class Layer implements DisplayObject implements IContainer {
 		if (filter != null) {
 			filter.filterStart(this, paintMode, transform);
 		}
+		if (cameraCulling && paintMode.camera != null) {
+			var cam = paintMode.camera;
+			var worldP1 = cam.screenToWorld(0, 0);
+			var worldP2 = cam.screenToWorld(cam.width, cam.height);
+			var viewP1 = cam.view.multvec(new FastVector4(worldP1.x, worldP1.y, 0, 1));
+			var viewP2 = cam.view.multvec(new FastVector4(worldP2.x, worldP2.y, 0, 1));
+			cullingArea.set(
+				Math.min(viewP1.x, viewP2.x) - cullingPadding,
+				Math.min(viewP1.y, viewP2.y) - cullingPadding,
+				Math.max(viewP1.x, viewP2.x) + cullingPadding,
+				Math.max(viewP1.y, viewP2.y) + cullingPadding
+			);
+		}
 		for(i in 0...children.length) {
+			if (cameraCulling && paintMode.camera != null) {
+				childArea.reset();
+				children[i].getDrawArea(childArea, this.transform);
+				if (!cullingArea.contains(childArea)) {
+					continue;
+				}
+			}
 			children[i].render(paintMode, this.transform);
 		}
 		if (filter != null) {
