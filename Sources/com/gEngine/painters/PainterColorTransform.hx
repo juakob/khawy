@@ -1,5 +1,6 @@
 package com.gEngine.painters;
 
+import kha.graphics5_.CullMode;
 import com.gEngine.display.Blend;
 import kha.Shaders;
 import kha.graphics4.PipelineState;
@@ -8,9 +9,7 @@ import kha.graphics4.VertexStructure;
 
 class PainterColorTransform extends Painter {
 	public function new(autoDestroy:Bool = true, blend:Blend, depthWrite:Bool = false) {
-		MAX_VERTEX_PER_BUFFER =100*4;
-		dataPerVertex = 13;
-		super(autoDestroy, blend, depthWrite);
+		super(autoDestroy, blend, depthWrite,CullMode.None,100*4,13);
 	}
 
 	override function defineVertexStructure(structure:VertexStructure) {
