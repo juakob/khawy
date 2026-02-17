@@ -104,6 +104,7 @@ class Input {
 	private var touchActive:Array<Int>;
 	public var mouseDeltaX:Float = 0;
 	public var mouseDeltaY:Float = 0;
+	public var mouseWheelDelta:Int = 0;
 	private var mousePosition:FastPoint;
 
 	private var t_mouseIsDown:Bool;
@@ -119,6 +120,7 @@ class Input {
 	private var t_touchActive:Array<Int>;
 	public var t_mouseDeltaX:Float = 0;
 	public var t_mouseDeltaY:Float = 0;
+	public var t_mouseWheelDelta:Int = 0;
 	private var t_mousePosition:FastPoint;
 
 	public var activeTouchSpots(default, null):Int;
@@ -190,7 +192,7 @@ class Input {
 
 	private function subscibeInput() {
 		Keyboard.get().notify(onKeyDown, onKeyUp);
-		Mouse.get().notify(onMouseDown, onMouseUp, onMouseMove, null);
+		Mouse.get().notify(onMouseDown, onMouseUp, onMouseMove, onMouseWheel);
 		var surface = Surface.get();
 		if (surface != null) {
 			surface.notify(onTouchStart, onTouchEnd, onTouchMove);
@@ -260,6 +262,10 @@ class Input {
 		#if INPUT_REC
 		if(record) records.push(new InputRecord(MouseMove(x,y,moveX,moveY)));
 		#end
+	}
+
+	function onMouseWheel(delta:Int):Void {
+		t_mouseWheelDelta += delta;
 	}
 
 	function onMouseUp(button:Int, x:Int, y:Int):Void {
@@ -372,9 +378,11 @@ class Input {
 
 		mouseDeltaX = t_mouseDeltaX;
 		mouseDeltaY = t_mouseDeltaY;
+		mouseWheelDelta = t_mouseWheelDelta;
 		
 		t_mouseDeltaX = 0;
 		t_mouseDeltaY = 0;
+		t_mouseWheelDelta = 0;
 		mousePosition.setTo(t_mousePosition.x,t_mousePosition.y);
 	}
 	#if INPUT_REC
@@ -433,6 +441,8 @@ class Input {
 	public function clearInput() {
 		mousePressed = false;
 		mouseReleased = false;
+		mouseWheelDelta = 0;
+		t_mouseWheelDelta = 0;
 		activeTouchSpots = 0;
 
 		keysPressed.splice(0, keysPressed.length);
@@ -486,6 +496,10 @@ class Input {
 
 	public inline function getMouseY():Float {
 		return mousePosition.y ;
+	}
+
+	public inline function getMouseWheelDelta():Int {
+		return mouseWheelDelta;
 	}
 
 	public inline function touchX(id:Int):Float {
