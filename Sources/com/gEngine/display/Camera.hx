@@ -225,7 +225,7 @@ class Camera {
 		painter.filter = textureFilter;
 		painter.setProjection(GEngine.i.getMatrix());
 		if (postProcess != null) {}
-		GEngine.i.renderToFrameBuffer(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1/0.95);
+		GEngine.i.renderToFrameBuffer(renderTarget, painter, finalX, finalY, drawArea.width(), drawArea.height(), 1, false, 1);
 		GEngine.i.endCanvas();
 		#if debugInfo
 		GEngine.drawCount+=2;
@@ -252,10 +252,19 @@ class Camera {
 	}
 
 	public function worldToScreen(x:Float, y:Float, z:Float):FastVector2 {
+		if (projectionIsOrthogonal) {
+			var local = view.multvec(new FastVector4(x, y, z, 1));
+			return new FastVector2(local.x + width * 0.5, local.y + height * 0.5);
+		}
+
 		var transform = projection.multmat(view);
-		var screen = transform.multvec(new FastVector4(x, y, z));
-		screen.mult(screen.w);
-		return new FastVector2(width * 0.5 + screen.x, height * 0.5 + screen.y);
+		var screen = transform.multvec(new FastVector4(x, y, z, 1));
+		if (screen.w != 0) {
+			screen.mult(1 / screen.w);
+		}
+		var sx = width * 0.5 + screen.x * width * 0.5;
+		var sy = height * 0.5 + screen.y * height * 0.5;
+		return new FastVector2(sx, sy);
 	}
 
 	public inline function screenToWorld(targetX:Float, targetY:Float, targetZ:Float = 0):FastVector2 {
