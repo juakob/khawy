@@ -237,6 +237,7 @@ class Sprite implements IAnimation implements IRotation {
 		var uvs = frame.UVs;
 		var painter:PainterAlpha = alphaPainters[0];
 		checkBatchAlpha(paintMode, paintInfo, Std.int(frame.vertexs.length * 0.5), painter);
+		var textureSlot = painter.getTextureSlot(paintInfo.texture);
 		var buffer = inline painter.getVertexBuffer();
 		var vertexBufferCounter = inline painter.getVertexDataCounter();
 		var vertexIndex:Int = 0;
@@ -258,8 +259,9 @@ class Sprite implements IAnimation implements IRotation {
 			buffer.set(vertexBufferCounter + 3, uvs[uvIndex]);
 			buffer.set(vertexBufferCounter + 4, uvs[uvIndex + 1]);
 			buffer.set(vertexBufferCounter + 5, alpha);
+			buffer.set(vertexBufferCounter + 6, textureSlot);
 			vertexIndex += 2;
-			vertexBufferCounter += 6;
+			vertexBufferCounter += 7;
 			uvIndex += 2;
 		}
 
@@ -280,9 +282,10 @@ class Sprite implements IAnimation implements IRotation {
 		var vertexs:Array<FastFloat> = frame.vertexs;
 		var cameraScale = paintMode.camera.scale;
 		var uvs = frame.UVs;
-		var painter:IPainter = customPainter != null ? customPainter : this.colorPainters[0];
+		var painter:Painter = customPainter != null ? customPainter : this.colorPainters[0];
 		//var painter:PainterColorTransform = this.colorPainters[cast blend];
 		checkBatchColor(paintMode, paintInfo, Std.int(frame.vertexs.length * 0.5), painter);
+		var textureSlot = painter.getTextureSlot(paintInfo.texture);
 		var redMul, blueMul, greenMul, alphaMul:Float;
 		var redAdd, blueAdd, greenAdd, alphaAdd:Float;
 		var buffer = painter.getVertexBuffer();
@@ -311,12 +314,12 @@ class Sprite implements IAnimation implements IRotation {
 				px + ox,
 				py + oy,
 				pz + offsetZ,
-				uvs[uvIndex++], uvs[uvIndex++],
+				uvs[uvIndex++], uvs[uvIndex++], textureSlot,
 				redMul, greenMul, blueMul, alphaMul,
 				redAdd, greenAdd, blueAdd, alphaAdd,
 				buffer, vertexBufferCounter
 			);
-			vertexBufferCounter += 13;
+			vertexBufferCounter += 14;
 			vertexIndex += 2;
 		}
 		painter.setVertexDataCounter(vertexBufferCounter);
@@ -336,21 +339,22 @@ class Sprite implements IAnimation implements IRotation {
 		}
 	}
 
-	private static inline function writeColorVertex(x:Float, y:Float, z:Float, u:Float, v:Float, redMul:Float, greenMul:Float, blueMul:Float, alphaMul:Float,
+	private static inline function writeColorVertex(x:Float, y:Float, z:Float, u:Float, v:Float, texSlot:Float, redMul:Float, greenMul:Float, blueMul:Float, alphaMul:Float,
 			redAdd:Float, greenAdd:Float, blueAdd:Float, alphaAdd:Float, buffer:Float32Array, offsetPos:Int) {
 		buffer.set(offsetPos, x);
 		buffer.set(offsetPos + 1, y);
 		buffer.set(offsetPos + 2, z);
 		buffer.set(offsetPos + 3, u);
 		buffer.set(offsetPos + 4, v);
-		buffer.set(offsetPos + 5, redMul);
-		buffer.set(offsetPos + 6, greenMul);
-		buffer.set(offsetPos + 7, blueMul);
-		buffer.set(offsetPos + 8, alphaMul);
-		buffer.set(offsetPos + 9, redAdd);
-		buffer.set(offsetPos + 10, greenAdd);
-		buffer.set(offsetPos + 11, blueAdd);
-		buffer.set(offsetPos + 12, alphaAdd);
+		buffer.set(offsetPos + 5, texSlot);
+		buffer.set(offsetPos + 6, redMul);
+		buffer.set(offsetPos + 7, greenMul);
+		buffer.set(offsetPos + 8, blueMul);
+		buffer.set(offsetPos + 9, alphaMul);
+		buffer.set(offsetPos + 10, redAdd);
+		buffer.set(offsetPos + 11, greenAdd);
+		buffer.set(offsetPos + 12, blueAdd);
+		buffer.set(offsetPos + 13, alphaAdd);
 	}
 
 	public function set_skewX(value:Float):Float {

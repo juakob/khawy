@@ -1,10 +1,10 @@
 #version 450
 
 in vec3 vertexPosition;
-in vec3 texPosition;
+in vec4 texPosition;
 
 uniform mat4 projectionMatrix;
-out vec3 texCoord;
+out vec4 texCoord;
 
 
 void kore() {

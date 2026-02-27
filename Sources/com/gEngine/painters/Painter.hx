@@ -26,6 +26,8 @@ import kha.graphics4.VertexData;
 import kha.graphics4.VertexStructure;
 
 class Painter implements IPainter {
+	public static inline var MAX_BATCH_TEXTURES:Int = 4;
+
 	var vertexBuffer:VertexBuffer;
 	var vertexBuffer1:VertexBuffer;
 	var vertexBuffer2:VertexBuffer;
@@ -44,6 +46,8 @@ class Painter implements IPainter {
 	var dataPerVertex:Int = 5;
 	var mvpID:ConstantLocation;
 	var textureConstantID:TextureUnit;
+	var textureConstantIDs:Array<TextureUnit>;
+	var activeTextureIDs:Array<Int>;
 	var canvasWidth:Int = 0;
 	var canvasHeight:Int = 0;
 	var projection:FastMatrix4;
@@ -76,6 +80,7 @@ class Painter implements IPainter {
 		this.dataPerVertex = dataV;
 		initShaders(blend);
 		createBuffers();
+		activeTextureIDs = new Array();
 		buffer = downloadVertexBuffer();
 	}
 
@@ -115,7 +120,7 @@ class Painter implements IPainter {
 
 		
 		setParameter(g);
-		g.setTextureParameters(textureConstantID, TextureAddressing.Clamp, TextureAddressing.Clamp, filter, filter, mipMapFilter);
+		setTextureParameters(g);
 
 		g.drawIndexedVertices(0, Std.int(vertexCount * ratioIndexVertex));
 
@@ -135,6 +140,7 @@ class Painter implements IPainter {
 		++ GEngine.drawCount;
 		#end
 		counter = 0;
+		activeTextureIDs.splice(0, activeTextureIDs.length);
 	}
 
 	public inline function vertexCount():Int {
@@ -161,7 +167,21 @@ class Painter implements IPainter {
 
 	function getConstantLocations(pipeline:PipelineState) {
 		mvpID = pipeline.getConstantLocation("projectionMatrix");
-		textureConstantID = pipeline.getTextureUnit("tex");
+		textureConstantIDs = new Array();
+		for (i in 0...MAX_BATCH_TEXTURES) {
+			var tex = pipeline.getTextureUnit("tex" + i);
+			if (tex != null) {
+				textureConstantIDs.push(tex);
+			}
+		}
+		if (textureConstantIDs.length == 0) {
+			textureConstantID = pipeline.getTextureUnit("tex");
+			if (textureConstantID != null) {
+				textureConstantIDs.push(textureConstantID);
+			}
+		} else {
+			textureConstantID = textureConstantIDs[0];
+		}
 	}
 
 	function createBuffers():Void {
@@ -204,12 +224,47 @@ class Painter implements IPainter {
 
 	private function setParameter(g:Graphics):Void {
 		g.setMatrix(mvpID, projection);
+		if (textureConstantIDs == null || textureConstantIDs.length == 0) {
+			return;
+		}
+		var fallbackTexture = textureID;
+		if (activeTextureIDs.length > 0) {
+			fallbackTexture = activeTextureIDs[0];
+		}
+		if (fallbackTexture < 0 && GEngine.i.textures.length > 0) {
+			fallbackTexture = 0;
+		}
+		if (textureConstantIDs.length == 1) {
+			var onlyTexture = fallbackTexture;
+			g.setTexture(textureConstantIDs[0], onlyTexture >= 0 ? GEngine.i.textures[onlyTexture] : null);
+			return;
+		}
+		for (i in 0...textureConstantIDs.length) {
+			var texID = i < activeTextureIDs.length ? activeTextureIDs[i] : fallbackTexture;
+			g.setTexture(textureConstantIDs[i], texID >= 0 ? GEngine.i.textures[texID] : null);
+		}
+	}
 
-		g.setTexture(textureConstantID, GEngine.i.textures[textureID]);
+	private function setTextureParameters(g:Graphics):Void {
+		if (textureConstantIDs == null) {
+			return;
+		}
+		for (unit in textureConstantIDs) {
+			if (unit != null) {
+				g.setTextureParameters(unit, TextureAddressing.Clamp, TextureAddressing.Clamp, filter, filter, mipMapFilter);
+			}
+		}
 	}
 
 	private function unsetTextures(g:Graphics):Void {
-		g.setTexture(textureConstantID, null);
+		if (textureConstantIDs == null) {
+			return;
+		}
+		for (unit in textureConstantIDs) {
+			if (unit != null) {
+				g.setTexture(unit, null);
+			}
+		}
 	}
 
 	function downloadVertexBuffer():Float32Array {
@@ -232,6 +287,50 @@ class Painter implements IPainter {
 		//return info.texture == textureID && info.mipMapFilter == mipMapFilter && info.textureFilter == this.filter && ((counter +
 		//	size * dataPerVertex) <= MAX_VERTEX_PER_BUFFER * dataPerVertex);
 		return info.texture == textureID&& info.mipMapFilter == mipMapFilter && info.textureFilter == this.filter &&((counter +	size * dataPerVertex) <= (MAX_VERTEX_PER_BUFFER * dataPerVertex));
+	}
+
+	public function canBatchWithTextureArray(info:PaintInfo, size:Int):Bool {
+		if (info.mipMapFilter != mipMapFilter || info.textureFilter != this.filter) {
+			return false;
+		}
+		if ((counter + size * dataPerVertex) > (MAX_VERTEX_PER_BUFFER * dataPerVertex)) {
+			return false;
+		}
+		if (info.texture == textureID || activeTextureIDs.indexOf(info.texture) != -1) {
+			return true;
+		}
+		return textureConstantIDs != null
+			&& textureConstantIDs.length > 1
+			&& activeTextureIDs.length < textureConstantIDs.length;
+	}
+
+	public function resetTextureBatch(texture:Int):Void {
+		activeTextureIDs.splice(0, activeTextureIDs.length);
+		textureID = texture;
+		if (texture >= 0) {
+			activeTextureIDs.push(texture);
+		}
+	}
+
+	public function getTextureSlot(texture:Int):Float {
+		if (texture < 0) {
+			return 0;
+		}
+		var slot = activeTextureIDs.indexOf(texture);
+		if (slot != -1) {
+			return slot;
+		}
+		if (activeTextureIDs.length == 0) {
+			activeTextureIDs.push(texture);
+			textureID = texture;
+			return 0;
+		}
+		var maxTextures = textureConstantIDs != null ? textureConstantIDs.length : 1;
+		if (maxTextures > 1 && activeTextureIDs.length < maxTextures) {
+			activeTextureIDs.push(texture);
+			return activeTextureIDs.length - 1;
+		}
+		return -1;
 	}
 
 	public function setProjection(proj:FastMatrix4):Void {

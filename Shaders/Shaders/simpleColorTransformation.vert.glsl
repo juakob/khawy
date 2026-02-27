@@ -1,12 +1,12 @@
 #version 450
 
 in vec3 vertexPosition;
-in vec2 texPosition;
+in vec3 texPosition;
 in vec4 colorMul;
 in vec4 colorAdd;
 
 uniform mat4 projectionMatrix;
-out vec2 texCoord;
+out vec3 texCoord;
 out vec4 _colorMul;
 out vec4 _colorAdd;
 

@@ -7,6 +7,7 @@ import com.helpers.MinMax;
 import kha.graphics4.MipMapFilter;
 import kha.graphics4.TextureFilter;
 import com.gEngine.display.BlendMode;
+import com.gEngine.painters.Painter;
 
 class PaintMode {
 	public var currentPainter(default, null):IPainter;
@@ -47,6 +48,9 @@ class PaintMode {
 		currentPainter.textureID = paintInfo.texture;
 		currentPainter.mipMapFilter = paintInfo.mipMapFilter;
 		currentPainter.filter = paintInfo.textureFilter;
+		if (Std.isOfType(currentPainter, Painter)) {
+			cast(currentPainter, Painter).resetTextureBatch(paintInfo.texture);
+		}
 		this.paintInfo = paintInfo;
 	}
 

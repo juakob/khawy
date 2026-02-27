@@ -137,7 +137,13 @@ class VertexBakePainter extends PainterColorTransform {
 		g.setPipeline(pipeline);
 
 		setParameter(g);
-		g.setTextureParameters(textureConstantID, TextureAddressing.Clamp, TextureAddressing.Clamp, filter, filter, mipMapFilter);
+		if (textureConstantIDs != null) {
+			for (unit in textureConstantIDs) {
+				if (unit != null) {
+					g.setTextureParameters(unit, TextureAddressing.Clamp, TextureAddressing.Clamp, filter, filter, mipMapFilter);
+				}
+			}
+		}
 
 		g.drawIndexedVertices();
 
