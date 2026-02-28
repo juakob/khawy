@@ -168,19 +168,30 @@ class Painter implements IPainter {
 	function getConstantLocations(pipeline:PipelineState) {
 		mvpID = pipeline.getConstantLocation("projectionMatrix");
 		textureConstantIDs = new Array();
-		for (i in 0...MAX_BATCH_TEXTURES) {
-			var tex = pipeline.getTextureUnit("tex" + i);
-			if (tex != null) {
+		var tex = pipeline.getTextureUnit("tex");
+		var tex2 = pipeline.getTextureUnit("tex2");
+		var tex3 = pipeline.getTextureUnit("tex3");
+		var tex4 = pipeline.getTextureUnit("tex4");
+		if (tex != null && (tex2 != null || tex3 != null || tex4 != null)) {
+			textureConstantIDs.push(tex);
+			if (tex2 != null) textureConstantIDs.push(tex2);
+			if (tex3 != null) textureConstantIDs.push(tex3);
+			if (tex4 != null) textureConstantIDs.push(tex4);
+		} else {
+			for (i in 0...MAX_BATCH_TEXTURES) {
+				var unit = pipeline.getTextureUnit("tex" + i);
+				if (unit != null) {
+					textureConstantIDs.push(unit);
+				}
+			}
+			if (textureConstantIDs.length == 0 && tex != null) {
 				textureConstantIDs.push(tex);
 			}
 		}
-		if (textureConstantIDs.length == 0) {
-			textureConstantID = pipeline.getTextureUnit("tex");
-			if (textureConstantID != null) {
-				textureConstantIDs.push(textureConstantID);
-			}
-		} else {
+		if (textureConstantIDs.length > 0) {
 			textureConstantID = textureConstantIDs[0];
+		} else {
+			textureConstantID = null;
 		}
 	}
 

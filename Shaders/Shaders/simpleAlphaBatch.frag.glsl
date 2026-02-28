@@ -8,9 +8,7 @@ uniform sampler2D tex;
 uniform sampler2D tex2;
 uniform sampler2D tex3;
 uniform sampler2D tex4;
-in vec3 texCoord;
-in vec4 _colorMul;
-in vec4 _colorAdd;
+in vec4 texCoord;
 out vec4 FragColor;
 
 vec4 sampleTexture(float textureIndex, vec2 uv) {
@@ -28,10 +26,6 @@ vec4 sampleTexture(float textureIndex, vec2 uv) {
 }
 
 void kore() {
-	vec4 texcolor = sampleTexture(texCoord.z, texCoord.xy) * _colorMul;
-	texcolor.xyz*=_colorMul.w;
-	texcolor+=_colorAdd*texcolor.w;
-	
+	vec4 texcolor = sampleTexture(texCoord.w, texCoord.xy) * texCoord.z;
 	FragColor = texcolor;
-
 }

@@ -347,7 +347,7 @@ class Profiler {
 		#end
 	}
 
-	public inline static function getOverlayLines(maxRows:Int = 8, barSize:Int = 18):Array<String> {
+	public  static function getOverlayLines(maxRows:Int = 8, barSize:Int = 18):Array<String> {
 		#if (!worker && (profile || profile_light || profile_deep))
 		var overlayStart = Scheduler.realTime();
 		var lines:Array<String> = new Array();

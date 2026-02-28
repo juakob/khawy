@@ -21,8 +21,8 @@ class PainterAlpha extends Painter {
 	}
 
 	override function setShaders(pipeline:PipelineState):Void {
-		pipeline.vertexShader = Shaders.simpleAlpha_vert;
-		pipeline.fragmentShader = Shaders.simpleAlpha_frag;
+		pipeline.vertexShader = Shaders.simpleAlphaBatch_vert;
+		pipeline.fragmentShader = Shaders.simpleAlphaBatch_frag;
 	}
 
 	override public function canBatch(info:PaintInfo, size:Int):Bool {
