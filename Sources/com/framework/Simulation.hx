@@ -175,7 +175,9 @@ class Simulation {
 		
 		
 		TimeManager.setDelta(mFrameByFrameTime);
+		com.debug.Profiler.startMeasure("enterFrame");
 		update(mFrameByFrameTime);
+		com.debug.Profiler.endMeasure("enterFrame");
 		
 	
 	}
@@ -191,15 +193,28 @@ class Simulation {
 			nextState = null;
 		}
 		if (!initialized){
+			com.debug.Profiler.startMeasure("resourcesUpdate");
 			resources.update();
+			com.debug.Profiler.endMeasure("resourcesUpdate");
 		}
 		com.debug.Profiler.startMeasure("renderSim");
 		var framebuffer = framebuffers[0];
 		Input.i.screenScale.setTo(virtualWidth / framebuffer.width, virtualHeight / framebuffer.height);
-		if (initialized) currentState.render();
+		if (initialized) {
+			com.debug.Profiler.startMeasure("stateRender");
+			currentState.render();
+			com.debug.Profiler.endMeasure("stateRender");
+		}
+		com.debug.Profiler.startMeasure("gengineDraw");
 		GEngine.i.draw(framebuffer,true,needRender);
+		com.debug.Profiler.endMeasure("gengineDraw");
+		com.debug.Profiler.startMeasure("stateDraw");
 		currentState.draw(framebuffer);
+		com.debug.Profiler.endMeasure("stateDraw");
 		if (isPause) {
+			#if (profile || profile_deep)
+			com.debug.Profiler.startMeasure("pauseOverlay");
+			#end
 			var g2:Graphics = framebuffer.g2;
 			g2.begin(false);
 
@@ -224,39 +239,72 @@ class Simulation {
 			);
 
 			g2.end();
+			#if (profile || profile_deep)
+			com.debug.Profiler.endMeasure("pauseOverlay");
+			#end
 		}
 		needRender=false;
 		com.debug.Profiler.endMeasure("renderSim");
 	}
 
 	private function update(dt:Float):Void {
+		com.debug.Profiler.startMeasure("updateSim");
 		if (!initialized){
 			if(finishLoading){
 				initialized = true;
 				currentState.init();
 				GEngine.i.update();
+				com.debug.Profiler.endMeasure("updateSim");
 				return;
 			}
 			if(currentState!=null){
+				com.debug.Profiler.startMeasure("loadingState");
 				currentState.loading(resources.percentage());
+				com.debug.Profiler.endMeasure("loadingState");
 			}	
 			//resources.update();
+			com.debug.Profiler.endMeasure("updateSim");
 			return;
 		}
 			
 		var fullIterations = Math.floor(TimeManager.multiplier + iterationRest);
 		if (!isPause) {
+			#if (profile || profile_deep)
+			com.debug.Profiler.startMeasure("updateIterations");
+			#end
 			for (i in 0...fullIterations) {
 				#if INPUT_REC
 				Input.i.updatePlayeback();
 				#end
+				#if (profile || profile_deep)
+				com.debug.Profiler.startMeasure("inputUpdate");
+				#end
 				Input.i.update();
+				#if (profile || profile_deep)
+				com.debug.Profiler.endMeasure("inputUpdate");
+				#end
+				#if (profile || profile_deep)
+				com.debug.Profiler.startMeasure("stateUpdate");
+				#end
 				currentState.update(dt);
+				#if (profile || profile_deep)
+				com.debug.Profiler.endMeasure("stateUpdate");
+				#end
+				#if (profile || profile_deep)
+				com.debug.Profiler.startMeasure("gengineUpdate");
+				#end
 				GEngine.i.update();
+				#if (profile || profile_deep)
+				com.debug.Profiler.endMeasure("gengineUpdate");
+				#end
 				
 			}
+			#if (profile || profile_deep)
+			com.debug.Profiler.endMeasure("updateIterations");
+			#end
 		}
 		iterationRest = (TimeManager.multiplier + iterationRest) - fullIterations;
+		com.debug.Profiler.endMeasure("updateSim");
 	}
 
 	private function loadState(state:State):Void {
