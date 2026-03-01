@@ -146,9 +146,15 @@ class CollisionTileMap implements ICollider {
 	}
 
 	public function changeTileId(aX:Int, aY:Int, aId:Int) {
-		if (aX > 0 && aY > 0 && aX < widthIntTiles && aY < heightInTiles) {
+		if (aX >= 0 && aY >= 0 && aX < widthIntTiles && aY < heightInTiles) {
 			tiles[aX + aY * widthIntTiles] = aId;
-			calculateEdges(aX - 1, aY - 1, aX + 1, aY + 1);
+			// calculateEdges uses exclusive max ranges, so +2 is needed
+			// to include the changed tile and its +1 neighbors.
+			var minX = Std.int(Math.max(0, aX - 1));
+			var minY = Std.int(Math.max(0, aY - 1));
+			var maxX = Std.int(Math.min(widthIntTiles, aX + 2));
+			var maxY = Std.int(Math.min(heightInTiles, aY + 2));
+			calculateEdges(minX, minY, maxX, maxY);
 		}
 	}
 
