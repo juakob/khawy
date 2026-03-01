@@ -93,8 +93,9 @@ class TileMapDisplay extends Layer {
 					var orientation = orientation[index];
 					if (frame >= 0) {
 						tile.timeline.gotoAndStop(frame);
-						tile.x = x * tileWidth;
-						tile.y = y * tileHeight;
+						// Tile sprite uses centered pivot, so place at tile center.
+						tile.x = x * tileWidth + tileWidth * 0.5;
+						tile.y = y * tileHeight + tileHeight * 0.5;
 						if (orientation & (cast Orientation.Rotate) != 0) {
 							tile.rotation = Math.PI * 0.5;
 							tile.scaleX = orientation & (cast Orientation.FlipY) != 0 ? -1 : 1;
