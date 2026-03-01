@@ -59,7 +59,9 @@ class TilesheetLoader implements AtlasJoinable {
 		for (counter in 0...spritesCount) {
 			var x = (counter % widthInFrames) * (tileWidth + spacing * 2);
 			var y = Std.int(counter / widthInFrames) * (tileHeight + spacing * 2);
-			frames.push(createFrame(0, 0, tileWidth, tileHeight, false,x,y, image.realWidth, image.realHeight));
+			var frame = createFrame(0, 0, tileWidth, tileHeight, false, x, y, image.realWidth, image.realHeight);
+			applyUVInset(frame, x, y, tileWidth, tileHeight, image.realWidth, image.realHeight);
+			frames.push(frame);
 
 			var bitmap:Bitmap = new Bitmap();
 			bitmap.x = x;
@@ -85,28 +87,45 @@ class TilesheetLoader implements AtlasJoinable {
 	public function update(atlasId:Int):Void {
 		animation.texturesID = atlasId;
 		animation.hasMipMap = false;
+		var texture = GEngine.i.getTexture(atlasId);
+		var insetU = 0.5 / texture.realWidth;
+		var insetV = 0.5 / texture.realHeight;
 		for (i in 0...bitmaps.length) {
 			var frame:Frame = animation.frames[i];
 			var bitmap = bitmaps[i];
 			var UVs:Array<FastFloat> = new Array();
+			var minU = bitmap.minUV.x + insetU;
+			var minV = bitmap.minUV.y + insetV;
+			var maxU = bitmap.maxUV.x - insetU;
+			var maxV = bitmap.maxUV.y - insetV;
 			// a
-			UVs.push(bitmap.minUV.x);
-			UVs.push(bitmap.minUV.y);
+			UVs.push(minU);
+			UVs.push(minV);
 
 			// b
-			UVs.push(bitmap.minUV.x);
-			UVs.push(bitmap.maxUV.y);
+			UVs.push(minU);
+			UVs.push(maxV);
 
 			// c
-			UVs.push(bitmap.maxUV.x);
-			UVs.push(bitmap.minUV.y);
+			UVs.push(maxU);
+			UVs.push(minV);
 
 			// d
-			UVs.push(bitmap.maxUV.x);
-			UVs.push(bitmap.maxUV.y);
+			UVs.push(maxU);
+			UVs.push(maxV);
 
 			frame.UVs = UVs;
 		}
+	}
+
+	static inline function applyUVInset(frame:Frame, textureOriginX:Int, textureOriginY:Int, width:Int, height:Int, textureW:Int, textureH:Int):Void {
+		var insetU = 0.5 / textureW;
+		var insetV = 0.5 / textureH;
+		var minU = textureOriginX / textureW + insetU;
+		var minV = textureOriginY / textureH + insetV;
+		var maxU = (textureOriginX + width) / textureW - insetU;
+		var maxV = (textureOriginY + height) / textureH - insetV;
+		frame.UVs = [minU, minV, minU, maxV, maxU, minV, maxU, maxV];
 	}
 
 	public static function createFrame(x:Float, y:Float, width:Int, height:Int, rotated:Bool, textureOriginX, textureOriginY, textureW:Int,textureH:Int):Frame {

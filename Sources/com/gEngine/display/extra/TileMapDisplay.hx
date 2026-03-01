@@ -35,6 +35,9 @@ class TileMapDisplay extends Layer {
 		tiles = new Array();
 		orientation = new Array();
 		tile = tileType;
+		#if PIXEL_GAME
+		tile.smooth = false;
+		#end
 		tile.pivotX = tileWidth * 0.5;
 		tile.pivotY = tileHeight * 0.5;
 		for (i in 0...widthInTiles * heightInTiles) {
