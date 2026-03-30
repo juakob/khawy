@@ -78,6 +78,27 @@ class JoystickProxy {
 		pressed.splice(0, pressed.length);
 	}
 
+	public function releaseState() {
+		released.splice(0, released.length);
+		pressed.splice(0, pressed.length);
+		for (i in 0...buttons.length) {
+			if (buttons[i] != 0) {
+				buttons[i] = 0;
+				if (onButtonChange != null) {
+					onButtonChange(i, 0);
+				}
+			}
+		}
+		for (i in 0...axes.length) {
+			if (axes[i] != 0) {
+				axes[i] = 0;
+				if (onAxisChange != null) {
+					onAxisChange(i, 0);
+				}
+			}
+		}
+	}
+
 	public function clearInput() {
 		released.splice(0, released.length);
 		pressed.splice(0, pressed.length);

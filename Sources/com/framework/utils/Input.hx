@@ -385,6 +385,40 @@ class Input {
 		t_mouseWheelDelta = 0;
 		mousePosition.setTo(t_mousePosition.x,t_mousePosition.y);
 	}
+
+	function resetInputState() {
+		mouseIsDown = false;
+		mousePressed = false;
+		mouseReleased = false;
+		mouseLeftIsDown = false;
+		mouseLeftPressed = false;
+		mouseLeftReleased = false;
+
+		t_mouseIsDown = false;
+		t_mousePressed = false;
+		t_mouseReleased = false;
+		t_mouseLeftIsDown = false;
+		t_mouseLeftPressed = false;
+		t_mouseLeftReleased = false;
+
+		keysDown.splice(0, keysDown.length);
+		keysPressed.splice(0, keysPressed.length);
+		keysReleased.splice(0, keysReleased.length);
+		t_keysDown.splice(0, t_keysDown.length);
+		t_keysPressed.splice(0, t_keysPressed.length);
+		t_keysReleased.splice(0, t_keysReleased.length);
+
+		touchActive.splice(0, touchActive.length);
+		t_touchActive.splice(0, t_touchActive.length);
+		activeTouchSpots = 0;
+
+		mouseDeltaX = 0;
+		mouseDeltaY = 0;
+		mouseWheelDelta = 0;
+		t_mouseDeltaX = 0;
+		t_mouseDeltaY = 0;
+		t_mouseWheelDelta = 0;
+	}
 	#if INPUT_REC
 	public function updatePlayeback() {
 		if(playback){
@@ -439,18 +473,36 @@ class Input {
 	#end
 
 	public function clearInput() {
-		mousePressed = false;
-		mouseReleased = false;
-		mouseWheelDelta = 0;
-		t_mouseWheelDelta = 0;
-		activeTouchSpots = 0;
-
-		keysPressed.splice(0, keysPressed.length);
-		keysReleased.splice(0, keysReleased.length);
-		keysDown.splice(0, keysDown.length);
+		resetInputState();
 
 		for (joystick in joysticks) {
 			joystick.clearInput();
+		}
+	}
+
+	public function releaseActiveInput() {
+		var keysToRelease = new Array<Int>();
+		for (key in keysDown) {
+			if (keysToRelease.indexOf(key) == -1) {
+				keysToRelease.push(key);
+			}
+		}
+		for (key in t_keysDown) {
+			if (keysToRelease.indexOf(key) == -1) {
+				keysToRelease.push(key);
+			}
+		}
+		for (key in keysToRelease) {
+			var keyCode:KeyCode = cast key;
+			for (listener in onKeyUpSubscribers) {
+				listener(keyCode);
+			}
+		}
+
+		resetInputState();
+
+		for (joystick in joysticks) {
+			joystick.releaseState();
 		}
 	}
 

@@ -94,6 +94,7 @@ class Simulation {
 
 	private function onForeground() {
 		//isPause = false;
+		Input.i.releaseActiveInput();
         if (currentState != null) {
 			currentState.onForeground();
 		}
@@ -101,6 +102,7 @@ class Simulation {
 
     public function onResume() {
 		//isPause = false;
+		Input.i.releaseActiveInput();
         if (currentState != null) {
 			currentState.onResume();
 		}
@@ -108,6 +110,7 @@ class Simulation {
 
     public function onPause() {
 		//isPause = true;
+		Input.i.releaseActiveInput();
         if (currentState != null) {
 			currentState.onPause();
 		}
@@ -115,6 +118,7 @@ class Simulation {
 
     private function onBackground() {
 		//isPause = true;
+		Input.i.releaseActiveInput();
         if (currentState != null) {
 			currentState.onBackground();
 		}
