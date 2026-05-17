@@ -360,6 +360,10 @@ class Input {
 		t_mouseLeftPressed = false;
 		t_mouseLeftReleased = false;
 
+		keysDown.splice(0, keysDown.length);
+		for (i in 0...t_keysDown.length){
+			keysDown.push(t_keysDown[i]);
+		}
 		keysPressed.splice(0, keysPressed.length);
 		keysReleased.splice(0, keysReleased.length);
 		for (i in 0...t_keysPressed.length){
@@ -448,6 +452,9 @@ class Input {
 		keysPressed.splice(0, keysPressed.length);
 		keysReleased.splice(0, keysReleased.length);
 		keysDown.splice(0, keysDown.length);
+		t_keysDown.splice(0, t_keysDown.length);
+		t_keysPressed.splice(0, t_keysPressed.length);
+		t_keysReleased.splice(0, t_keysReleased.length);
 
 		for (joystick in joysticks) {
 			joystick.clearInput();
