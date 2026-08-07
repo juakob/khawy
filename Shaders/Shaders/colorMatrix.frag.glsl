@@ -1,5 +1,9 @@
 #version 450
 
+#ifdef GL_ES
+precision mediump float;
+#endif
+
 uniform sampler2D tex;
 uniform mat4 colorMatrix;
 uniform vec4 colorOffset;

@@ -582,7 +582,7 @@ class GEngine {
 	public function getRenderTarget(width:Int, height:Int):Int {
 		var id:Int = renderTargetPool.getFreeImageId(width, height);
 		if (id == -1) {
-			var target:Image = Image.createRenderTarget(Std.int(width * oversample), Std.int(height * oversample),null,NoDepthAndStencil,8);
+			var target:Image = Image.createRenderTarget(Std.int(width * oversample), Std.int(height * oversample), null, NoDepthAndStencil, antiAliasing);
 			id = textures.push(target) - 1;
 			renderTargetPool.addRenderTarget(id, width, height);
 		}

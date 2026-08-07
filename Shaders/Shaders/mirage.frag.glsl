@@ -1,5 +1,9 @@
 #version 450
 
+#ifdef GL_ES
+precision mediump float;
+#endif
+
 
 uniform float time;
 const float A = 0.009;
