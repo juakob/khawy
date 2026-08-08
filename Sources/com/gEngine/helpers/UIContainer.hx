@@ -42,6 +42,19 @@ class UIContainer extends StaticLayer {
         return component;
     }
 
+    public function removeComponent(sprite:DisplayObject):Void {
+        var i = components.length - 1;
+        while (i >= 0) {
+            if (components[i].display == sprite) {
+                components.splice(i, 1);
+            }
+            --i;
+        }
+        if (sprite.parent == this) {
+            remove(sprite);
+        }
+    }
+
     override function render(paintMode:PaintMode, transform:FastMatrix4) {
         var camera = paintMode.camera;
         updateScaleFactor(camera); // Recalcula en caso de cambio de tamaño

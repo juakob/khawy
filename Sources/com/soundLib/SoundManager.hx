@@ -4,6 +4,12 @@ import kha.Assets;
 import kha.Sound;
 import kha.audio1.Audio;
 import kha.audio1.AudioChannel;
+#if kha_html5
+import kha.input.KeyCode;
+import kha.input.Keyboard;
+import kha.input.Mouse;
+import kha.input.Surface;
+#end
 
 typedef SM = SoundManager;
 
@@ -12,6 +18,12 @@ class SoundManager {
 	private static var music:AudioChannel;
 	private static var musicName:String;
 	private static var musicPosition:Float = 0;
+	#if kha_html5
+	private static var audioUnlocked:Bool = false;
+	private static var pendingMusicName:String;
+	private static var pendingMusicLoop:Bool = true;
+	private static var hasPendingMusic:Bool = false;
+	#end
 	//
 	public static var soundMuted(default, null):Bool = false;
 	public static var musicMuted(default, null):Bool = false;
@@ -20,6 +32,13 @@ class SoundManager {
 	public static function init():Void {
 		map = new Map();
 		initied = true;
+		#if kha_html5
+		audioUnlocked = false;
+		hasPendingMusic = false;
+		pendingMusicName = null;
+		pendingMusicLoop = true;
+		subscribeUnlockInput();
+		#end
 	}
 
 	public static function addSound(soundName:String, sound:Sound):Void {
@@ -33,6 +52,11 @@ class SoundManager {
 		}
 		#end
 		if (!soundMuted) {
+			#if kha_html5
+			if (!audioUnlocked) {
+				return null;
+			}
+			#end
 			return Audio.play(map.get(sound), loop);
 		}
 		return null;
@@ -49,12 +73,15 @@ class SoundManager {
 		}
 		musicName = soundName;
 		if (!musicMuted) {
-			var sound = map.get(soundName);
-			if (sound.compressedData != null) {
-				music = Audio.stream(sound, loop);
-			} else {
-				music = Audio.play(sound, loop);
+			#if kha_html5
+			if (!audioUnlocked) {
+				pendingMusicName = soundName;
+				pendingMusicLoop = loop;
+				hasPendingMusic = true;
+				return;
 			}
+			#end
+			startMusic(soundName, loop);
 		}
 	}
 
@@ -94,6 +121,10 @@ class SoundManager {
 	}
 
 	public static function stopMusic():Void {
+		#if kha_html5
+		hasPendingMusic = false;
+		pendingMusicName = null;
+		#end
 		if (music != null) {
 			musicPosition = music.position;
 			music.stop();
@@ -116,4 +147,57 @@ class SoundManager {
 	static public function reset() {
 		map = new Map();
 	}
+
+	private static function startMusic(soundName:String, loop:Bool):Void {
+		var sound = map.get(soundName);
+		if (sound.compressedData != null) {
+			music = Audio.stream(sound, loop);
+		} else {
+			music = Audio.play(sound, loop);
+		}
+	}
+
+	#if kha_html5
+	private static function subscribeUnlockInput():Void {
+		Keyboard.get().notify(onUnlockKeyDown, null);
+		Mouse.get().notify(onUnlockMouseDown, null, null, null);
+		var surface = Surface.get();
+		if (surface != null) {
+			surface.notify(onUnlockTouchStart, null, null);
+		}
+	}
+
+	private static function unsubscribeUnlockInput():Void {
+		Keyboard.get().remove(onUnlockKeyDown, null, null);
+		Mouse.get().remove(onUnlockMouseDown, null, null, null);
+		var surface = Surface.get();
+		if (surface != null) {
+			surface.remove(onUnlockTouchStart, null, null);
+		}
+	}
+
+	private static function unlockAudio():Void {
+		if (audioUnlocked) {
+			return;
+		}
+		audioUnlocked = true;
+		unsubscribeUnlockInput();
+		if (hasPendingMusic && pendingMusicName != null && !musicMuted) {
+			hasPendingMusic = false;
+			playMusic(pendingMusicName, pendingMusicLoop);
+		}
+	}
+
+	private static function onUnlockKeyDown(_:KeyCode):Void {
+		unlockAudio();
+	}
+
+	private static function onUnlockMouseDown(_:Int, _:Int, _:Int):Void {
+		unlockAudio();
+	}
+
+	private static function onUnlockTouchStart(_:Int, _:Int, _:Int):Void {
+		unlockAudio();
+	}
+	#end
 }
